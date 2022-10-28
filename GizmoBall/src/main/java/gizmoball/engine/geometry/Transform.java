@@ -1,45 +1,47 @@
 package gizmoball.engine.geometry;
 
-import gizmoball.engine.geometry.shape.*;
+import lombok.Getter;
+import lombok.Setter;
+
 
 /**
- * 物体旋转/位移，对物体做如下设定：
- * <p>
- *     {@link Circle} 和 {@link Rectangle} 中心点位于重心上
- * </p>
- * <p>
- *     {@link Triangle} 中心点位于直角顶点上
- * </p>
- * <p>
- *     {@link QuarterCircle} 中心点位于圆心上
- * </p>
- * <p>
- *     其余组合图形若无说明则默认位于重心上
- * </p>
+ * 物体旋转/位移
  */
+@Getter
+@Setter
 public class Transform {
 
     /**
      * 旋转角度的cos
      */
-    protected double cost = 1.0;
+    public double cost;
 
     /**
      * 旋转角度的sin
      */
-    protected double sint = 0.0;
+    public double sint;
 
     /**
-     * 相对于原点的x轴偏移
+     * 相对于原点的x轴偏移，相当于世界的x坐标
      */
-    protected double x = 0.0;
+    public double x;
 
     /**
-     * 相对于原点的y轴偏移
+     * 相对于原点的y轴偏移，相当于世界的y坐标
      */
-    protected double y = 0.0;
+    public double y;
 
-    // 存在问题
+    public Transform() {
+        this(1.0, 0.0, 0.0, 0.0);
+    }
+
+    public Transform(double cost, double sint, double x, double y) {
+        this.cost = cost;
+        this.sint = sint;
+        this.x = x;
+        this.y = y;
+    }
+
     /**
      * 绕着某一点做旋转
      *
@@ -49,9 +51,10 @@ public class Transform {
      * @param y 旋转点的y坐标
      */
     public void rotate(double c, double s, double x, double y) {
-        this.cost = Transform.sandwich(c * this.cost - s * this.sint, -1.0, 1.0);
-        this.sint = Transform.sandwich(s * this.cost + c * this.sint, -1.0, 1.0);
-
+        double cosT = this.cost;
+        double sinT = this.sint;
+        this.cost = Transform.sandwich(c * cosT - s * sinT, -1.0, 1.0);
+        this.sint = Transform.sandwich(s * cosT + c * sinT, -1.0, 1.0);
         double cx = this.x - x;
         double cy = this.y - y;
         this.x = c * cx - s * cy + x;
@@ -70,7 +73,7 @@ public class Transform {
     }
 
     /**
-     * 按给定坐标平移
+     * 按给定{@link Vector2}平移
      *
      * @param x x轴平移距离
      * @param y y轴平移距离
@@ -81,12 +84,12 @@ public class Transform {
     }
 
     /**
-     * 按给定向量平移
+     * 按给定{@link Vector2}平移
      *
      * @param vector2 方向向量
      */
     public void translate(Vector2 vector2) {
-        this.translate(vector2.getX(), vector2.getY());
+        this.translate(vector2.x, vector2.y);
     }
 
     /**
@@ -95,9 +98,60 @@ public class Transform {
      * @param value 原值
      * @param left  下界
      * @param right 上界
-     * @return 夹逼后的值，必定位于上界和下界之间
+     * @return double
      */
-    public static double sandwich(double value, double left, double right) {
+    private static double sandwich(double value, double left, double right) {
         return (value <= right && value >= left) ? value : (value < left ? left : right);
     }
+
+    /**
+     * 对给定{@link Vector2}的的x坐标进行变换
+     *
+     * @param vector 待变换{@link Vector2}
+     * @return double
+     */
+    public double getTransformedX(Vector2 vector) {
+        return this.cost * vector.x - this.sint * vector.y + this.x;
+    }
+
+    /**
+     * 对给定{@link Vector2}的的y坐标进行变换
+     *
+     * @param vector 待变换{@link Vector2}
+     * @return double
+     */
+    public double getTransformedY(Vector2 vector) {
+        return this.sint * vector.x + this.cost * vector.y + this.y;
+    }
+
+    /**
+     * 对给定{@link Vector2}的的x和y坐标进行旋转平移变换
+     *
+     * @param vector 待变换{@link Vector2}
+     * @return Vector2
+     */
+    public Vector2 getTransformed(Vector2 vector) {
+        Vector2 tv = new Vector2();
+        double x = vector.x;
+        double y = vector.y;
+        tv.x = this.cost * x - this.sint * y + this.x;
+        tv.y = this.sint * x + this.cost * y + this.y;
+        return tv;
+    }
+
+    /**
+     * 对给定{@link Vector2}的的x和y坐标进行旋转变换
+     *
+     * @param vector 待变换{@link Vector2}
+     * @return Vector2
+     */
+    public Vector2 getTransformedR(Vector2 vector) {
+        Vector2 v = new Vector2();
+        double x = vector.x;
+        double y = vector.y;
+        v.x = this.cost * x - this.sint * y;
+        v.y = this.sint * x + this.cost * y;
+        return v;
+    }
+
 }

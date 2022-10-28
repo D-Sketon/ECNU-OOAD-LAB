@@ -1,7 +1,5 @@
 package gizmoball.engine.physics;
 
-import gizmoball.engine.geometry.Fixture;
-import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import lombok.Data;
@@ -30,13 +28,11 @@ public class PhysicsBody {
 	protected final List<Force> forces;
 
     /** 物体组成的部件（简单形状） */
-    protected final List<AbstractShape> shapes;
+    protected final AbstractShape shape;
 
-    /**
-     * 物体旋转/位移
-     */
-    protected final Transform transform;
-
+    /** 是否是触发器（无碰撞，物体可穿过） */
+    protected boolean isTrigger;
+    
 }
 
 

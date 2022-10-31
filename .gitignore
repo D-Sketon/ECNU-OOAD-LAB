@@ -27,3 +27,4 @@ db/
 logs/
 .idea/
 .vscode/
+*.iml

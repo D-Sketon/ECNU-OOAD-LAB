@@ -2,14 +2,19 @@ package gizmoball.engine.physics;
 
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 代表一个物体，他也可以是一个组件包含多个基础物体
  */
 @Data
+@RequiredArgsConstructor
 public class PhysicsBody {
 
     /** 物体质量 */
@@ -32,7 +37,16 @@ public class PhysicsBody {
 
     /** 是否是触发器（无碰撞，物体可穿过） */
     protected boolean isTrigger;
-    
+
+    public PhysicsBody(AbstractShape shape) {
+        this.mass = new Mass(0,0,0,0);
+        this.linearVelocity = new Vector2();
+        this.linearDamping = 0.0;
+        this.force = new Vector2();
+        this.forces = new ArrayList<>();
+        this.isTrigger = false;
+        this.shape = shape;
+    }
 }
 
 

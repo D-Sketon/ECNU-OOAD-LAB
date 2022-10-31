@@ -9,6 +9,7 @@ import gizmoball.engine.world.listener.TickListener;
 import gizmoball.engine.world.listener.TriggerListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,6 +52,14 @@ public class World {
         this.tickListeners = new ArrayList<>();
         this.triggerListeners = new ArrayList<>();
         this.collisionDetector = new BasicCollisionDetector();
+    }
+
+    public void addBodies(PhysicsBody... bodies){
+        this.bodies.addAll(Arrays.asList(bodies));
+    }
+
+    public List<PhysicsBody> getBodies(){
+        return this.bodies;
     }
 
     /**

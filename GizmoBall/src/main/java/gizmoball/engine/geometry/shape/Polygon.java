@@ -4,9 +4,11 @@ import gizmoball.engine.collision.Interval;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import lombok.Getter;
 
 import java.util.Arrays;
 
+@Getter
 public abstract class Polygon extends AbstractShape {
 
     /**

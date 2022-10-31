@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="434.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gizmoball.ui.MainController">
+   <children>
+      <Pane layoutY="25.0" prefHeight="600.0" prefWidth="600.0">
+         <children>
+            <Canvas fx:id="gizmoCanvas" height="600.0" width="600.0" />
+         </children>
+      </Pane>
+      <Pane layoutX="600.0" layoutY="25.0" prefHeight="600.0" prefWidth="300.0" style="-fx-border-color: #333; -fx-border-width: 0 0 0 1;">
+         <children>
+            <GridPane fx:id="gizmoGridPane" alignment="CENTER" prefHeight="300.0" prefWidth="300.0" style="-fx-border-color: #333; -fx-border-width: 0 0 1 0;">
+              <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <HBox fx:id="gizmoOpHBox" alignment="CENTER" layoutY="301.0" prefHeight="140.0" prefWidth="300.0" style="-fx-border-color: #333; -fx-border-width: 0 0 1 0;">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </HBox>
+            <HBox fx:id="gameOpHBox" layoutY="441.0" prefHeight="160.0" prefWidth="300.0" />
+         </children></Pane>
+      <MenuBar prefHeight="25.0" prefWidth="900.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <HBox prefHeight="100.0" prefWidth="200.0" />
+   </children>
+</AnchorPane>

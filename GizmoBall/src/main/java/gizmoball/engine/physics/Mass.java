@@ -1,14 +1,13 @@
-
-
-
 package gizmoball.engine.physics;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 物体重量
  */
 @Data
+@RequiredArgsConstructor
 public class Mass {
 
     /** The mass in kg */

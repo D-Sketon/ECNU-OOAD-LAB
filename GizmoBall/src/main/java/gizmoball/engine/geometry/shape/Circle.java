@@ -1,7 +1,10 @@
 package gizmoball.engine.geometry.shape;
 
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.geometry.*;
+import gizmoball.engine.collision.feature.PointFeature;
+import gizmoball.engine.geometry.AABB;
+import gizmoball.engine.geometry.Transform;
+import gizmoball.engine.geometry.Vector2;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,6 +50,22 @@ public class Circle extends AbstractShape {
         Vector2[] foci = new Vector2[1];
         foci[0] = new Vector2(transform.getX(), transform.getY());
         return foci;
+    }
+
+    @Override
+    public PointFeature getFarthestFeature(Vector2 vector) {
+        Vector2 farthest = this.getFarthestPoint(vector);
+        // 圆形没有边，所以返回特征点
+        return new PointFeature(farthest);
+    }
+
+    @Override
+    public Vector2 getFarthestPoint(Vector2 vector) {
+        Vector2 nAxis = vector.getNormalized();
+        Vector2 center = new Vector2(transform.getX(), transform.getY());
+        center.x += this.radius * nAxis.x;
+        center.y += this.radius * nAxis.y;
+        return center;
     }
 
 }

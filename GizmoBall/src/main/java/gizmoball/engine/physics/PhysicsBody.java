@@ -17,29 +17,54 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PhysicsBody {
 
-    /** 物体质量 */
+    /**
+     * 物体质量
+     */
     protected Mass mass;
 
-    /** 当前速度 */
+    /**
+     * 当前速度
+     */
     protected final Vector2 linearVelocity;
 
-    /** 线性阻尼 */
+    /**
+     * 角速度
+     */
+    protected double angularVelocity;
+    
+    /**
+     * 线性阻尼
+     */
     protected double linearDamping;
 
-    /** 当前受力总和 */
+    /**
+     * 当前受力总和
+     */
     protected final Vector2 force;
 
-    /** 当前受力列表 */
-	protected final List<Force> forces;
+    /**
+     * 当前受力列表
+     */
+    protected final List<Force> forces;
 
-    /** 物体组成的部件（简单形状） */
+    /**
+     * 物体组成的部件（简单形状）
+     */
     protected final AbstractShape shape;
 
-    /** 是否是触发器（无碰撞，物体可穿过） */
+    /**
+     * 是否是触发器（无碰撞，物体可穿过）
+     */
     protected boolean isTrigger;
+    
+    protected double friction;
+    	
+    protected double restitution;
+    	
+    protected double restitutionVelocity;
 
     public PhysicsBody(AbstractShape shape) {
-        this.mass = new Mass(0,0,0,0);
+        this.mass = new Mass();
         this.linearVelocity = new Vector2();
         this.linearDamping = 0.0;
         this.force = new Vector2();
@@ -47,6 +72,8 @@ public class PhysicsBody {
         this.isTrigger = false;
         this.shape = shape;
     }
+
+
 }
 
 

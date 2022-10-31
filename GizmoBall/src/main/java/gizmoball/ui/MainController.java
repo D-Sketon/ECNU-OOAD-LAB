@@ -24,6 +24,8 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -80,6 +82,9 @@ public class MainController extends Application implements Initializable {
             new ImageLabelButton("icons/design.png", "design"),
     };
 
+    private final int STAGE_WIDTH = 900;
+    private final int STAGE_HEIGHT = 600;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
@@ -119,28 +124,28 @@ public class MainController extends Application implements Initializable {
             bottomRectangle.getTransform().setX(bottomRectangle.getWidth() / 2);
             bottomRectangle.getTransform().setY(-bottomRectangle.getHeight() / 2);
             PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
-            bottomBorder.setMass(new Mass(0, 0, 0, 0));
+            bottomBorder.getMass().setMass(0);
             world.addBodies(bottomBorder);
 
             Rectangle topRectangle = new Rectangle(worldWidth, worldHeight, new Transform());
             topRectangle.getTransform().setX(topRectangle.getWidth() / 2);
             topRectangle.getTransform().setY(worldHeight + topRectangle.getHeight() / 2);
             PhysicsBody topBorder = new PhysicsBody(topRectangle);
-            topBorder.setMass(new Mass(0, 0, 0, 0));
+            bottomBorder.getMass().setMass(0);
             world.addBodies(topBorder);
 
             Rectangle leftRectangle = new Rectangle(worldWidth, worldHeight, new Transform());
             leftRectangle.getTransform().setX(-leftRectangle.getWidth() / 2);
             leftRectangle.getTransform().setY(leftRectangle.getHeight() / 2);
             PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
-            leftBorder.setMass(new Mass(0, 0, 0, 0));
+            bottomBorder.getMass().setMass(0);
             world.addBodies(leftBorder);
 
             Rectangle rightRectangle = new Rectangle(worldWidth, worldHeight, new Transform());
             rightRectangle.getTransform().setX(worldWidth + rightRectangle.getWidth() / 2);
             rightRectangle.getTransform().setY(rightRectangle.getHeight() / 2);
             PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
-            rightBorder.setMass(new Mass(0, 0, 0, 0));
+            bottomBorder.getMass().setMass(0);
             world.addBodies(rightBorder);
         }
         {
@@ -221,12 +226,11 @@ public class MainController extends Application implements Initializable {
                 double[] xpoints = new double[vertices.length];
                 double[] ypoints = new double[vertices.length];
                 for (int i = 0; i < vertices.length; i++) {
-                    xpoints[i] = transform.getTransformedX(new Vector2(vertices[i].getX(), vertices[i].getY()));
+                    xpoints[i] = transform.getTransformedX(new Vector2(vertices[i].x, vertices[i].y));
                 }
             } else if (shape instanceof Circle) {
                 Circle circle = (Circle) shape;
                 gc.setFill(Color.BLUE);
-                gc.drawImage();
                 gc.fillOval(circle.getTransform().getX(), circle.getTransform().getY(), circle.getRadius(), circle.getRadius());
             }
         }

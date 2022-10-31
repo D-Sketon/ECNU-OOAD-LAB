@@ -22,6 +22,7 @@
             <artifactId>lombok</artifactId>
             <version>1.18.20</version>
         </dependency>
+<<<<<<< HEAD
         <dependency>
             <groupId>de.codecentric.centerdevice</groupId>
             <artifactId>javafxsvg</artifactId>
@@ -39,5 +40,7 @@
             <version>4.2.2</version>
             <scope>test</scope>
         </dependency>
+=======
+>>>>>>> 2fff54f5ebdcd1b7b23381cb16e6d64601d7fbd7
     </dependencies>
 </project>

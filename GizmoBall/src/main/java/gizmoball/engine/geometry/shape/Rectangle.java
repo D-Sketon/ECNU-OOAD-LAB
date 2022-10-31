@@ -1,12 +1,10 @@
 package gizmoball.engine.geometry.shape;
 
 
-import gizmoball.engine.collision.Interval;
-import gizmoball.engine.geometry.*;
+import gizmoball.engine.geometry.Transform;
+import gizmoball.engine.geometry.Vector2;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Arrays;
 
 @Getter
 @Setter
@@ -52,5 +50,5 @@ public class Rectangle extends Polygon {
         this.height = this.height / this.rate * rate;
         this.rate = rate;
     }
-    
+
 }

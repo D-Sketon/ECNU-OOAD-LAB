@@ -1,8 +1,7 @@
 package gizmoball.engine.world;
 
-import gizmoball.engine.collision.CollisionData;
-import gizmoball.engine.collision.CollisionDetector;
 import gizmoball.engine.collision.BasicCollisionDetector;
+import gizmoball.engine.collision.CollisionDetector;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.listener.TickListener;
@@ -31,7 +30,9 @@ public class World {
 
     protected Vector2 gravity;
 
-    /** 所有游戏物体信息 */
+    /**
+     * 所有游戏物体信息
+     */
     protected final List<PhysicsBody> bodies;
 
     /**
@@ -76,7 +77,7 @@ public class World {
         // 更新物体状态
         // 1. 根据碰撞信息更新物体速度
         // 2. 根据物体速度更新物体位置
-        
+
         // -- triggerListener.after
 
         // -- tickListener.after

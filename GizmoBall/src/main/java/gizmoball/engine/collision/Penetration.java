@@ -25,5 +25,5 @@ public class Penetration {
         this.normal = normal.copy();
         this.depth = depth;
     }
-    
+
 }

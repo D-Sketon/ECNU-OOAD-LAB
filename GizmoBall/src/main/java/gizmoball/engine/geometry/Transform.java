@@ -92,6 +92,7 @@ public class Transform {
         this.translate(vector2.x, vector2.y);
     }
 
+
     /**
      * 夹逼，消除double误差
      *
@@ -100,7 +101,7 @@ public class Transform {
      * @param right 上界
      * @return double
      */
-    private static double sandwich(double value, double left, double right) {
+    public static double sandwich(double value, double left, double right) {
         return (value <= right && value >= left) ? value : (value < left ? left : right);
     }
 
@@ -140,6 +141,39 @@ public class Transform {
     }
 
     /**
+     * Transforms the given {@link Vector2} only by the rotation and returns the
+     * result in the given {@link Vector2}.
+     * @param vector the {@link Vector2} to transform
+     */
+    public void transformR(Vector2 vector) {
+        double x = vector.x;
+        double y = vector.y;
+        vector.x = this.cost * x - this.sint * y;
+        vector.y = this.sint * x + this.cost * y;
+    }
+
+    /**
+     * 对给定{@link Vector2}的的x和y坐标进行旋转平移变换
+     *
+     * @param vector 变换{@link Vector2}
+     */
+    public void transform(Vector2 vector) {
+        double x = vector.x;
+        double y = vector.y;
+        vector.x = this.cost * x - this.sint * y + this.x;
+        vector.y = this.sint * x + this.cost * y + this.y;
+    }
+
+    public Vector2 getInverseTransformed(Vector2 vector) {
+        Vector2 tv = new Vector2();
+        double tx = vector.x - this.x;
+        double ty = vector.y - this.y;
+        tv.x = this.cost * tx + this.sint * ty;
+        tv.y = -this.sint * tx + this.cost * ty;
+        return tv;
+    }
+
+    /**
      * 对给定{@link Vector2}的的x和y坐标进行旋转变换
      *
      * @param vector 待变换{@link Vector2}
@@ -151,6 +185,22 @@ public class Transform {
         double y = vector.y;
         v.x = this.cost * x - this.sint * y;
         v.y = this.sint * x + this.cost * y;
+        return v;
+    }
+
+    /**
+     * 对给定{@link Vector2}的的x和y坐标进行旋转逆变换
+     *
+     * @param vector 待变换{@link Vector2}
+     * @return Vector2
+     */
+    public Vector2 getInverseTransformedR(Vector2 vector) {
+        Vector2 v = new Vector2();
+        double x = vector.x;
+        double y = vector.y;
+        // sin(-a) = -sin(a)
+        v.x = this.cost * x + this.sint * y;
+        v.y = -this.sint * x + this.cost * y;
         return v;
     }
 

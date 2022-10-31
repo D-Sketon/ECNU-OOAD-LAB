@@ -1,11 +1,11 @@
 package gizmoball.engine.geometry.shape;
 
 import gizmoball.engine.collision.Interval;
+import gizmoball.engine.collision.feature.EdgeFeature;
+import gizmoball.engine.collision.feature.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-
-import java.util.Arrays;
 
 public abstract class Polygon extends AbstractShape {
 
@@ -107,6 +107,62 @@ public abstract class Polygon extends AbstractShape {
             max = Math.max(max, v);
         }
         return new Interval(min, max);
+    }
+
+    @Override
+    public EdgeFeature getFarthestFeature(Vector2 vector) {
+        Vector2 localn = transform.getInverseTransformedR(vector);
+
+        int index = getFarthestVertexIndex(localn);
+        int count = this.vertices.length;
+
+        Vector2 maximum = new Vector2(this.vertices[index]);
+        transform.transform(maximum);
+        PointFeature vm = new PointFeature(maximum, index);
+
+        Vector2 leftN = this.normals[index == 0 ? count - 1 : index - 1];
+        Vector2 rightN = this.normals[index];
+
+        if (leftN.dot(localn) < rightN.dot(localn)) {
+            int l = (index == count - 1) ? 0 : index + 1;
+
+            Vector2 left = transform.getTransformed(this.vertices[l]);
+            PointFeature vl = new PointFeature(left, l);
+            return new EdgeFeature(vm, vl, vm, maximum.to(left), index + 1);
+        } else {
+            int r = (index == 0) ? count - 1 : index - 1;
+
+            Vector2 right = transform.getTransformed(this.vertices[r]);
+            PointFeature vr = new PointFeature(right, r);
+            return new EdgeFeature(vr, vm, vm, right.to(maximum), index);
+        }
+    }
+
+    @Override
+    public Vector2 getFarthestPoint(Vector2 vector) {
+        Vector2 localn = transform.getInverseTransformedR(vector);
+        int index = getFarthestVertexIndex(localn);
+        return transform.getTransformed(this.vertices[index]);
+    }
+
+    private int getFarthestVertexIndex(Vector2 vector) {
+        int maxIndex = 0;
+        int n = this.vertices.length;
+        double max = vector.dot(this.vertices[0]), candidateMax;
+
+        if (max < (candidateMax = vector.dot(this.vertices[1]))) {
+            do {
+                max = candidateMax;
+                maxIndex++;
+            } while ((maxIndex + 1) < n && max < (candidateMax = vector.dot(this.vertices[maxIndex + 1])));
+        } else if (max < (candidateMax = vector.dot(this.vertices[n - 1]))) {
+            maxIndex = n;
+            do {
+                max = candidateMax;
+                maxIndex--;
+            } while (maxIndex > 0 && max <= (candidateMax = vector.dot(this.vertices[maxIndex - 1])));
+        }
+        return maxIndex;
     }
 
 }

@@ -18,6 +18,19 @@ public class Vector2 {
         this.y = y;
     }
 
+    public Vector2(Vector2 vector) {
+        this.x = vector.x;
+        this.y = vector.y;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        Vector2 v = (Vector2) obj;
+        return Math.abs(this.x - v.x) <= Epsilon.E && Math.abs(this.y - v.y) <= Epsilon.E;
+    }
+
     /**
      * 基于本{@link Vector2}复制一个新向量
      *
@@ -317,9 +330,10 @@ public class Vector2 {
     /**
      * Negates this {@link Vector2}.
      */
-    public void negate() {
+    public Vector2 negate() {
         this.x = -this.x;
         this.y = -this.y;
+        return this;
     }
 
     /**
@@ -430,6 +444,18 @@ public class Vector2 {
         this.x = this.y;
         this.y = -temp;
         return this;
+    }
+
+    /**
+     * 将本{@link Vector2}规范化并返回
+     *
+     * @return Vector2
+     */
+    public Vector2 getNormalized() {
+        double magnitude = this.getMagnitude();
+        if (magnitude <= Epsilon.E) return new Vector2();
+        magnitude = 1.0 / magnitude;
+        return new Vector2(this.x * magnitude, this.y * magnitude);
     }
 
     /**

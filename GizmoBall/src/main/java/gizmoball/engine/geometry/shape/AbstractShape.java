@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public abstract class AbstractShape implements Convex{
+public abstract class AbstractShape implements Convex {
 
     /**
      * 物体旋转/位移
@@ -89,4 +89,7 @@ public abstract class AbstractShape implements Convex{
         transform.translate(vector2);
     }
 
+    public Vector2 getLocalPoint(Vector2 worldPoint) {
+        return this.transform.getInverseTransformed(worldPoint);
+    }
 }

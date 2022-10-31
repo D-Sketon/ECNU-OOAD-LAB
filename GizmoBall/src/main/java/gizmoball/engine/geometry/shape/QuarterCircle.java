@@ -1,7 +1,10 @@
 package gizmoball.engine.geometry.shape;
 
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.geometry.*;
+import gizmoball.engine.collision.feature.Feature;
+import gizmoball.engine.geometry.AABB;
+import gizmoball.engine.geometry.Transform;
+import gizmoball.engine.geometry.Vector2;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -103,6 +106,16 @@ public class QuarterCircle extends AbstractShape {
         return new Vector2[]{
                 transform.getTransformed(this.vertices[0])
         };
+    }
+
+    @Override
+    public Feature getFarthestFeature(Vector2 vector) {
+        return null;
+    }
+
+    @Override
+    public Vector2 getFarthestPoint(Vector2 vector) {
+        return null;
     }
 
 }

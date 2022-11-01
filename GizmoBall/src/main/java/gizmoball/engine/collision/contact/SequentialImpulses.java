@@ -209,7 +209,7 @@ public class SequentialImpulses {
      *
      * @param contactConstraints 碰撞约束
      */
-    public void solveVelocityContraints(List<ContactConstraint> contactConstraints) {
+    public void solveVelocityConstraints(List<ContactConstraint> contactConstraints) {
         for (ContactConstraint contactConstraint : contactConstraints) {
             List<SolvableContact> contacts = contactConstraint.getContacts();
             int cSize = contactConstraint.getSize();
@@ -331,7 +331,7 @@ public class SequentialImpulses {
         contact2.jn = x.y;
     }
 
-    public boolean solvePositionContraints(List<ContactConstraint> contactConstraints) {
+    public boolean solvePositionConstraints(List<ContactConstraint> contactConstraints) {
         int size = contactConstraints.size();
         if (size == 0) return true;
 

@@ -268,7 +268,8 @@ public class MainController extends Application implements Initializable {
             transformedCenter.add(snapped);
 
             PhysicsBody physicsBody = gizmo.createPhysicsBody(PREFERRED_SIZE, transformedCenter);
-            physicsBody.setMass(new Mass(new Vector2(transformedCenter), 10, 1));
+            // todo
+            physicsBody.setMass(new Mass(new Vector2(0,0), 10, 1));
             world.addBodies(physicsBody);
 
             drawGizmo(gc);

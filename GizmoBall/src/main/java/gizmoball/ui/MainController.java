@@ -269,7 +269,10 @@ public class MainController extends Application implements Initializable {
 
             PhysicsBody physicsBody = gizmo.createPhysicsBody(PREFERRED_SIZE, transformedCenter);
             // todo
-            physicsBody.setMass(new Mass(new Vector2(0,0), 10, 1));
+            physicsBody.setMass(physicsBody.getShape().createMass(10));
+            System.out.println(physicsBody.getShape());
+            physicsBody.setRestitution(0.5);
+            //physicsBody.setRestitution(20);
             world.addBodies(physicsBody);
 
             drawGizmo(gc);

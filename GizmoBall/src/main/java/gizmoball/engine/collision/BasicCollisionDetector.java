@@ -36,7 +36,7 @@ public class BasicCollisionDetector implements CollisionDetector {
                             manifolds.add(new Pair<>(manifold, physicsBodyPhysicsBodyPair));
                         }
                     }
-                }
+               }
             }
         }
         return manifolds;
@@ -62,9 +62,7 @@ public class BasicCollisionDetector implements CollisionDetector {
         for (int i = 0; i < Settings.DEFAULT_SOLVER_ITERATIONS; i++) {
             solver.solveVelocityConstraints(constraints);
         }
-        for (PhysicsBody body : bodies) {
-            System.out.println(body);
-        }
+
         for (PhysicsBody body : bodies) {
             body.integratePosition();
         }

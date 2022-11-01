@@ -83,7 +83,7 @@ public class PhysicsBody {
         this.torques = new ArrayList<>();
         this.isTrigger = false;
         this.shape = shape;
-        this.gravityScale = 1.0;
+        this.gravityScale = 10.0;
     }
 
     protected void accumulate(double elapsedTime) {

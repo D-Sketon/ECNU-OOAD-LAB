@@ -78,6 +78,7 @@ public class World {
 
         // 碰撞检测，返回碰撞检测
         List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> pairs = collisionDetector.narrowPhase(bodies);
+
         List<ContactConstraint> contactConstraints = collisionDetector.preLocalSolve(pairs);
         collisionDetector.LocalSolve(solver, gravity, contactConstraints, bodies);
 

@@ -1,36 +1,35 @@
 package gizmoball.ui;
 
-import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
-import gizmoball.engine.geometry.Geometry;
+import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.AbstractShape;
-import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.Polygon;
-import gizmoball.engine.geometry.shape.Rectangle;
-import gizmoball.engine.physics.Mass;
+import gizmoball.engine.geometry.shape.*;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import javafx.application.Application;
-import javafx.event.EventHandler;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
-import javafx.scene.Scene;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class MainController extends Application implements Initializable {
 
@@ -58,33 +57,45 @@ public class MainController extends Application implements Initializable {
     @FXML
     HBox gameOpHBox;
 
+    /** 游戏世界 */
     private World world;
 
-    private static final ImageLabelButton[] gizmos = {
-            new ImageLabelButton("icons/rectangle.png", "rectangle"),
-            new ImageLabelButton("icons/circle.png", "circle"),
-            new ImageLabelButton("icons/triangle.png", "triangle"),
-            new ImageLabelButton("icons/black_hole.png", "black hole"),
-            new ImageLabelButton("icons/ball.png", "ball"),
-            new ImageLabelButton("icons/rail.png", "rail"),
-            new ImageLabelButton("icons/quarter_circle.png", "quarter circle"),
+    /** 是否处于编辑模式 */
+    private boolean inDesign = true;
+
+    /** 边界AABB */
+    public AABB boundaryAABB;
+
+    /** 拖拽传参的key */
+    private static final DataFormat GIZMO_TYPE_DATA = new DataFormat("gizmo");
+
+    public static final int GRID_SIZE = 30;
+
+    private static final Vector2 PREFERRED_SIZE = new Vector2(GRID_SIZE, GRID_SIZE);
+
+
+    private static final DraggableGizmoComponent[] gizmos = {
+            new DraggableGizmoComponent("icons/rectangle.png", "rectangle", GizmoType.RECTANGLE),
+            new DraggableGizmoComponent("icons/circle.png", "circle", GizmoType.CIRCLE),
+            new DraggableGizmoComponent("icons/triangle.png", "triangle", GizmoType.TRIANGLE),
+            new DraggableGizmoComponent("icons/black_hole.png", "black hole", GizmoType.BLACK_HOLE),
+            new DraggableGizmoComponent("icons/ball.png", "ball", GizmoType.BALL),
+            new DraggableGizmoComponent("icons/rail.png", "rail", GizmoType.PIPE),
+            new DraggableGizmoComponent("icons/quarter_circle.png", "quarter circle", GizmoType.CURVED_PIPE),
+            // TODO 左右挡板
     };
 
-    private static final ImageLabelButton[] gizmoOps = {
-            new ImageLabelButton("icons/rotate_right.svg", "rotate right"),
-            new ImageLabelButton("icons/delete.svg", "delete"),
-            new ImageLabelButton("icons/zoom_out.svg", "zoom out"),
-            new ImageLabelButton("icons/zoom_in.svg", "zoom in"),
+    private static final ImageLabelComponent[] gizmoOps = {
+            new ImageLabelComponent("icons/rotate_right.svg", "rotate right"),
+            new ImageLabelComponent("icons/delete.svg", "delete"),
+            new ImageLabelComponent("icons/zoom_out.svg", "zoom out"),
+            new ImageLabelComponent("icons/zoom_in.svg", "zoom in"),
     };
 
-    private static final ImageLabelButton[] gameOps = {
-            new ImageLabelButton("icons/play.png", "play"),
-            new ImageLabelButton("icons/design.png", "design"),
+    private static final ImageLabelComponent[] gameOps = {
+            new ImageLabelComponent("icons/play.png", "play"),
+            new ImageLabelComponent("icons/design.png", "design"),
     };
-
-    private final int STAGE_WIDTH = 900;
-    private final int STAGE_HEIGHT = 600;
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
@@ -95,124 +106,203 @@ public class MainController extends Application implements Initializable {
 
     private void initGizmoGridPane() {
         for (int i = 0; i < gizmos.length; i++) {
-            ImageLabelButton gizmo = gizmos[i];
-            gizmoGridPane.add(gizmo.createHBox(), i % 3, i / 3);
+            DraggableGizmoComponent gizmo = gizmos[i];
+            gizmoGridPane.add(gizmo.createVBox(), i % 3, i / 3);
+            // 添加拖拽事件监听器
+            // 拖拽传参为gizmo的类型
+            int finalI = i;
+            gizmo.getImageView().setOnDragDetected(event -> {
+                Dragboard db = gizmo.getImageView().startDragAndDrop(TransferMode.ANY);
+                db.setDragView(gizmo.getImageView().getImage());
+                ClipboardContent content = new ClipboardContent();
+                content.put(GIZMO_TYPE_DATA, finalI);
+                db.setContent(content);
+                event.consume();
+            });
+
         }
     }
 
     private void initGizmoOpHBox() {
-        for (ImageLabelButton gizmoOp : gizmoOps) {
-            gizmoOpHBox.getChildren().add(gizmoOp.createHBox());
+        for (ImageLabelComponent gizmoOp : gizmoOps) {
+            gizmoOpHBox.getChildren().add(gizmoOp.createVBox());
         }
     }
 
     private void initGameOpHBox() {
-        for (ImageLabelButton gameOp : gameOps) {
-            gameOpHBox.getChildren().add(gameOp.createHBox());
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        Runnable r = () -> {
+            for (int i = 4; i < world.getBodies().size(); i++) {
+                AbstractShape shape = world.getBodies().get(i).getShape();
+                Transform transform = shape.getTransform();
+                transform.setX(transform.x + 16);
+                transform.setY(transform.y + 16);
+
+                shape.translate(GeometryUtil.offsetToBoundary(shape.createAABB(), boundaryAABB));
+                shape.translate(GeometryUtil.snapToGrid(shape.createAABB(), GRID_SIZE, GRID_SIZE));
+            }
+            Platform.runLater(() -> drawGizmo(gizmoCanvas.getGraphicsContext2D()));
+        };
+
+        // 停止/暂停游戏
+        final ScheduledFuture<?>[] scheduledFuture = new ScheduledFuture<?>[1];
+        for (ImageLabelComponent gameOp : gameOps) {
+            gameOpHBox.getChildren().add(gameOp.createVBox());
+            gameOp.getImageView().setCursor(Cursor.HAND);
+            gameOp.getImageView().setOnMouseClicked(event -> {
+                if (gameOp.getLabel().getText().equals("play")) {
+                    inDesign = false;
+                    scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 500, TimeUnit.MILLISECONDS);
+                } else {
+                    inDesign = true;
+                    scheduledFuture[0].cancel(true);
+                }
+            });
         }
     }
 
-
+    /**
+     * 初始化世界
+     */
     private void initWorld() {
         world = new World(World.EARTH_GRAVITY);
         {
             // init border
             double worldWidth = gizmoCanvas.getWidth();
             double worldHeight = gizmoCanvas.getHeight();
+            boundaryAABB = new AABB(0, 0, worldWidth, worldHeight);
 
-            Rectangle bottomRectangle = new Rectangle(worldWidth, worldHeight, new Transform());
-            bottomRectangle.getTransform().setX(bottomRectangle.getWidth() / 2);
-            bottomRectangle.getTransform().setY(-bottomRectangle.getHeight() / 2);
+            Rectangle bottomRectangle = new Rectangle(worldWidth / 2, worldHeight / 2, new Transform());
+            bottomRectangle.getTransform().setX(bottomRectangle.getHalfWidth());
+            bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
             PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
             bottomBorder.getMass().setMass(0);
             world.addBodies(bottomBorder);
 
-            Rectangle topRectangle = new Rectangle(worldWidth, worldHeight, new Transform());
-            topRectangle.getTransform().setX(topRectangle.getWidth() / 2);
-            topRectangle.getTransform().setY(worldHeight + topRectangle.getHeight() / 2);
+            Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2, new Transform());
+            topRectangle.getTransform().setX(topRectangle.getHalfWidth());
+            topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
             PhysicsBody topBorder = new PhysicsBody(topRectangle);
             bottomBorder.getMass().setMass(0);
             world.addBodies(topBorder);
 
-            Rectangle leftRectangle = new Rectangle(worldWidth, worldHeight, new Transform());
-            leftRectangle.getTransform().setX(-leftRectangle.getWidth() / 2);
-            leftRectangle.getTransform().setY(leftRectangle.getHeight() / 2);
+            Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2, new Transform());
+            leftRectangle.getTransform().setX(-leftRectangle.getHalfWidth());
+            leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
             PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
             bottomBorder.getMass().setMass(0);
             world.addBodies(leftBorder);
 
-            Rectangle rightRectangle = new Rectangle(worldWidth, worldHeight, new Transform());
-            rightRectangle.getTransform().setX(worldWidth + rightRectangle.getWidth() / 2);
-            rightRectangle.getTransform().setY(rightRectangle.getHeight() / 2);
+            Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2, new Transform());
+            rightRectangle.getTransform().setX(worldWidth + rightRectangle.getHalfWidth());
+            rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
             PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
             bottomBorder.getMass().setMass(0);
             world.addBodies(rightBorder);
         }
-        {
-            // add custom item
-
-        }
     }
 
 
+
+    private void addCustomGizmo(){
+        Rectangle rectangle = new Rectangle(GRID_SIZE, GRID_SIZE, new Transform(1,0,100,100));
+        PhysicsBody physicsBody = new PhysicsBody(rectangle);
+        world.addBodies(physicsBody);
+
+        Triangle triangle = new Triangle(
+                new Vector2[]{new Vector2(0, 0), new Vector2(GRID_SIZE, 0), new Vector2(0, GRID_SIZE)},
+                new Transform(1,0,150,150));
+        triangle.rotate(Math.PI / 2, 150, 150);
+        PhysicsBody physicsBody1 = new PhysicsBody(triangle);
+        world.addBodies(physicsBody1);
+
+        Circle circle = new Circle(new Transform(1,0,150,200));
+        circle.setRadius(GRID_SIZE);
+        PhysicsBody physicsBody2 = new PhysicsBody(circle);
+        world.addBodies(physicsBody2);
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        SvgImageLoaderFactory.install();
         initWorld();
+        // 初始化界面
         initGizmoGridPane();
         initGizmoOpHBox();
         initGameOpHBox();
+        GraphicsContext gc = initCanvas();
 
+        /// test
+        addCustomGizmo();
 
-        Canvas target = gizmoCanvas;
-        target.setOnDragOver(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data is dragged over the target */
-                /* accept it only if it is not dragged from the same node
-                 * and if it has a string data */
-                if (event.getGestureSource() != target &&
-                        event.getDragboard().hasString()) {
-                    /* allow for moving */
-                    event.acceptTransferModes(TransferMode.MOVE);
-                }
+    }
 
-                event.consume();
-            }
-        });
-        target.setOnDragDropped(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data dropped */
-                /* if there is a string data on dragboard, read it and use it */
-                Dragboard db = event.getDragboard();
-                boolean success = false;
+    //------------canvas-----------------
 
-                System.out.println(event.getX() + " " + event.getY());
-                if (db.hasString()) {
-                    success = true;
-                }
-                /* let the source know whether the string was successfully
-                 * transferred and used */
-                event.setDropCompleted(success);
-
-                event.consume();
-            }
-        });
-
-
+    private GraphicsContext initCanvas(){
+        // 设置坐标系转换
         GraphicsContext gc = gizmoCanvas.getGraphicsContext2D();
         Affine affine = new Affine();
         affine.appendScale(1, -1);
         affine.appendTranslation(0, -gizmoCanvas.getHeight());
         gc.setTransform(affine);
 
+        // 增加拖拽监听器
+        Canvas target = gizmoCanvas;
+        target.setOnDragOver(event -> {
+            if (event.getGestureSource() != target) {
+                event.acceptTransferModes(TransferMode.COPY);
+            }
+            event.consume();
+        });
+        target.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            int gizmoIndex = (int) db.getContent(GIZMO_TYPE_DATA);
+            DraggableGizmoComponent gizmo = gizmos[gizmoIndex];
 
-        gc.setFill(Color.RED);
-        gc.fillRect(0, 0, 100, 100);
-        gc.setFill(Color.BLUE);
-        gc.fillOval(0, 0, 100, 100);
+            Vector2 transformedCenter = new Vector2(event.getX(), boundaryAABB.maxY - event.getY());
+            // 以鼠标所在的点创建一个格子大小的AABB
+            AABB centerAABB = new AABB(- GRID_SIZE / 2.0,- GRID_SIZE / 2.0, GRID_SIZE / 2.0, GRID_SIZE / 2.0);
+            centerAABB.translate(transformedCenter);
+            // 移到边界内
+            Vector2 offsetToBoundary = GeometryUtil.offsetToBoundary(centerAABB, boundaryAABB);
+            transformedCenter.add(offsetToBoundary);
+            centerAABB.translate(offsetToBoundary);
+            // 对齐到网格
+            Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, GRID_SIZE, GRID_SIZE);
+            transformedCenter.add(snapped);
+
+            PhysicsBody physicsBody = gizmo.createPhysicsBody(PREFERRED_SIZE, transformedCenter);
+            world.addBodies(physicsBody);
+
+            drawGizmo(gc);
+            event.setDropCompleted(true);
+            event.consume();
+        });
+
+        drawGizmo(gc);
+
+        return gc;
+    }
+
+    private void clearCanvas(GraphicsContext gc){
+        gc.clearRect(0, 0, gizmoCanvas.getWidth(), gizmoCanvas.getHeight());
+    }
+
+    private void drawGrid(GraphicsContext gc){
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(1);
+        for (int i = 0; i < gizmoCanvas.getWidth(); i += GRID_SIZE) {
+            gc.strokeLine(i, 0, i, gizmoCanvas.getHeight());
+        }
+        for (int i = 0; i < gizmoCanvas.getHeight(); i += GRID_SIZE) {
+            gc.strokeLine(0, i, gizmoCanvas.getWidth(), i);
+        }
     }
 
     private void drawGizmo(GraphicsContext gc) {
+        clearCanvas(gc);
+        drawGrid(gc);
+
         List<PhysicsBody> bodies = world.getBodies();
         for (PhysicsBody body : bodies) {
             AbstractShape shape = body.getShape();
@@ -226,12 +316,17 @@ public class MainController extends Application implements Initializable {
                 double[] xpoints = new double[vertices.length];
                 double[] ypoints = new double[vertices.length];
                 for (int i = 0; i < vertices.length; i++) {
-                    xpoints[i] = transform.getTransformedX(new Vector2(vertices[i].x, vertices[i].y));
+                    Vector2 transformed = transform.getTransformed(vertices[i]);
+                    xpoints[i] = transformed.x;
+                    ypoints[i] = transformed.y;
                 }
+                gc.fillPolygon(xpoints, ypoints, vertices.length);
             } else if (shape instanceof Circle) {
                 Circle circle = (Circle) shape;
                 gc.setFill(Color.BLUE);
-                gc.fillOval(circle.getTransform().getX(), circle.getTransform().getY(), circle.getRadius(), circle.getRadius());
+                gc.fillOval(circle.getTransform().getX() - circle.getRadius(),
+                        circle.getTransform().getY() - circle.getRadius(),
+                        circle.getRadius() * 2, circle.getRadius() * 2);
             }
         }
     }

@@ -8,6 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Triangle extends Polygon {
+
+    public Triangle(Vector2[] vertices) {
+        this(vertices, new Transform());
+    }
+
     public Triangle(Vector2[] vertices, Transform transform) {
         // TODO
         super(transform, vertices, new Vector2[]{});

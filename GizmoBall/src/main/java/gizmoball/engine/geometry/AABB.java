@@ -29,4 +29,21 @@ public class AABB {
                 this.minY <= aabb.maxY &&
                 this.maxY >= aabb.minY;
     }
+
+    /**
+     * 按给定坐标平移
+     *
+     * @param x x轴平移距离
+     * @param y y轴平移距离
+     */
+    public void translate(double x, double y) {
+        this.minX += x;
+        this.minY += y;
+        this.maxX += x;
+        this.maxY += y;
+    }
+
+    public void translate(Vector2 vector2) {
+        this.translate(vector2.x, vector2.y);
+    }
 }

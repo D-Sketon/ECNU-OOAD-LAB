@@ -32,6 +32,7 @@ public class QuarterCircle extends AbstractShape {
 
     public QuarterCircle(Transform transform, double radius) {
         super(transform);
+        this.radius = radius;
 
         double theta = Math.PI / 2;
         double cosAlpha =

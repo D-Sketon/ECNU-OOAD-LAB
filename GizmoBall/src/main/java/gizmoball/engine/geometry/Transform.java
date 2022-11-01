@@ -204,4 +204,30 @@ public class Transform {
         return v;
     }
 
+    /**
+     * 根据cost,sint获取角度
+     * @return double
+     */
+    public double getAngle(){
+        double angle = 0;
+        if (cost > 0 && sint > 0) {
+            angle = Math.toDegrees(Math.asin(sint));
+        } else if (cost > 0 && sint < 0) {
+            angle = Math.toDegrees(Math.asin(sint));
+        } else if (cost < 0 && sint > 0) {
+            angle = 180 - Math.toDegrees(Math.asin(sint));
+        } else if (cost < 0 && sint < 0) {
+            angle = -180 - Math.toDegrees(Math.asin(sint));
+        } else if (cost == 0 && sint > 0) {
+            angle = 90;
+        } else if (cost == 0 && sint < 0) {
+            angle = -90;
+        } else if (cost > 0 && sint == 0) {
+            angle = 0;
+        } else if (cost < 0 && sint == 0) {
+            angle = 180;
+        }
+        return angle;
+    }
+
 }

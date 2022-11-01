@@ -1,53 +1,52 @@
-package gizmoball.ui;
+package gizmoball.ui.component;
 
 
-import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.QuarterCircle;
 import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.ui.ImagePhysicsBody;
 import javafx.scene.Cursor;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.function.Function;
 
 @Getter
 @Setter
-public class DraggableGizmoComponent extends ImageLabelComponent implements Serializable {
+public class DraggableGizmoComponent extends ImageLabelComponent {
 
-    protected static final Function<Vector2, PhysicsBody> circleBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, ImagePhysicsBody> circleBodyCreator = (preferredSize) -> {
         Circle circle = new Circle(preferredSize.x / 2.0);
-        return new PhysicsBody(circle);
+        return new ImagePhysicsBody(circle);
     };
 
-    protected static final Function<Vector2, PhysicsBody> rectangleBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, ImagePhysicsBody> rectangleBodyCreator = (preferredSize) -> {
         Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 2.0);
-        return new PhysicsBody(rectangle);
+        return new ImagePhysicsBody(rectangle);
     };
 
-    protected static final Function<Vector2, PhysicsBody> flipperBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, ImagePhysicsBody> flipperBodyCreator = (preferredSize) -> {
         Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0);
-        return new PhysicsBody(rectangle);
+        return new ImagePhysicsBody(rectangle);
     };
 
-    protected static final Function<Vector2, PhysicsBody> triangleBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, ImagePhysicsBody> triangleBodyCreator = (preferredSize) -> {
         Vector2[] vertices = new Vector2[]{
                 new Vector2(-preferredSize.y / 2.0, -preferredSize.y / 2.0),
                 new Vector2(-preferredSize.y / 2.0, preferredSize.y / 2.0),
                 new Vector2(preferredSize.x / 2.0, -preferredSize.y / 2.0)
         };
         Triangle triangle = new Triangle(vertices);
-        return new PhysicsBody(triangle);
+        return new ImagePhysicsBody(triangle);
     };
 
-    protected static final Function<Vector2, PhysicsBody> curvedPipeBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, ImagePhysicsBody> curvedPipeBodyCreator = (preferredSize) -> {
         QuarterCircle quarterCircle = new QuarterCircle(preferredSize.x / 2.0);
-        return new PhysicsBody(quarterCircle);
+        return new ImagePhysicsBody(quarterCircle);
     };
 
     private GizmoType gizmoType;
@@ -71,8 +70,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent implements Seri
      * @return the physics body.
      */
     public PhysicsBody createPhysicsBody(Vector2 preferredSize, Vector2 center) {
-        PhysicsBody physicsBody = gizmoType.getPhysicsBodySupplier().apply(preferredSize);
+        ImagePhysicsBody physicsBody = (ImagePhysicsBody) gizmoType.getPhysicsBodySupplier().apply(preferredSize);
         physicsBody.getShape().translate(center);
+        physicsBody.setImage(this.getImage());
         return physicsBody;
     }
 }

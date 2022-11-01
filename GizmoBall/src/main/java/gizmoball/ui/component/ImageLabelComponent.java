@@ -1,4 +1,4 @@
-package gizmoball.ui;
+package gizmoball.ui.component;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

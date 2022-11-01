@@ -1,17 +1,12 @@
-package gizmoball.ui;
+package gizmoball.ui.component;
 
-import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.AbstractShape;
-import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.Rectangle;
-import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.ui.component.DraggableGizmoComponent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 @Getter
 @AllArgsConstructor
@@ -38,7 +33,7 @@ public enum GizmoType {
     ;
     private final String id;
 
-    private final Function<Vector2, PhysicsBody> physicsBodySupplier;
+    private final Function<Vector2, ? extends PhysicsBody> physicsBodySupplier;
 
     @Override
     public String toString() {

@@ -26,7 +26,7 @@
                 <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-            <HBox fx:id="gizmoOpHBox" alignment="CENTER" layoutY="301.0" prefHeight="140.0" prefWidth="300.0" style="-fx-border-color: #333; -fx-border-width: 0 0 1 0;">
+            <HBox fx:id="gizmoOpHBox" alignment="CENTER" layoutY="301.0" prefHeight="140.0" prefWidth="300.0">
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>

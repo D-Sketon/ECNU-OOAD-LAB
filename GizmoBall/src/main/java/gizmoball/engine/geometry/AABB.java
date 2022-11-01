@@ -17,6 +17,13 @@ public class AABB {
 
     public double maxY;
 
+    public AABB(AABB aabb) {
+        this.minX = aabb.minX;
+        this.minY = aabb.minY;
+        this.maxX = aabb.maxX;
+        this.maxY = aabb.maxY;
+    }
+
     /**
      * 判断AABB是否重叠
      *

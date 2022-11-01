@@ -66,6 +66,10 @@ public class World {
         this.bodies.addAll(Arrays.asList(bodies));
     }
 
+    public void removeBodies(PhysicsBody... bodies) {
+        this.bodies.removeAll(Arrays.asList(bodies));
+    }
+
     public List<PhysicsBody> getBodies() {
         return this.bodies;
     }

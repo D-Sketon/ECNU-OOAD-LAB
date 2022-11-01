@@ -13,41 +13,44 @@ public class Rectangle extends Polygon {
     /**
      * 矩形的半宽
      */
-    protected double width;
+    protected double halfWidth;
 
     /**
      * 矩形的半高
      */
-    protected double height;
+    protected double halfHeight;
 
-    private Rectangle(double width, double height, Vector2[] vertices, Transform transform) {
+    private Rectangle(double halfWidth, double halfHeight, Vector2[] vertices, Transform transform) {
         super(transform, vertices, new Vector2[]{
                 new Vector2(0.0, -1.0),
                 new Vector2(1.0, 0.0),
                 new Vector2(0.0, 1.0),
                 new Vector2(-1.0, 0.0)
         });
-        this.width = width;
-        this.height = height;
+        this.halfWidth = halfWidth;
+        this.halfHeight = halfHeight;
     }
 
 
-    public Rectangle(double width, double height, Transform transform) {
-        this(width, height, new Vector2[]{
-                new Vector2(-width, -height),
-                new Vector2(width, -height),
-                new Vector2(width, height),
-                new Vector2(-width, height)
+    public Rectangle(double halfWidth, double halfHeight, Transform transform) {
+        this(halfWidth, halfHeight, new Vector2[]{
+                new Vector2(-halfWidth, -halfHeight),
+                new Vector2(halfWidth, -halfHeight),
+                new Vector2(halfWidth, halfHeight),
+                new Vector2(-halfWidth, halfHeight)
         }, transform);
     }
 
+    public Rectangle(double halfWidth, double halfHeight) {
+        this(halfWidth, halfHeight, new Transform());
+    }
 
     @Override
     public void zoom(int rate) {
         super.zoom(rate);
         if (rate < 1) return;
-        this.width = this.width / this.rate * rate;
-        this.height = this.height / this.rate * rate;
+        this.halfWidth = this.halfWidth / this.rate * rate;
+        this.halfHeight = this.halfHeight / this.rate * rate;
         this.rate = rate;
     }
 

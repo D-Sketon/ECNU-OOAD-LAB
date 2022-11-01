@@ -14,6 +14,15 @@ public class Circle extends AbstractShape {
 
     private double radius;
 
+    public Circle(double radius) {
+        this(radius, new Transform());
+    }
+
+    public Circle(double radius, Transform transform) {
+        super(transform);
+        this.radius = radius;
+    }
+
     public Circle(Transform transform) {
         super(transform);
     }

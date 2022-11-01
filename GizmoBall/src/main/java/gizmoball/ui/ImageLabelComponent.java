@@ -9,7 +9,7 @@ import javafx.scene.text.TextAlignment;
 import lombok.Data;
 
 @Data
-public class ImageLabelButton {
+public class ImageLabelComponent {
 
     private Image image;
 
@@ -27,19 +27,18 @@ public class ImageLabelButton {
 
     private Label label;
 
-    public ImageLabelButton(String resource, String labelText) {
-        this.image = new Image(getClass().getClassLoader().getResourceAsStream(resource));
+    public ImageLabelComponent(String resource, String labelText) {
+        this(resource, labelText, 60, 60);
+    }
+
+    public ImageLabelComponent(String resource, String labelText, int imageWidth, int imageHeight) {
+        this.image = new Image(getClass().getClassLoader().getResourceAsStream(resource), imageWidth, imageHeight, true, true);
         this.labelText = labelText;
-        imageWidth = 60;
-        imageHeight = 60;
+        this.imageWidth = imageWidth;
+        this.imageHeight = imageHeight;
     }
 
-    public void setImageSize(double width, double height) {
-        imageWidth = width;
-        imageHeight = height;
-    }
-
-    public VBox createHBox() {
+    public VBox createVBox() {
         vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         imageView = new ImageView(image);

@@ -22,6 +22,10 @@ public class QuarterCircle extends AbstractShape {
 
     final Vector2[] normals;
 
+    public QuarterCircle(double radius) {
+        this(new Transform(), radius);
+    }
+
     public QuarterCircle(Transform transform) {
         this(transform, 1.0);
     }

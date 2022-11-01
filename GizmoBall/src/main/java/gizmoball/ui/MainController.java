@@ -4,6 +4,7 @@ import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.*;
+import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import javafx.application.Application;
@@ -132,15 +133,7 @@ public class MainController extends Application implements Initializable {
     private void initGameOpHBox() {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         Runnable r = () -> {
-            for (int i = 4; i < world.getBodies().size(); i++) {
-                AbstractShape shape = world.getBodies().get(i).getShape();
-                Transform transform = shape.getTransform();
-                transform.setX(transform.x + 16);
-                transform.setY(transform.y + 16);
-
-                shape.translate(GeometryUtil.offsetToBoundary(shape.createAABB(), boundaryAABB));
-                shape.translate(GeometryUtil.snapToGrid(shape.createAABB(), GRID_SIZE, GRID_SIZE));
-            }
+            world.tick();
             Platform.runLater(() -> drawGizmo(gizmoCanvas.getGraphicsContext2D()));
         };
 
@@ -152,7 +145,7 @@ public class MainController extends Application implements Initializable {
             gameOp.getImageView().setOnMouseClicked(event -> {
                 if (gameOp.getLabel().getText().equals("play")) {
                     inDesign = false;
-                    scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 500, TimeUnit.MILLISECONDS);
+                    scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 16, TimeUnit.MILLISECONDS);
                 } else {
                     inDesign = true;
                     scheduledFuture[0].cancel(true);
@@ -177,49 +170,33 @@ public class MainController extends Application implements Initializable {
             bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
             PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
             bottomBorder.getMass().setMass(0);
+            bottomBorder.getMass().setCenter(new Vector2());
             world.addBodies(bottomBorder);
 
             Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2, new Transform());
             topRectangle.getTransform().setX(topRectangle.getHalfWidth());
             topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
             PhysicsBody topBorder = new PhysicsBody(topRectangle);
-            bottomBorder.getMass().setMass(0);
+            topBorder.getMass().setMass(0);
+            topBorder.getMass().setCenter(new Vector2());
             world.addBodies(topBorder);
 
             Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2, new Transform());
             leftRectangle.getTransform().setX(-leftRectangle.getHalfWidth());
             leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
             PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
-            bottomBorder.getMass().setMass(0);
+            leftBorder.getMass().setMass(0);
+            leftBorder.getMass().setCenter(new Vector2());
             world.addBodies(leftBorder);
 
             Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2, new Transform());
             rightRectangle.getTransform().setX(worldWidth + rightRectangle.getHalfWidth());
             rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
             PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
-            bottomBorder.getMass().setMass(0);
+            rightBorder.getMass().setMass(0);
+            rightBorder.getMass().setCenter(new Vector2());
             world.addBodies(rightBorder);
         }
-    }
-
-
-
-    private void addCustomGizmo(){
-        Rectangle rectangle = new Rectangle(GRID_SIZE, GRID_SIZE, new Transform(1,0,100,100));
-        PhysicsBody physicsBody = new PhysicsBody(rectangle);
-        world.addBodies(physicsBody);
-
-        Triangle triangle = new Triangle(
-                new Vector2[]{new Vector2(0, 0), new Vector2(GRID_SIZE, 0), new Vector2(0, GRID_SIZE)},
-                new Transform(1,0,150,150));
-        triangle.rotate(Math.PI / 2, 150, 150);
-        PhysicsBody physicsBody1 = new PhysicsBody(triangle);
-        world.addBodies(physicsBody1);
-
-        Circle circle = new Circle(new Transform(1,0,150,200));
-        circle.setRadius(GRID_SIZE);
-        PhysicsBody physicsBody2 = new PhysicsBody(circle);
-        world.addBodies(physicsBody2);
     }
 
     @Override
@@ -230,10 +207,6 @@ public class MainController extends Application implements Initializable {
         initGizmoOpHBox();
         initGameOpHBox();
         GraphicsContext gc = initCanvas();
-
-        /// test
-        addCustomGizmo();
-
     }
 
     //------------canvas-----------------
@@ -272,6 +245,7 @@ public class MainController extends Application implements Initializable {
             transformedCenter.add(snapped);
 
             PhysicsBody physicsBody = gizmo.createPhysicsBody(PREFERRED_SIZE, transformedCenter);
+            physicsBody.setMass(new Mass(new Vector2(transformedCenter), 10, 1));
             world.addBodies(physicsBody);
 
             drawGizmo(gc);

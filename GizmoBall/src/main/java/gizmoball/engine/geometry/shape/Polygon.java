@@ -1,11 +1,13 @@
 package gizmoball.engine.geometry.shape;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Interval;
 import gizmoball.engine.collision.feature.EdgeFeature;
 import gizmoball.engine.collision.feature.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.physics.Mass;
 import lombok.Getter;
 
 @Getter
@@ -165,6 +167,63 @@ public abstract class Polygon extends AbstractShape {
             } while (maxIndex > 0 && max <= (candidateMax = vector.dot(this.vertices[maxIndex - 1])));
         }
         return maxIndex;
+    }
+
+    @Override
+    public Mass createMass(double density) {
+        // can't use normal centroid calculation since it will be weighted towards sides
+        // that have larger distribution of points.
+        Vector2 center = new Vector2();
+        double area = 0.0;
+        double I = 0.0;
+        int n = this.vertices.length;
+        // get the average center
+        Vector2 ac = new Vector2();
+        for (int i = 0; i < n; i++) {
+            ac.add(this.vertices[i]);
+        }
+        ac.divide(n);
+        // loop through the vertices using two variables to avoid branches in the loop
+        for (int i1 = n - 1, i2 = 0; i2 < n; i1 = i2++) {
+            // get two vertices
+            Vector2 p1 = this.vertices[i1];
+            Vector2 p2 = this.vertices[i2];
+            // get the vector from the center to the point
+            p1 = p1.difference(ac);
+            p2 = p2.difference(ac);
+            // perform the cross product (yi * x(i+1) - y(i+1) * xi)
+            double D = p1.cross(p2);
+            // multiply by half
+            double triangleArea = 0.5 * D;
+            // add it to the total area
+            area += triangleArea;
+
+            // area weighted centroid
+            // (p1 + p2) * (D / 6)
+            // = (x1 + x2) * (yi * x(i+1) - y(i+1) * xi) / 6
+            // we will divide by the total area later
+            center.x += (p1.x + p2.x) * Settings.INV_3 * triangleArea;
+            center.y += (p1.y + p2.y) * Settings.INV_3 * triangleArea;
+
+            // (yi * x(i+1) - y(i+1) * xi) * (p2^2 + p2 . p1 + p1^2)
+            I += triangleArea * (p2.dot(p2) + p2.dot(p1) + p1.dot(p1));
+            // we will do the m / 6A = (d / 6) when we have the area summed up
+        }
+        area = Math.abs(area);
+        // compute the mass
+        double m = density * area;
+        // finish the centroid calculation by dividing by the total area
+        // and adding in the average center
+        center.divide(area);
+        Vector2 c = center.sum(ac);
+        // finish the inertia tensor by dividing by the total area and multiplying by d / 6
+        I *= (density / 6.0);
+        // shift the axis of rotation to the area weighted center
+        // (center is the vector from the average center to the area weighted center since
+        // the average center is used as the origin)
+        I -= m * center.getMagnitudeSquared();
+
+        return new Mass(c, m, I);
     }
 
 }

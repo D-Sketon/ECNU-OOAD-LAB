@@ -4,6 +4,7 @@ import gizmoball.engine.collision.Interval;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.physics.Mass;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -87,6 +88,10 @@ public abstract class AbstractShape implements Convex {
      */
     public void translate(Vector2 vector2) {
         transform.translate(vector2);
+    }
+
+    public Mass createMass(double density){
+        return null;
     }
 
     public Vector2 getLocalPoint(Vector2 worldPoint) {

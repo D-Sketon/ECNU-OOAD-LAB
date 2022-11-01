@@ -20,7 +20,7 @@ public class SatDetector {
     public static boolean detect(AbstractShape shape1, AbstractShape shape2, Penetration penetration) {
         // 如果两个都是圆则直接调用CircleDetector
         if (shape1 instanceof Circle && shape2 instanceof Circle) {
-            return CircleDetector.detect((Circle) shape1, (Circle) shape1, penetration);
+            return CircleDetector.detect((Circle) shape1, (Circle) shape2, penetration);
         }
         // 获得焦点数组
         Vector2[] foci1 = shape1.getFoci();

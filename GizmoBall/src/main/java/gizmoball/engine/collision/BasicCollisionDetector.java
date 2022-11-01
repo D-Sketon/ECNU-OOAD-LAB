@@ -36,7 +36,7 @@ public class BasicCollisionDetector implements CollisionDetector {
                             manifolds.add(new Pair<>(manifold, physicsBodyPhysicsBodyPair));
                         }
                     }
-                }
+               }
             }
         }
         return manifolds;
@@ -46,8 +46,7 @@ public class BasicCollisionDetector implements CollisionDetector {
     public List<ContactConstraint> preLocalSolve(List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds) {
         List<ContactConstraint> contactConstraints = new ArrayList<>();
         for (Pair<Manifold, Pair<PhysicsBody, PhysicsBody>> manifold : manifolds) {
-            ContactConstraint contactConstraint = new ContactConstraint();
-            contactConstraint.setPair(manifold.getValue());
+            ContactConstraint contactConstraint = new ContactConstraint(manifold.getValue());
             contactConstraint.update(manifold.getKey());
             contactConstraints.add(contactConstraint);
         }
@@ -61,13 +60,14 @@ public class BasicCollisionDetector implements CollisionDetector {
         }
         solver.initialize(constraints);
         for (int i = 0; i < Settings.DEFAULT_SOLVER_ITERATIONS; i++) {
-            solver.solveVelocityContraints(constraints);
+            solver.solveVelocityConstraints(constraints);
         }
+
         for (PhysicsBody body : bodies) {
             body.integratePosition();
         }
         for (int i = 0; i < Settings.DEFAULT_SOLVER_ITERATIONS; i++) {
-            solver.solvePositionContraints(constraints);
+            solver.solvePositionConstraints(constraints);
         }
     }
 }

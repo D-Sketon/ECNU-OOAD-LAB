@@ -3,7 +3,8 @@ package gizmoball.ui;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.*;
+import gizmoball.engine.geometry.shape.AbstractShape;
+import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.physics.Mass;
@@ -25,6 +26,10 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -65,7 +70,6 @@ public class MainController extends Application implements Initializable {
      */
     @FXML
     HBox gameOpHBox;
-
 
     private static final boolean DEV_MODE = true;
 
@@ -126,6 +130,9 @@ public class MainController extends Application implements Initializable {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
+        primaryStage.setOnCloseRequest(e -> {
+            System.exit(0);
+        });
         primaryStage.setTitle("GizmoBall");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

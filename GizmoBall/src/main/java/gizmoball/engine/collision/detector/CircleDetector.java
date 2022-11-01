@@ -22,11 +22,10 @@ public class CircleDetector {
         // 构造圆心坐标
         Vector2 ce1 = new Vector2(transform1.getX(), transform1.getY());
         Vector2 ce2 = new Vector2(transform2.getX(), transform2.getY());
-        Vector2 v = ce2.to(ce1);
+        Vector2 v = ce1.to(ce2);
         double radii = circle1.getRadius() + circle2.getRadius();
         double mag = v.getMagnitudeSquared();
         // 发生碰撞
-        // TODO 是否需要添加等于号
         if (mag < radii * radii) {
             if (penetration != null) {
                 penetration.setDepth(radii - v.normalize());

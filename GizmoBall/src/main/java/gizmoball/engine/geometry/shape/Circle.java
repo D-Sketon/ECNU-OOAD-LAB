@@ -1,10 +1,12 @@
 package gizmoball.engine.geometry.shape;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Interval;
 import gizmoball.engine.collision.feature.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.physics.Mass;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -76,5 +78,16 @@ public class Circle extends AbstractShape {
         center.y += this.radius * nAxis.y;
         return center;
     }
+
+    @Override
+    public Mass createMass(double density) {
+        double r2 = this.radius * this.radius;
+        // compute the mass
+        double mass = density * Math.PI * r2;
+        // compute the inertia tensor
+        double inertia = mass * r2 * 0.5;
+        // use the center supplied to the circle
+        return new Mass(new Vector2(0,0), mass, inertia);
+        }
 
 }

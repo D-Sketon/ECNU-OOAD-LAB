@@ -3,7 +3,10 @@ package gizmoball.ui;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.*;
+import gizmoball.engine.geometry.shape.AbstractShape;
+import gizmoball.engine.geometry.shape.Circle;
+import gizmoball.engine.geometry.shape.Polygon;
+import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
@@ -17,7 +20,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.*;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -58,16 +64,24 @@ public class MainController extends Application implements Initializable {
     @FXML
     HBox gameOpHBox;
 
-    /** 游戏世界 */
+    /**
+     * 游戏世界
+     */
     private World world;
 
-    /** 是否处于编辑模式 */
+    /**
+     * 是否处于编辑模式
+     */
     private boolean inDesign = true;
 
-    /** 边界AABB */
+    /**
+     * 边界AABB
+     */
     public AABB boundaryAABB;
 
-    /** 拖拽传参的key */
+    /**
+     * 拖拽传参的key
+     */
     private static final DataFormat GIZMO_TYPE_DATA = new DataFormat("gizmo");
 
     public static final int GRID_SIZE = 30;
@@ -97,9 +111,13 @@ public class MainController extends Application implements Initializable {
             new ImageLabelComponent("icons/play.png", "play"),
             new ImageLabelComponent("icons/design.png", "design"),
     };
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main.fxml"));
+        primaryStage.setOnCloseRequest(e -> {
+            System.exit(0);
+        });
         primaryStage.setTitle("GizmoBall");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
@@ -133,8 +151,13 @@ public class MainController extends Application implements Initializable {
     private void initGameOpHBox() {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         Runnable r = () -> {
-            world.tick();
-            Platform.runLater(() -> drawGizmo(gizmoCanvas.getGraphicsContext2D()));
+            try {
+                world.tick();
+                Platform.runLater(() -> drawGizmo(gizmoCanvas.getGraphicsContext2D()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         };
 
         // 停止/暂停游戏
@@ -211,7 +234,7 @@ public class MainController extends Application implements Initializable {
 
     //------------canvas-----------------
 
-    private GraphicsContext initCanvas(){
+    private GraphicsContext initCanvas() {
         // 设置坐标系转换
         GraphicsContext gc = gizmoCanvas.getGraphicsContext2D();
         Affine affine = new Affine();
@@ -234,7 +257,7 @@ public class MainController extends Application implements Initializable {
 
             Vector2 transformedCenter = new Vector2(event.getX(), boundaryAABB.maxY - event.getY());
             // 以鼠标所在的点创建一个格子大小的AABB
-            AABB centerAABB = new AABB(- GRID_SIZE / 2.0,- GRID_SIZE / 2.0, GRID_SIZE / 2.0, GRID_SIZE / 2.0);
+            AABB centerAABB = new AABB(-GRID_SIZE / 2.0, -GRID_SIZE / 2.0, GRID_SIZE / 2.0, GRID_SIZE / 2.0);
             centerAABB.translate(transformedCenter);
             // 移到边界内
             Vector2 offsetToBoundary = GeometryUtil.offsetToBoundary(centerAABB, boundaryAABB);
@@ -258,11 +281,11 @@ public class MainController extends Application implements Initializable {
         return gc;
     }
 
-    private void clearCanvas(GraphicsContext gc){
+    private void clearCanvas(GraphicsContext gc) {
         gc.clearRect(0, 0, gizmoCanvas.getWidth(), gizmoCanvas.getHeight());
     }
 
-    private void drawGrid(GraphicsContext gc){
+    private void drawGrid(GraphicsContext gc) {
         gc.setStroke(Color.GRAY);
         gc.setLineWidth(1);
         for (int i = 0; i < gizmoCanvas.getWidth(); i += GRID_SIZE) {

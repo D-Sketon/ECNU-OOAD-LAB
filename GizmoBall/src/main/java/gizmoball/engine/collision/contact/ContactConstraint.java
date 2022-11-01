@@ -11,11 +11,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class ContactConstraint {
 	/** The collision pair */
@@ -55,6 +55,17 @@ public class ContactConstraint {
 
 	/** The inverse of the {@link #K} matrix */
 	private Matrix22 invK;
+
+	public ContactConstraint(Pair<PhysicsBody,PhysicsBody> pair) {
+		this.pair = pair;
+		this.contacts = new ArrayList<>(2);
+		this.normal = new Vector2();
+		this.tangent = new Vector2();
+		this.sensor = false;
+		this.tangentSpeed = 0;
+		this.enabled = true;
+		this.size = 0;
+	}
 
 	public void update(Manifold manifold) {
 

@@ -3,6 +3,7 @@ package gizmoball.engine.collision.manifold;
 import gizmoball.engine.geometry.Vector2;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,4 +21,9 @@ public class Manifold {
      * 分离法线的反向量
      */
     private Vector2 normal;
+
+    public Manifold() {
+        this.points = new ArrayList<>();
+        this.normal = new Vector2();
+    }
 }

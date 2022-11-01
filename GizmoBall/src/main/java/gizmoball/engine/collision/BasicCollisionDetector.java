@@ -46,8 +46,7 @@ public class BasicCollisionDetector implements CollisionDetector {
     public List<ContactConstraint> preLocalSolve(List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds) {
         List<ContactConstraint> contactConstraints = new ArrayList<>();
         for (Pair<Manifold, Pair<PhysicsBody, PhysicsBody>> manifold : manifolds) {
-            ContactConstraint contactConstraint = new ContactConstraint();
-            contactConstraint.setPair(manifold.getValue());
+            ContactConstraint contactConstraint = new ContactConstraint(manifold.getValue());
             contactConstraint.update(manifold.getKey());
             contactConstraints.add(contactConstraint);
         }

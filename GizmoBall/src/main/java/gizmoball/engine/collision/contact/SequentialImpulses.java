@@ -1,5 +1,6 @@
 package gizmoball.engine.collision.contact;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Matrix22;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
@@ -336,11 +337,11 @@ public class SequentialImpulses {
 
         double minSeparation = 0.0;
         // 设置求解约束时使用的最大线性位置校正，这有助于防止过冲
-        double maxLinearCorrection = 0.2;
+        double maxLinearCorrection = Settings.DEFAULT_MAXIMUM_LINEAR_CORRECTION;
         // 线性睡眠容差，当2D刚体线性速度低于该值，刚体进入睡眠
-        double allowedPenetration = 0.005;
+        double allowedPenetration = Settings.DEFAULT_LINEAR_TOLERANCE;
         // 设置比例因子，该比例因子确定解决碰撞重叠的速度
-        double baumgarte = 0.2;
+        double baumgarte = Settings.DEFAULT_BAUMGARTE;
 
         // loop through the contact constraints
         for (ContactConstraint contactConstraint : contactConstraints) {

@@ -11,8 +11,6 @@ import lombok.Data;
 @AllArgsConstructor
 public class ManifoldPoint {
 
-    private ManifoldPointId id;
-
     /**
      * 点的坐标
      */

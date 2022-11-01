@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@Deprecated
 public class EdgeFeature extends Feature {
 
     /**
@@ -37,7 +38,6 @@ public class EdgeFeature extends Feature {
     }
 
     public EdgeFeature(PointFeature vertex1, PointFeature vertex2, PointFeature max, Vector2 edge, int index) {
-        super(index);
         this.vertex1 = vertex1;
         this.vertex2 = vertex2;
         this.max = max;

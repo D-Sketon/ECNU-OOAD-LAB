@@ -1,7 +1,6 @@
 package gizmoball.engine.collision.contact;
 
 
-import gizmoball.engine.collision.manifold.ManifoldPointId;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import lombok.AllArgsConstructor;
@@ -10,11 +9,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 final class SolvableContact {
-    /**
-     * The manifold point id for warm starting
-     */
-    private ManifoldPointId id;
-
     /**
      * The contact point in world space
      */
@@ -80,8 +74,7 @@ final class SolvableContact {
      */
     private boolean ignored;
 
-    public SolvableContact(ManifoldPointId id, Vector2 point, double depth, Vector2 p1, Vector2 p2) {
-        this.id = id;
+    public SolvableContact(Vector2 point, double depth, Vector2 p1, Vector2 p2) {
         this.p = point;
         this.depth = depth;
         this.p1 = p1;

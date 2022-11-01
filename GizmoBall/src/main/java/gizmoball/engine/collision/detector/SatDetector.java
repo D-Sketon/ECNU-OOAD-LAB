@@ -102,6 +102,5 @@ public class SatDetector {
         penetration.setDepth(minOverlap);
         return true;
     }
-
-
+    
 }

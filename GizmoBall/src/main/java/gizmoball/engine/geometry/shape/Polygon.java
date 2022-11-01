@@ -120,7 +120,7 @@ public abstract class Polygon extends AbstractShape {
 
         Vector2 maximum = new Vector2(this.vertices[index]);
         transform.transform(maximum);
-        PointFeature vm = new PointFeature(maximum, index);
+        PointFeature vm = new PointFeature(maximum);
 
         Vector2 leftN = this.normals[index == 0 ? count - 1 : index - 1];
         Vector2 rightN = this.normals[index];
@@ -129,13 +129,13 @@ public abstract class Polygon extends AbstractShape {
             int l = (index == count - 1) ? 0 : index + 1;
 
             Vector2 left = transform.getTransformed(this.vertices[l]);
-            PointFeature vl = new PointFeature(left, l);
+            PointFeature vl = new PointFeature(left);
             return new EdgeFeature(vm, vl, vm, maximum.to(left), index + 1);
         } else {
             int r = (index == 0) ? count - 1 : index - 1;
 
             Vector2 right = transform.getTransformed(this.vertices[r]);
-            PointFeature vr = new PointFeature(right, r);
+            PointFeature vr = new PointFeature(right);
             return new EdgeFeature(vr, vm, vm, right.to(maximum), index);
         }
     }

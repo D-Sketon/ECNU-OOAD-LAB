@@ -2,7 +2,6 @@ package gizmoball.engine.collision.feature;
 
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.collision.manifold.Manifold;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,11 +10,6 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public abstract class Feature {
 
-    /**
-     * 特征编号
-     */
-    private int index;
 }

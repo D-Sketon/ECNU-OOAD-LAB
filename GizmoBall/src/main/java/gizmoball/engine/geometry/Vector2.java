@@ -290,35 +290,6 @@ public class Vector2 {
     }
 
     /**
-     * Returns true if the given {@link Vector2} is orthogonal (perpendicular)
-     * to this {@link Vector2}.
-     * <p>
-     * If the dot product of this vector and the given vector is
-     * zero then we know that they are perpendicular
-     *
-     * @param vector the {@link Vector2}
-     * @return boolean
-     */
-    public boolean isOrthogonal(Vector2 vector) {
-        return Math.abs(this.x * vector.x + this.y * vector.y) <= Epsilon.E;
-    }
-
-    /**
-     * Returns true if the given {@link Vector2} is orthogonal (perpendicular)
-     * to this {@link Vector2}.
-     * <p>
-     * If the dot product of this vector and the given vector is
-     * zero then we know that they are perpendicular
-     *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return boolean
-     */
-    public boolean isOrthogonal(double x, double y) {
-        return Math.abs(this.x * x + this.y * y) <= Epsilon.E;
-    }
-
-    /**
      * Returns true if this {@link Vector2} is the zero {@link Vector2}.
      *
      * @return boolean
@@ -346,49 +317,6 @@ public class Vector2 {
     }
 
     /**
-     * Sets the {@link Vector2} to the zero {@link Vector2}
-     *
-     * @return {@link Vector2} this vector
-     */
-    public Vector2 zero() {
-        this.x = 0.0;
-        this.y = 0.0;
-        return this;
-    }
-
-    /**
-     * Internal helper method that rotates about the given coordinates by an angle &theta;.
-     *
-     * @param cos cos(&theta;)
-     * @param sin sin(&theta;)
-     * @param x   the x coordinate to rotate about
-     * @param y   the y coordinate to rotate about
-     * @return {@link Vector2} this vector
-     * @since 3.4.0
-     */
-    Vector2 rotate(double cos, double sin, double x, double y) {
-        double tx = (this.x - x);
-        double ty = (this.y - y);
-
-        this.x = tx * cos - ty * sin + x;
-        this.y = tx * sin + ty * cos + y;
-
-        return this;
-    }
-
-    /**
-     * Rotates the {@link Vector2} about the given coordinates.
-     *
-     * @param theta the rotation angle in radians
-     * @param x     the x coordinate to rotate about
-     * @param y     the y coordinate to rotate about
-     * @return {@link Vector2} this vector
-     */
-    public Vector2 rotate(double theta, double x, double y) {
-        return this.rotate(Math.cos(theta), Math.sin(theta), x, y);
-    }
-
-    /**
      * Projects this {@link Vector2} onto the given {@link Vector2}.
      *
      * @param vector the {@link Vector2}
@@ -412,19 +340,6 @@ public class Vector2 {
     }
 
     /**
-     * Sets this vector to the right-handed normal of this vector.
-     *
-     * @return {@link Vector2} this vector
-     * @see #getRightHandOrthogonalVector()
-     */
-    public Vector2 right() {
-        double temp = this.x;
-        this.x = -this.y;
-        this.y = temp;
-        return this;
-    }
-
-    /**
      * Returns the left-handed normal of this vector.
      *
      * @return {@link Vector2} the left hand orthogonal {@link Vector2}
@@ -443,6 +358,16 @@ public class Vector2 {
         double temp = this.x;
         this.x = this.y;
         this.y = -temp;
+        return this;
+    }
+
+    /**
+     * Sets the {@link Vector2} to the zero {@link Vector2}
+     * @return {@link Vector2} this vector
+     */
+    public Vector2 zero() {
+        this.x = 0.0;
+        this.y = 0.0;
         return this;
     }
 

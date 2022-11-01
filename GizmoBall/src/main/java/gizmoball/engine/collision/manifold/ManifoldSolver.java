@@ -16,13 +16,13 @@ public class ManifoldSolver {
     /**
      * 基于{@link Penetration}计算出碰撞流形
      * <p>
-     *     分为两个步骤：查找特征和剪裁
+     * 分为两个步骤：查找特征和剪裁
      * </p>
      *
      * @param penetration 穿透信息
-     * @param shape1 被碰撞图形
-     * @param shape2 碰撞图形
-     * @param manifold 碰撞点信息
+     * @param shape1      被碰撞图形
+     * @param shape2      碰撞图形
+     * @param manifold    碰撞点信息
      * @return boolean
      */
     public boolean getManifold(Penetration penetration, AbstractShape shape1, AbstractShape shape2, Manifold manifold) {
@@ -32,7 +32,7 @@ public class ManifoldSolver {
 
         if (feature1 instanceof PointFeature) {
             PointFeature vertex = (PointFeature) feature1;
-            ManifoldPoint mp = new ManifoldPoint(ManifoldPointId.DISTANCE, vertex.getPoint(), penetration.getDepth());
+            ManifoldPoint mp = new ManifoldPoint(vertex.getPoint(), penetration.getDepth());
             manifold.getPoints().add(mp);
             manifold.getNormal().x = -n.x;
             manifold.getNormal().y = -n.y;
@@ -43,7 +43,7 @@ public class ManifoldSolver {
         Feature feature2 = shape2.getFarthestFeature(ne);
         if (feature2 instanceof PointFeature) {
             PointFeature vertex = (PointFeature) feature2;
-            ManifoldPoint mp = new ManifoldPoint(ManifoldPointId.DISTANCE, vertex.getPoint(), penetration.getDepth());
+            ManifoldPoint mp = new ManifoldPoint(vertex.getPoint(), penetration.getDepth());
             manifold.getPoints().add(mp);
             manifold.getNormal().x = ne.x;
             manifold.getNormal().y = ne.y;
@@ -89,19 +89,26 @@ public class ManifoldSolver {
         manifold.getNormal().y = flipped ? -frontNormal.y : frontNormal.y;
 
         // 第三次剪裁
-        for (int i = 0; i < clip2.size(); i++) {
-            PointFeature vertex = clip2.get(i);
+        for (PointFeature vertex : clip2) {
             Vector2 point = vertex.getPoint();
             double depth = frontNormal.dot(point) - frontOffset;
             if (depth >= 0.0) {
-                IndexedManifoldPointId id = new IndexedManifoldPointId(reference.getIndex(), incident.getIndex(), vertex.getIndex(), flipped);
-                ManifoldPoint mp = new ManifoldPoint(id, point, depth);
+                ManifoldPoint mp = new ManifoldPoint(point, depth);
                 manifold.getPoints().add(mp);
             }
         }
         return manifold.getPoints().size() != 0;
     }
 
+    /**
+     * 剪裁入射边
+     *
+     * @param v1 特征点
+     * @param v2 特征点
+     * @param n 参考边向量
+     * @param offset 剪裁偏移
+     * @return List
+     */
     protected List<PointFeature> clip(PointFeature v1, PointFeature v2, Vector2 n, double offset) {
         List<PointFeature> points = new ArrayList<>(2);
         Vector2 p1 = v1.getPoint();
@@ -119,9 +126,9 @@ public class ManifoldSolver {
             e.multiply(u);
             e.add(p1);
             if (d1 > 0.0) {
-                points.add(new PointFeature(e, v1.getIndex()));
+                points.add(new PointFeature(e));
             } else {
-                points.add(new PointFeature(e, v2.getIndex()));
+                points.add(new PointFeature(e));
             }
         }
         return points;

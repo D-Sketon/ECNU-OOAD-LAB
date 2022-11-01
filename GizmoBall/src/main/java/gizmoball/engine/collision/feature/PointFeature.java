@@ -18,11 +18,6 @@ public class PointFeature extends Feature {
     private Vector2 point;
 
     public PointFeature(Vector2 point) {
-        this(point, -1);
-    }
-
-    public PointFeature(Vector2 point, int index) {
-        super(index);
         this.point = point;
     }
 }

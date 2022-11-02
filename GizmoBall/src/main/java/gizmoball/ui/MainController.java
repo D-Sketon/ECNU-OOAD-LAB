@@ -7,7 +7,6 @@ import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.geometry.shape.Rectangle;
-import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import gizmoball.ui.component.*;
@@ -15,23 +14,18 @@ import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Stage;
@@ -63,13 +57,13 @@ public class MainController extends Application implements Initializable {
      * 操作游戏组件的面板（删除，缩放，旋转...）
      */
     @FXML
-    HBox gizmoOpHBox;
+    HBox upperHBox;
 
-    /**
-     * 游戏操作面板（设计，开始...）
-     */
     @FXML
-    HBox gameOpHBox;
+    HBox lowerHBox;
+
+    @FXML
+    javafx.scene.shape.Rectangle gizmoOutlineRectangle;
 
     private static final boolean DEV_MODE = true;
 
@@ -116,10 +110,9 @@ public class MainController extends Application implements Initializable {
 
 //            new CommandComponent("icons/rotate_left.png", "rotate left", GizmoCommand.ROTATE_LEFT),
             new CommandComponent("icons/move_up.png", "move up", GizmoCommand.MOVE_UP),
+            new CommandComponent("icons/move_right.png", "move right", GizmoCommand.MOVE_RIGHT),
             new CommandComponent("icons/move_down.png", "move down", GizmoCommand.MOVE_DOWN),
             new CommandComponent("icons/move_left.png", "move left", GizmoCommand.MOVE_LEFT),
-            new CommandComponent("icons/move_right.png", "move right", GizmoCommand.MOVE_RIGHT),
-
     };
 
     private static final ImageLabelComponent[] gameOps = {
@@ -156,23 +149,24 @@ public class MainController extends Application implements Initializable {
                 db.setContent(content);
                 event.consume();
             });
-
         }
     }
 
-    private void initGizmoOpHBox() {
+    private void initGizmoOp() {
+        // 初始物件操作
         for (CommandComponent gizmoOp : gizmoOps) {
-            gizmoOp.createVBox();
+            gizmoOp.createVBox().setMaxWidth(70);
             gizmoOp.getImageView().setOnMouseClicked(event -> {
-                if (selectedBody == null) {
+                if (selectedBody == null || !inDesign) {
                     return;
                 }
                 try {
                     boolean success = gizmoOpHandler.handleCommand(gizmoOp.getGizmoCommand(), selectedBody);
-                    if (success){
-                        if(gizmoOp.getGizmoCommand() == GizmoCommand.REMOVE) {
+                    if (success) {
+                        if (gizmoOp.getGizmoCommand() == GizmoCommand.REMOVE) {
                             selectedBody = null;
                         }
+                        updateGizmoOutlineRectangle();
                         drawGizmo(gizmoCanvas.getGraphicsContext2D());
                     }
                 } catch (Exception e) {
@@ -181,15 +175,6 @@ public class MainController extends Application implements Initializable {
                     e.printStackTrace();
                 }
             });
-        }
-
-        BorderPane borderPane = new BorderPane();
-        for (int i = 4; i < gizmoOps.length; i++) {
-
-        }
-
-        for (CommandComponent gizmoOp : gizmoOps) {
-            gizmoOpHBox.getChildren().add(gizmoOp.getVBox());
         }
     }
 
@@ -204,21 +189,67 @@ public class MainController extends Application implements Initializable {
             }
         };
 
-        // 停止/暂停游戏
+        // 开始游戏
         final ScheduledFuture<?>[] scheduledFuture = new ScheduledFuture<?>[1];
-        for (ImageLabelComponent gameOp : gameOps) {
-            gameOpHBox.getChildren().add(gameOp.createVBox());
-            gameOp.getImageView().setCursor(Cursor.HAND);
-            gameOp.getImageView().setOnMouseClicked(event -> {
-                if (gameOp.getLabel().getText().equals("play")) {
-                    inDesign = false;
-                    scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 16, TimeUnit.MILLISECONDS);
-                } else {
-                    inDesign = true;
-                    scheduledFuture[0].cancel(true);
-                }
-            });
+        ImageLabelComponent play = gameOps[0];
+        play.createVBox();
+        play.getImageView().setOnMouseClicked(event -> {
+            if (!inDesign) {
+                return;
+            }
+            selectedBody = null;
+            inDesign = false;
+            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 16, TimeUnit.MILLISECONDS);
+        });
+        play.getImageView().setCursor(Cursor.HAND);
+        //暂停游戏（设计模式）
+        ImageLabelComponent design = gameOps[1];
+        design.createVBox();
+        design.getImageView().setOnMouseClicked(event -> {
+            if (inDesign) {
+                return;
+            }
+            inDesign = true;
+            scheduledFuture[0].cancel(true);
+        });
+        design.getImageView().setCursor(Cursor.HAND);
+    }
+
+    /**
+     * 初始化游戏操作按钮
+     */
+    private void initGizmoOpHBox() {
+        // 初始物件操作
+        initGizmoOp();
+        // 初始化游戏操作（开始，设计）
+        initGameOpHBox();
+
+        for (int i = 0; i < 4; i++) {
+            upperHBox.getChildren().add(gizmoOps[i].getVBox());
         }
+
+        upperHBox.setSpacing(20);
+        lowerHBox.getChildren().add(gameOps[0].getVBox());
+
+        BorderPane borderPane = new BorderPane();
+        BorderPane.setAlignment(gizmoOps[4].getImageView(), Pos.CENTER);
+        BorderPane.setAlignment(gizmoOps[5].getImageView(), Pos.CENTER_RIGHT);
+        BorderPane.setAlignment(gizmoOps[6].getImageView(), Pos.CENTER);
+        BorderPane.setAlignment(gizmoOps[7].getImageView(), Pos.CENTER_LEFT);
+
+        borderPane.setTop(gizmoOps[4].getImageView());
+        borderPane.setRight(gizmoOps[5].getImageView());
+        borderPane.setBottom(gizmoOps[6].getImageView());
+        borderPane.setLeft(gizmoOps[7].getImageView());
+
+        Pane pane = new Pane();
+        pane.setPrefWidth(60);
+        pane.setPrefHeight(60);
+        borderPane.setCenter(pane);
+        lowerHBox.getChildren().add(borderPane);
+
+        lowerHBox.getChildren().add(gameOps[1].getVBox());
+
     }
 
     /**
@@ -273,12 +304,24 @@ public class MainController extends Application implements Initializable {
         // 初始化界面
         initGizmoGridPane();
         initGizmoOpHBox();
-        initGameOpHBox();
         GraphicsContext gc = initCanvas();
     }
 
 
     //------------canvas-----------------
+
+    protected void updateGizmoOutlineRectangle() {
+        if (selectedBody == null) {
+            gizmoOutlineRectangle.setVisible(false);
+            return;
+        }
+        AABB aabb = selectedBody.getShape().createAABB();
+        gizmoOutlineRectangle.setX(aabb.minX);
+        gizmoOutlineRectangle.setY(world.boundaryAABB.maxY - aabb.maxY);
+        gizmoOutlineRectangle.setWidth(aabb.maxX - aabb.minX);
+        gizmoOutlineRectangle.setHeight(aabb.maxY - aabb.minY);
+        gizmoOutlineRectangle.setVisible(true);
+    }
 
     private GraphicsContext initCanvas() {
         // 设置坐标系转换
@@ -302,7 +345,7 @@ public class MainController extends Application implements Initializable {
                 int[] index = world.getGridIndex(x, y);
                 if (index != null) {
                     selectedBody = world.gizmoGridBodies[index[0]][index[1]];
-                    System.out.println(selectedBody);
+                    updateGizmoOutlineRectangle();
                 }
             }
         });
@@ -313,6 +356,9 @@ public class MainController extends Application implements Initializable {
             event.consume();
         });
         target.setOnDragDropped(event -> {
+            if (!DEV_MODE && !inDesign) {
+                return;
+            }
             Dragboard db = event.getDragboard();
             int gizmoIndex = (int) db.getContent(GIZMO_TYPE_DATA);
             DraggableGizmoComponent gizmo = gizmos[gizmoIndex];
@@ -331,8 +377,12 @@ public class MainController extends Application implements Initializable {
             transformedCenter.add(snapped);
 
             PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            physicsBody.setMass(new Mass(new Vector2(transformedCenter), 10, 1));
-            gizmoOpHandler.addGizmo(physicsBody);
+            physicsBody.setMass(physicsBody.getShape().createMass(1));
+            try {
+                gizmoOpHandler.addGizmo(physicsBody);
+            } catch (Exception e) {
+
+            }
 
             drawGizmo(gc);
             event.setDropCompleted(true);
@@ -360,22 +410,6 @@ public class MainController extends Application implements Initializable {
         }
     }
 
-    public static Image imageMisro(Image image) {
-        int w = (int) image.getWidth();
-        int h = (int) image.getHeight();
-        PixelReader pixelReader = image.getPixelReader();
-        WritableImage writableImage = new WritableImage(w, h);
-        PixelWriter pixelWriter = writableImage.getPixelWriter();
-
-        for (int i = 0; i < h; i++) {
-            for (int j = 0; j < w; j++) {
-                pixelWriter.setArgb(j, h - 1 - i, pixelReader.getArgb(j, i));
-            }
-        }
-
-        return writableImage;
-    }
-
     private void drawGizmo(GraphicsContext gc) {
         clearCanvas(gc);
         drawGrid(gc);
@@ -387,24 +421,46 @@ public class MainController extends Application implements Initializable {
             if (physicsBody instanceof ImagePhysicsBody) {
                 ImagePhysicsBody body = (ImagePhysicsBody) physicsBody;
                 int scale = body.getShape().getRate();
+                int gridSize = world.getGridSize();
+                AABB aabb = body.getShape().createAABB();
 
+
+                SVGNode svgNode = body.getSvgNode();
+                if(svgNode != null){
+                    gc.save();
+
+
+                    double sx = gridSize / svgNode.getWidth();
+                    double sy = gridSize / svgNode.getHeight();
+                    double why1_5 = 1.0 / 5;
+                    Affine affine = new Affine();
+                    affine.appendRotation(transform.getAngle(), transform.x, transform.y); // TODO center
+                    affine.appendTranslation(transform.getX() - gridSize / 2.0 * scale,
+                            transform.getY() - gridSize / 2.0 * scale + aabb.maxY - aabb.minY); // aabb.maxY - aabb.minY为了处理图片上下翻转
+                    affine.appendScale(sx * scale * why1_5 , -sy * scale * why1_5);
+                    gc.transform(affine);
+
+                    gc.beginPath();
+                    for (SVGPath svgPath : svgNode.getSvgPaths()) {
+                        gc.appendSVGPath(svgPath.getPath());
+                        gc.setFill(svgPath.getFill());
+                    }
+                    gc.fill();
+                    gc.closePath();
+
+                    gc.restore();
+                    continue;
+                }
 
                 gc.save();
-                int gridSize = world.getGridSize();
                 Affine affine = new Affine();
                 affine.appendRotation(transform.getAngle(), transform.x, transform.y);
                 gc.transform(affine);
-                gc.drawImage(imageMisro(body.getImage()),
+                gc.drawImage(body.getImage(),
                         transform.getX() - gridSize / 2.0 * scale,
                         transform.getY() - gridSize / 2.0 * scale,
                         gridSize * scale, gridSize * scale);
                 gc.restore();
-
-
-//                gc.drawImage(imageMisro(body.getImage()),
-//                        transform.getX() - GRID_SIZE / 2.0 * scale,
-//                        transform.getY() - GRID_SIZE / 2.0 * scale,
-//                        GRID_SIZE * scale, GRID_SIZE * scale);
 
             } else if (shape instanceof Polygon) {
                 // 画多边形

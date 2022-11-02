@@ -2,6 +2,7 @@ package gizmoball.ui.component;
 
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.ui.GridWorld;
 
@@ -132,6 +133,8 @@ public class GizmoOpHandler {
 
         gizmoBody.getShape().zoom(rate - 1);
         gizmoBody.getShape().translate(-world.getGridSize() / 2.0, -world.getGridSize() / 2.0);
+        //修改质量
+        gizmoBody.setMass(gizmoBody.getShape().createMass(10));
         return true;
     }
 
@@ -149,8 +152,11 @@ public class GizmoOpHandler {
         }
 
         int rate = gizmoBody.getShape().getRate();
+
         gizmoBody.getShape().zoom(rate + 1);
         gizmoBody.getShape().translate(world.getGridSize() / 2.0, world.getGridSize() / 2.0);
+        //修改质量
+        gizmoBody.setMass(gizmoBody.getShape().createMass(10));
         world.setGrid(translatedAABB, gizmoBody);
         return true;
     }

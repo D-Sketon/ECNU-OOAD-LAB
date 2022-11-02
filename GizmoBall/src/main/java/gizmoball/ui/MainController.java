@@ -7,6 +7,7 @@ import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.geometry.shape.Rectangle;
+import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import gizmoball.ui.component.*;
@@ -199,7 +200,7 @@ public class MainController extends Application implements Initializable {
             }
             selectedBody = null;
             inDesign = false;
-            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 16, TimeUnit.MILLISECONDS);
+            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 50, TimeUnit.MILLISECONDS);
         });
         play.getImageView().setCursor(Cursor.HAND);
         //暂停游戏（设计模式）
@@ -268,32 +269,28 @@ public class MainController extends Application implements Initializable {
             bottomRectangle.getTransform().setX(bottomRectangle.getHalfWidth());
             bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
             PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
-            bottomBorder.getMass().setMass(0);
-            bottomBorder.getMass().setCenter(new Vector2());
+            bottomBorder.setMass(new Mass(new Vector2(),0.0,0.0));
             world.addBodies(bottomBorder);
 
             Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
             topRectangle.getTransform().setX(topRectangle.getHalfWidth());
             topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
             PhysicsBody topBorder = new PhysicsBody(topRectangle);
-            topBorder.getMass().setMass(0);
-            topBorder.getMass().setCenter(new Vector2());
+            topBorder.setMass(new Mass(new Vector2(),0.0,0.0));
             world.addBodies(topBorder);
 
             Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
             leftRectangle.getTransform().setX(-leftRectangle.getHalfWidth());
             leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
             PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
-            leftBorder.getMass().setMass(0);
-            leftBorder.getMass().setCenter(new Vector2());
+            leftBorder.setMass(new Mass(new Vector2(),0.0,0.0));
             world.addBodies(leftBorder);
 
             Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
             rightRectangle.getTransform().setX(worldWidth + rightRectangle.getHalfWidth());
             rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
             PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
-            rightBorder.getMass().setMass(0);
-            rightBorder.getMass().setCenter(new Vector2());
+            rightBorder.setMass(new Mass(new Vector2(),0.0,0.0));
             world.addBodies(rightBorder);
         }
     }
@@ -377,7 +374,7 @@ public class MainController extends Application implements Initializable {
             transformedCenter.add(snapped);
 
             PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            physicsBody.setMass(physicsBody.getShape().createMass(1));
+            physicsBody.setMass(physicsBody.getShape().createMass(10));
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {

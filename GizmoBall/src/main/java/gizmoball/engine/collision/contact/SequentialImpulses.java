@@ -218,7 +218,6 @@ public class SequentialImpulses {
             Vector2 N = contactConstraint.getNormal();
             Vector2 T = contactConstraint.getTangent();
             double tangentSpeed = contactConstraint.getTangentSpeed();
-
             // 施加摩擦冲量
             for (int k = 0; k < cSize; k++) {
                 SolvableContact contact = contacts.get(k);
@@ -266,7 +265,7 @@ public class SequentialImpulses {
                 Vector2 x = contactConstraint.getInvK().product(b).negate();
                 if (x.x >= 0.0 && x.y >= 0.0) {
                     this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                    return;
+                    continue;
                 }
 
                 x.x = -contact1.getMassN() * b.x;
@@ -274,7 +273,7 @@ public class SequentialImpulses {
                 rvn2 = contactConstraint.getK().m10 * x.x + b.y;
                 if (x.x >= 0.0 && rvn2 >= 0.0) {
                     this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                    return;
+                    continue;
                 }
 
                 x.x = 0.0;
@@ -282,7 +281,7 @@ public class SequentialImpulses {
                 rvn1 = contactConstraint.getK().m01 * x.y + b.x;
                 if (x.y >= 0.0 && rvn1 >= 0.0) {
                     this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                    return;
+                    continue;
                 }
 
                 x.x = 0.0f;
@@ -291,7 +290,6 @@ public class SequentialImpulses {
                 rvn2 = b.y;
                 if (rvn1 >= 0.0 && rvn2 >= 0.0) {
                     this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                    return;
                 }
             }
         }

@@ -17,7 +17,7 @@ public class CommandComponent extends ImageLabelComponent {
     @Override
     public VBox createVBox() {
         VBox vBox = super.createVBox();
-        vBox.setCursor(Cursor.HAND);
+        getImageView().setCursor(Cursor.HAND);
         return vBox;
     }
 }

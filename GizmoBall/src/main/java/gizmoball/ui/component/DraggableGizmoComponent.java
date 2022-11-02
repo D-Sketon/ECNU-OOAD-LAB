@@ -9,6 +9,10 @@ import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.ui.ImagePhysicsBody;
 import javafx.scene.Cursor;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +22,7 @@ import java.util.function.Function;
 @Getter
 @Setter
 public class DraggableGizmoComponent extends ImageLabelComponent {
+
 
     protected static final Function<Vector2, ImagePhysicsBody> circleBodyCreator = (preferredSize) -> {
         Circle circle = new Circle(preferredSize.x / 2.0);
@@ -51,9 +56,39 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
 
     private GizmoType gizmoType;
 
+    private Image flippedImage;
+
+    private SVGNode svgNode;
+
     public DraggableGizmoComponent(String resource, String labelText, GizmoType gizmoType) {
         super(resource, labelText);
         this.gizmoType = gizmoType;
+        this.flippedImage = upsideDown(getImage());
+
+        int li = resource.lastIndexOf('.');
+        String svgResource = (li == -1 ? resource : resource.substring(0, li)) + ".svg";
+        this.svgNode = SVGNode.fromResource(getClass().getClassLoader().getResourceAsStream(svgResource));
+    }
+
+    /**
+     * 上下翻转图片
+     * @param image /
+     * @return /
+     */
+    public static Image upsideDown(Image image) {
+        int w = (int) image.getWidth();
+        int h = (int) image.getHeight();
+        PixelReader pixelReader = image.getPixelReader();
+        WritableImage writableImage = new WritableImage(w, h);
+        PixelWriter pixelWriter = writableImage.getPixelWriter();
+
+        for (int i = 0; i < h; i++) {
+            for (int j = 0; j < w; j++) {
+                pixelWriter.setArgb(j, h - 1 - i, pixelReader.getArgb(j, i));
+            }
+        }
+
+        return writableImage;
     }
 
     @Override
@@ -72,7 +107,8 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     public PhysicsBody createPhysicsBody(Vector2 preferredSize, Vector2 center) {
         ImagePhysicsBody physicsBody = (ImagePhysicsBody) gizmoType.getPhysicsBodySupplier().apply(preferredSize);
         physicsBody.getShape().translate(center);
-        physicsBody.setImage(this.getImage());
+        physicsBody.setImage(this.flippedImage);
+        physicsBody.setSvgNode(this.svgNode);
         return physicsBody;
     }
 }

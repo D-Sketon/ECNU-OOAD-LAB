@@ -9,9 +9,11 @@ import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.Mass;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
-public abstract class Polygon extends AbstractShape {
+@ToString(callSuper = true)
+public class Polygon extends AbstractShape {
 
     /**
      * 多边形顶点数组
@@ -23,14 +25,35 @@ public abstract class Polygon extends AbstractShape {
      */
     protected Vector2[] normals;
 
-    protected Polygon(Transform transform) {
-        super(transform);
+    public Polygon(Transform transform, Vector2[] vertices) {
+        this(transform, vertices, getCounterClockwiseEdgeNormals(vertices));
     }
 
-    protected Polygon(Transform transform, Vector2[] vertices, Vector2[] normals) {
+    public Polygon(Vector2[] vertices) {
+        this(new Transform(), vertices, getCounterClockwiseEdgeNormals(vertices));
+    }
+
+    public Polygon(Transform transform, Vector2[] vertices, Vector2[] normals) {
         super(transform);
         this.vertices = vertices;
         this.normals = normals;
+    }
+
+    public static Vector2[] getCounterClockwiseEdgeNormals(Vector2[] vertices) {
+        if (vertices == null) return null;
+
+        int size = vertices.length;
+        if (size == 0) return null;
+
+        Vector2[] normals = new Vector2[size];
+        for (int i = 0; i < size; i++) {
+            Vector2 p1 = vertices[i];
+            Vector2 p2 = (i + 1 == size) ? vertices[0] : vertices[i + 1];
+            Vector2 n = p1.to(p2).left();
+            n.normalize();
+            normals[i] = n;
+        }
+        return normals;
     }
 
     @Override

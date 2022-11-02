@@ -45,7 +45,7 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, ImagePhysicsBody> curvedPipeBodyCreator = (preferredSize) -> {
-        QuarterCircle quarterCircle = new QuarterCircle(preferredSize.x / 2.0);
+        QuarterCircle quarterCircle = new QuarterCircle(preferredSize.x);
         return new ImagePhysicsBody(quarterCircle);
     };
 

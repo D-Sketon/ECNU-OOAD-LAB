@@ -6,11 +6,11 @@ import gizmoball.engine.collision.feature.Feature;
 import gizmoball.engine.collision.feature.PointFeature;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
+import gizmoball.engine.geometry.shape.QuarterCircle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// https://dyn4j.org/2011/11/contact-points-using-clipping/
 public class ManifoldSolver {
 
     /**
@@ -25,7 +25,14 @@ public class ManifoldSolver {
      * @param manifold    碰撞点信息
      * @return boolean
      */
-    public boolean getManifold(Penetration penetration, AbstractShape shape1, AbstractShape shape2, Manifold manifold) {
+    public boolean getManifold(Penetration penetration, AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Manifold manifold) {
+        if (shape != null) {
+            if (shape1 instanceof QuarterCircle) {
+                shape1 = shape;
+            } else if (shape2 instanceof QuarterCircle) {
+                shape2 = shape;
+            }
+        }
         // 获得分离法线的单位向量（理论上已被规范化）
         Vector2 n = penetration.getNormal();
         Feature feature1 = shape1.getFarthestFeature(n);
@@ -103,9 +110,9 @@ public class ManifoldSolver {
     /**
      * 剪裁入射边
      *
-     * @param v1 特征点
-     * @param v2 特征点
-     * @param n 参考边向量
+     * @param v1     特征点
+     * @param v2     特征点
+     * @param n      参考边向量
      * @param offset 剪裁偏移
      * @return List
      */

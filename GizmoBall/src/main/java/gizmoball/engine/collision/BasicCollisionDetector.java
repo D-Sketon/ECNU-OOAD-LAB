@@ -4,6 +4,7 @@ import gizmoball.engine.Settings;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
 import gizmoball.engine.collision.detector.AABBDetector;
+import gizmoball.engine.collision.detector.DetectorResult;
 import gizmoball.engine.collision.detector.SatDetector;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
@@ -29,14 +30,15 @@ public class BasicCollisionDetector implements CollisionDetector {
                 AbstractShape shape2 = body2.getShape();
                 if (AABBDetector.detect(shape1, shape2)) {
                     Penetration penetration = new Penetration();
-                    if (SatDetector.detect(shape1, shape2, penetration)) {
+                    DetectorResult detect = SatDetector.detect(shape1, shape2, null, penetration);
+                    if (detect.isHasCollision()) {
                         Manifold manifold = new Manifold();
-                        if (manifoldSolver.getManifold(penetration, shape1, shape2, manifold)) {
+                        if (manifoldSolver.getManifold(penetration, shape1, shape2, detect.getApproximateShape(), manifold)) {
                             Pair<PhysicsBody, PhysicsBody> physicsBodyPhysicsBodyPair = new Pair<>(body1, body2);
                             manifolds.add(new Pair<>(manifold, physicsBodyPhysicsBodyPair));
                         }
                     }
-               }
+                }
             }
         }
         return manifolds;

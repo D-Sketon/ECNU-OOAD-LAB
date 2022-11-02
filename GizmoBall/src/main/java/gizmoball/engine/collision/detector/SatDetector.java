@@ -5,6 +5,7 @@ import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
+import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.geometry.shape.QuarterCircle;
 
 public class SatDetector {
@@ -18,14 +19,32 @@ public class SatDetector {
      * @param penetration 穿透信息
      * @return boolean
      */
-    public static boolean detect(AbstractShape shape1, AbstractShape shape2, Penetration penetration) {
+    public static DetectorResult detect(AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Penetration penetration) {
         // 如果两个都是圆则直接调用CircleDetector
         if (shape1 instanceof Circle && shape2 instanceof Circle) {
-            return CircleDetector.detect((Circle) shape1, (Circle) shape2, penetration);
+            return CircleDetector.detect((Circle) shape1, (Circle) shape2, shape, penetration);
         } else if (shape1 instanceof Circle && shape2 instanceof QuarterCircle) {
-            return QuarterCirCleDetector.detect((QuarterCircle) shape2, (Circle) shape1, penetration);
+            return QuarterCirCleDetector.detect((QuarterCircle) shape2, (Circle) shape1, penetration, true);
         } else if (shape2 instanceof Circle && shape1 instanceof QuarterCircle) {
-            return QuarterCirCleDetector.detect((QuarterCircle) shape1, (Circle) shape2, penetration);
+            return QuarterCirCleDetector.detect((QuarterCircle) shape1, (Circle) shape2, penetration, false);
+        } else if (shape1 instanceof QuarterCircle) {
+            QuarterCircle shape11 = (QuarterCircle) shape1;
+            Vector2[] vertices = shape11.getVertices();
+            Polygon polygon = new Polygon(shape11.getTransform().copy(),
+                    new Vector2[]{vertices[0],
+                            vertices[1],
+                            vertices[2],
+                            new Vector2(shape11.getRadius() / Math.sqrt(2), shape11.getRadius() / Math.sqrt(2))});
+            return detect(polygon, shape2, polygon, penetration);
+        } else if (shape2 instanceof QuarterCircle) {
+            QuarterCircle shape21 = (QuarterCircle) shape2;
+            Vector2[] vertices = shape21.getVertices();
+            Polygon polygon = new Polygon(shape21.getTransform().copy(),
+                    new Vector2[]{vertices[0],
+                    vertices[1],
+                    vertices[2],
+                    new Vector2(shape21.getRadius() / Math.sqrt(2), shape21.getRadius() / Math.sqrt(2))});
+            return detect(shape1, polygon, polygon, penetration);
         }
         // 获得焦点数组
         Vector2[] foci1 = shape1.getFoci();
@@ -44,7 +63,7 @@ public class SatDetector {
                 Interval intervalA = shape1.project(axis);
                 Interval intervalB = shape2.project(axis);
                 if (!intervalA.overlaps(intervalB)) {
-                    return false;
+                    return new DetectorResult(false, shape);
                 } else {
                     double overlap = intervalA.getOverlap(intervalB);
                     // 如果分隔存在包含关系
@@ -75,7 +94,7 @@ public class SatDetector {
                 Interval intervalA = shape1.project(axis);
                 Interval intervalB = shape2.project(axis);
                 if (!intervalA.overlaps(intervalB)) {
-                    return false;
+                    return new DetectorResult(false, shape);
                 } else {
                     double overlap = intervalA.getOverlap(intervalB);
                     if (intervalA.containsExclusive(intervalB) || intervalB.containsExclusive(intervalA)) {
@@ -105,7 +124,7 @@ public class SatDetector {
         penetration.getNormal().x = currentAxis.x;
         penetration.getNormal().y = currentAxis.y;
         penetration.setDepth(minOverlap);
-        return true;
+        return new DetectorResult(true, shape);
     }
 
 }

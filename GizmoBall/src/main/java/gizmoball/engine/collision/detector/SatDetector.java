@@ -5,6 +5,7 @@ import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
+import gizmoball.engine.geometry.shape.QuarterCircle;
 
 public class SatDetector {
 
@@ -21,6 +22,10 @@ public class SatDetector {
         // 如果两个都是圆则直接调用CircleDetector
         if (shape1 instanceof Circle && shape2 instanceof Circle) {
             return CircleDetector.detect((Circle) shape1, (Circle) shape2, penetration);
+        } else if (shape1 instanceof Circle && shape2 instanceof QuarterCircle) {
+            return QuarterCirCleDetector.detect((QuarterCircle) shape2, (Circle) shape1, penetration);
+        } else if (shape2 instanceof Circle && shape1 instanceof QuarterCircle) {
+            return QuarterCirCleDetector.detect((QuarterCircle) shape1, (Circle) shape2, penetration);
         }
         // 获得焦点数组
         Vector2[] foci1 = shape1.getFoci();
@@ -102,5 +107,5 @@ public class SatDetector {
         penetration.setDepth(minOverlap);
         return true;
     }
-    
+
 }

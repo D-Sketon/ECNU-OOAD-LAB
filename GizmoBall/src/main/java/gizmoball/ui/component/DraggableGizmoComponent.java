@@ -37,8 +37,8 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     protected static final Function<Vector2, ImagePhysicsBody> triangleBodyCreator = (preferredSize) -> {
         Vector2[] vertices = new Vector2[]{
                 new Vector2(-preferredSize.y / 2.0, -preferredSize.y / 2.0),
-                new Vector2(-preferredSize.y / 2.0, preferredSize.y / 2.0),
-                new Vector2(preferredSize.x / 2.0, -preferredSize.y / 2.0)
+                new Vector2(preferredSize.x / 2.0, -preferredSize.y / 2.0),
+                new Vector2(-preferredSize.y / 2.0, preferredSize.y / 2.0)
         };
         Triangle triangle = new Triangle(vertices);
         return new ImagePhysicsBody(triangle);

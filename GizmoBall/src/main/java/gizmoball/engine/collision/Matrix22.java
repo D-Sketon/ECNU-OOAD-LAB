@@ -44,11 +44,12 @@ public class Matrix22 {
 	 * @return Vector2
 	 */
 	public Vector2 product(Vector2 vector) {
-		double x = vector.x;
-		double y = vector.y;
-		vector.x = this.m00 * x + this.m01 * y;
-		vector.y = this.m10 * x + this.m11 * y;
-		return vector;
+		Vector2 copy = vector.copy();
+		double x = copy.x;
+		double y = copy.y;
+		copy.x = this.m00 * x + this.m01 * y;
+		copy.y = this.m10 * x + this.m11 * y;
+		return copy;
 	}
 
 	/**

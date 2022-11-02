@@ -14,10 +14,6 @@ public class QuarterCircle extends AbstractShape {
 
     private double radius;
 
-    private double alpha;
-
-    final double cosAlpha;
-
     final Vector2[] vertices;
 
     final Vector2[] normals;
@@ -35,8 +31,7 @@ public class QuarterCircle extends AbstractShape {
         this.radius = radius;
 
         double theta = Math.PI / 2;
-        double cosAlpha =
-                this.alpha = theta * 0.5;
+        double cosAlpha = this.alpha = theta * 0.5;
 
         // compute the triangular section of the pie (and cache cos(alpha))
         double x = radius * (this.cosAlpha = Math.cos(this.alpha));

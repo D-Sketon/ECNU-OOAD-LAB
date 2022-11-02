@@ -90,7 +90,7 @@ public abstract class AbstractShape implements Convex {
         transform.translate(vector2);
     }
 
-    public Mass createMass(double density){
+    public Mass createMass(double density) {
         return null;
     }
 

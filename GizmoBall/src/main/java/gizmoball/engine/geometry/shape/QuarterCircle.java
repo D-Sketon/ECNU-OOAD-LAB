@@ -5,6 +5,7 @@ import gizmoball.engine.collision.feature.Feature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.physics.Mass;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,57 +15,44 @@ public class QuarterCircle extends AbstractShape {
 
     private double radius;
 
-    final Vector2[] vertices;
-
-    final Vector2[] normals;
+    private Vector2[] vertices;
 
     public QuarterCircle(double radius) {
         this(new Transform(), radius);
     }
 
-    public QuarterCircle(Transform transform) {
-        this(transform, 1.0);
-    }
-
     public QuarterCircle(Transform transform, double radius) {
         super(transform);
         this.radius = radius;
-
-        double theta = Math.PI / 2;
-        double cosAlpha = this.alpha = theta * 0.5;
-
-        // compute the triangular section of the pie (and cache cos(alpha))
-        double x = radius * (this.cosAlpha = Math.cos(this.alpha));
-        double y = radius * Math.sin(this.alpha);
-        this.vertices = new Vector2[]{
-                // the origin
-                new Vector2(),
-                // the top point
-                new Vector2(x, y),
-                // the bottom point
-                new Vector2(x, -y)
-        };
-
-        Vector2 v1 = this.vertices[1].to(this.vertices[0]);
-        Vector2 v2 = this.vertices[0].to(this.vertices[2]);
-        v1.left().normalize();
-        v2.left().normalize();
-        this.normals = new Vector2[]{v1, v2};
+        this.vertices = new Vector2[3];
+        this.vertices[0] = new Vector2(-radius / 2, radius / 2);
+        this.vertices[1] = new Vector2(-radius / 2, -radius / 2);
+        this.vertices[2] = new Vector2(radius / 2, -radius / 2);
     }
 
     @Override
     public void zoom(int rate) {
         if (rate < 1) return;
         this.radius = this.radius / this.rate * rate;
+        int size = vertices.length;
+        for (int i = 0; i < size; i++) {
+            vertices[i] = vertices[i].multiply((double) rate / this.rate);
+        }
         this.rate = rate;
     }
 
     @Override
+    public Mass createMass(double density) {
+        double r2 = this.radius * this.radius;
+
+        double mass = density * Math.PI * r2 / 4;
+        double inertia = mass * r2 * 0.5;
+        return new Mass(new Vector2(4 * Math.sqrt(2) * radius / 3 / Math.PI - 1, 4 * Math.sqrt(2) * radius / 3 / Math.PI - 1), mass, inertia);
+    }
+
+    @Override
     public AABB createAABB() {
-        Vector2 vector2 = new Vector2(this.radius / 2, this.radius / 2);
-        Vector2 transformed = this.transform.getTransformed(vector2);
-        Transform newTransform = new Transform(this.transform.getCost(), this.transform.getSint(), transformed.x, transformed.y);
-        return new Rectangle(this.radius / 2, this.radius / 2, newTransform).createAABB();
+        return new Rectangle(this.radius / 2, this.radius / 2, this.transform.copy()).createAABB();
     }
 
     @Override
@@ -74,38 +62,12 @@ public class QuarterCircle extends AbstractShape {
 
     @Override
     public Vector2[] getAxes(Vector2[] foci) {
-        int fociSize = foci != null ? foci.length : 0;
-        int size = this.vertices.length;
-        Vector2[] axes = new Vector2[2 + fociSize];
-        int index = 0;
-        axes[index++] = transform.getTransformedR(this.normals[0]);
-        axes[index++] = transform.getTransformedR(this.normals[1]);
-        Vector2 focus = transform.getTransformed(this.vertices[0]);
-        for (int i = 0; i < fociSize; i++) {
-            Vector2 f = foci[i];
-            Vector2 closest = focus;
-            double d = f.distanceSquared(closest);
-            for (int j = 1; j < size; j++) {
-                Vector2 p = this.vertices[j];
-                p = transform.getTransformed(p);
-                double dt = f.distanceSquared(p);
-                if (dt < d) {
-                    closest = p;
-                    d = dt;
-                }
-            }
-            Vector2 axis = f.to(closest);
-            axis.normalize();
-            axes[index++] = axis;
-        }
-        return axes;
+        return null;
     }
 
     @Override
     public Vector2[] getFoci() {
-        return new Vector2[]{
-                transform.getTransformed(this.vertices[0])
-        };
+        return null;
     }
 
     @Override

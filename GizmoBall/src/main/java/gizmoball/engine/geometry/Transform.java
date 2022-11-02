@@ -42,6 +42,10 @@ public class Transform {
         this.y = y;
     }
 
+    public Transform copy() {
+        return new Transform(this.cost, this.sint, this.x, this.y);
+    }
+
     /**
      * 绕着某一点做旋转
      *
@@ -143,6 +147,7 @@ public class Transform {
     /**
      * Transforms the given {@link Vector2} only by the rotation and returns the
      * result in the given {@link Vector2}.
+     *
      * @param vector the {@link Vector2} to transform
      */
     public void transformR(Vector2 vector) {
@@ -206,9 +211,10 @@ public class Transform {
 
     /**
      * 根据cost,sint获取角度
+     *
      * @return double
      */
-    public double getAngle(){
+    public double getAngle() {
         double angle = 0;
         if (cost > 0 && sint > 0) {
             angle = Math.toDegrees(Math.asin(sint));

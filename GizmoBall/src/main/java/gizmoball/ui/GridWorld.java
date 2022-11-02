@@ -5,11 +5,7 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import lombok.Getter;
-import org.apache.commons.math3.util.MathUtils;
 import org.apache.commons.math3.util.Precision;
-
-import java.math.BigDecimal;
-import java.util.DoubleSummaryStatistics;
 
 @Getter
 public class GridWorld extends World {
@@ -51,8 +47,8 @@ public class GridWorld extends World {
      * @return 如果超出格子范围，返回null，否则返回格子下标长度为2的数组[i, j]，对应gizmoGridBodies[i][j]
      */
     public int[] getGridIndex(double x, double y) {
-        x = Precision.round(x,10);
-        y = Precision.round(y,10);
+        x = Precision.round(x, 10);
+        y = Precision.round(y, 10);
         if (x < boundaryAABB.minX || x > boundaryAABB.maxX
                 || y < boundaryAABB.minY || y > boundaryAABB.maxY) {
             return null;
@@ -89,11 +85,11 @@ public class GridWorld extends World {
      */
     public boolean checkOverlay(AABB aabb) {
         int[] bottomLeft = getGridIndex(aabb.getMinX(), aabb.getMinY());
-        if(bottomLeft == null) {
+        if (bottomLeft == null) {
             return true;
         }
         int[] topRight = getGridIndex(aabb.getMaxX(), aabb.getMaxY());
-        if(topRight == null) {
+        if (topRight == null) {
             return true;
         }
         for (int i = bottomLeft[0]; i < topRight[0]; i++) {

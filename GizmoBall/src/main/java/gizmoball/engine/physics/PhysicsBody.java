@@ -116,7 +116,7 @@ public class PhysicsBody {
 
 
     public void integrateVelocity(Vector2 gravity) {
-        if (this.mass.getType() == MassType.INFINITE) {
+        if (this.mass.getType() == MassType.INFINITE || this.mass.getType() == null) {
             return;
         }
         double elapsedTime = Settings.DEFAULT_STEP_FREQUENCY;

@@ -7,6 +7,7 @@ import gizmoball.engine.collision.contact.SequentialImpulses;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.engine.world.listener.CollisionListener;
 import gizmoball.engine.world.listener.TickListener;
 import gizmoball.engine.world.listener.TriggerListener;
 import javafx.util.Pair;
@@ -50,14 +51,17 @@ public class World {
 
     protected final CollisionDetector collisionDetector;
 
-    private final SequentialImpulses solver;
+    protected final SequentialImpulses solver;
 
-    public World(Vector2 gravity) {
+    protected List<CollisionListener> listeners;
+
+    public World(Vector2 gravity, List<CollisionListener> listeners) {
         this.gravity = gravity;
         this.bodies = new ArrayList<>();
         this.timeTicks = 0;
         this.tickListeners = new ArrayList<>();
         this.triggerListeners = new ArrayList<>();
+        this.listeners = listeners;
         this.collisionDetector = new BasicCollisionDetector();
         this.solver = new SequentialImpulses();
     }
@@ -81,7 +85,7 @@ public class World {
         // -- tickListener.before
 
         // 碰撞检测，返回碰撞检测
-        List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> pairs = collisionDetector.narrowPhase(bodies);
+        List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> pairs = collisionDetector.detect(bodies, listeners);
 
         List<ContactConstraint> contactConstraints = collisionDetector.preLocalSolve(pairs);
         collisionDetector.LocalSolve(solver, gravity, contactConstraints, bodies);

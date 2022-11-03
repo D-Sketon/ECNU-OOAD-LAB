@@ -10,6 +10,8 @@ import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
+import gizmoball.engine.world.listener.CollisionListener;
+import gizmoball.engine.world.listener.PipeCollisionListener;
 import gizmoball.ui.component.*;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -22,16 +24,16 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -200,7 +202,7 @@ public class MainController extends Application implements Initializable {
             }
             selectedBody = null;
             inDesign = false;
-            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 50, TimeUnit.MILLISECONDS);
+            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 16, TimeUnit.MILLISECONDS);
         });
         play.getImageView().setCursor(Cursor.HAND);
         //暂停游戏（设计模式）
@@ -259,7 +261,9 @@ public class MainController extends Application implements Initializable {
     private void initWorld() {
         double worldWidth = gizmoCanvas.getWidth();
         double worldHeight = gizmoCanvas.getHeight();
-        world = new GridWorld(World.SUN_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
+        List<CollisionListener> listeners = new ArrayList<>();
+        listeners.add(new PipeCollisionListener());
+        world = new GridWorld(World.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30, listeners);
         preferredSize = new Vector2(world.getGridSize(), world.getGridSize());
         gizmoOpHandler = new GizmoOpHandler(world);
 
@@ -269,28 +273,36 @@ public class MainController extends Application implements Initializable {
             bottomRectangle.getTransform().setX(bottomRectangle.getHalfWidth());
             bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
             PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
-            bottomBorder.setMass(new Mass(new Vector2(),0.0,0.0));
+            bottomBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+            bottomBorder.setRestitution(0.9);
+            bottomBorder.setFriction(0.5);
             world.addBodies(bottomBorder);
 
             Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
             topRectangle.getTransform().setX(topRectangle.getHalfWidth());
             topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
             PhysicsBody topBorder = new PhysicsBody(topRectangle);
-            topBorder.setMass(new Mass(new Vector2(),0.0,0.0));
+            topBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+            topBorder.setRestitution(0.9);
+            topBorder.setFriction(0.5);
             world.addBodies(topBorder);
 
             Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
             leftRectangle.getTransform().setX(-leftRectangle.getHalfWidth());
             leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
             PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
-            leftBorder.setMass(new Mass(new Vector2(),0.0,0.0));
+            leftBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+            leftBorder.setRestitution(0.9);
+            leftBorder.setFriction(0.5);
             world.addBodies(leftBorder);
 
             Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
             rightRectangle.getTransform().setX(worldWidth + rightRectangle.getHalfWidth());
             rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
             PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
-            rightBorder.setMass(new Mass(new Vector2(),0.0,0.0));
+            rightBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+            rightBorder.setRestitution(0.9);
+            rightBorder.setFriction(0.5);
             world.addBodies(rightBorder);
         }
     }
@@ -373,7 +385,9 @@ public class MainController extends Application implements Initializable {
             Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
             transformedCenter.add(snapped);
             PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            physicsBody.setMass(physicsBody.getShape().createMass(10));
+            physicsBody.setMass(physicsBody.getShape().createMass(1));
+            physicsBody.setRestitution(0.9);
+            physicsBody.setFriction(0.5);
             physicsBody.setRestitution(0.5);
             physicsBody.setRestitutionVelocity(2);
             try {
@@ -411,8 +425,6 @@ public class MainController extends Application implements Initializable {
     private void
 
 
-
-
     drawGizmo(GraphicsContext gc) {
         clearCanvas(gc);
         drawGrid(gc);
@@ -429,7 +441,7 @@ public class MainController extends Application implements Initializable {
 
 
                 SVGNode svgNode = body.getSvgNode();
-                if(svgNode != null){
+                if (svgNode != null) {
                     gc.save();
 
 
@@ -440,7 +452,7 @@ public class MainController extends Application implements Initializable {
                     affine.appendRotation(transform.getAngle(), transform.x, transform.y); // TODO center
                     affine.appendTranslation(transform.getX() - gridSize / 2.0 * scale,
                             transform.getY() - gridSize / 2.0 * scale + aabb.maxY - aabb.minY); // aabb.maxY - aabb.minY为了处理图片上下翻转
-                    affine.appendScale(sx * scale * why1_5 , -sy * scale * why1_5);
+                    affine.appendScale(sx * scale * why1_5, -sy * scale * why1_5);
                     gc.transform(affine);
 
                     gc.beginPath();

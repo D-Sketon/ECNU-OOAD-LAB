@@ -133,9 +133,7 @@ public class ManifoldSolver {
             double u = d1 / (d1 - d2);
             e.multiply(u);
             e.add(p1);
-            if (d1 > 0.0) {
-                points.add(new PointFeature(e));
-            }
+            points.add(new PointFeature(e));
         }
         return points;
     }

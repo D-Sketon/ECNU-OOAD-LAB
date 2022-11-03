@@ -11,12 +11,12 @@ public class Settings {
     /**
      * The default step frequency of the dynamics engine; in seconds
      */
-    public static final double DEFAULT_STEP_FREQUENCY = 1.0 / 60.0;
+    public static final double DEFAULT_STEP_FREQUENCY = 1.0 / 50.0;
 
     /**
      * The default maximum translation a {@link PhysicsBody} can have in one time step; in meters
      */
-    public static final double DEFAULT_MAXIMUM_TRANSLATION = 2.0;
+    public static final double DEFAULT_MAXIMUM_TRANSLATION = 90.0;
 
     /**
      * The default maximum rotation a {@link PhysicsBody} can have in one time step; in radians
@@ -26,21 +26,21 @@ public class Settings {
     /**
      * The default number of solver iterations
      */
-    public static final int DEFAULT_SOLVER_ITERATIONS = 10;
+    public static final int DEFAULT_SOLVER_ITERATIONS = 20;
 
     /**
      * The default linear tolerance; in meters
      */
-    public static final double DEFAULT_LINEAR_TOLERANCE = 0.005;
+    public static final double DEFAULT_LINEAR_TOLERANCE = 0.05;
 
     /**
      * The default maximum linear correction; in meters
      */
-    public static final double DEFAULT_MAXIMUM_LINEAR_CORRECTION = 0.2;
+    public static final double DEFAULT_MAXIMUM_LINEAR_CORRECTION = 1;
 
     /**
      * The default baumgarte
      */
-    public static final double DEFAULT_BAUMGARTE = 0.2;
+    public static final double DEFAULT_BAUMGARTE = 1;
 
 }

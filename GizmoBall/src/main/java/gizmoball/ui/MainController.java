@@ -372,9 +372,10 @@ public class MainController extends Application implements Initializable {
             // 对齐到网格
             Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
             transformedCenter.add(snapped);
-
             PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
             physicsBody.setMass(physicsBody.getShape().createMass(10));
+            physicsBody.setRestitution(0.5);
+            physicsBody.setRestitutionVelocity(2);
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {
@@ -407,7 +408,12 @@ public class MainController extends Application implements Initializable {
         }
     }
 
-    private void drawGizmo(GraphicsContext gc) {
+    private void
+
+
+
+
+    drawGizmo(GraphicsContext gc) {
         clearCanvas(gc);
         drawGrid(gc);
 

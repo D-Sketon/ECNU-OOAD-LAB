@@ -10,9 +10,12 @@ import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
+import gizmoball.engine.geometry.shape.Circle;
+import gizmoball.engine.geometry.shape.Pipe;
 import gizmoball.engine.physics.PhysicsBody;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class BasicCollisionDetector implements CollisionDetector {
                 if (AABBDetector.detect(shape1, shape2)) {
                     Penetration penetration = new Penetration();
                     DetectorResult detect = SatDetector.detect(shape1, shape2, null, penetration);
-                    if (detect.isHasCollision()) {
+                    if (detect.isHasCollision() && pipeCollisionSolve(shape1, shape2, penetration)) {
                         Manifold manifold = new Manifold();
                         if (manifoldSolver.getManifold(penetration, shape1, shape2, detect.getApproximateShape(), manifold)) {
                             Pair<PhysicsBody, PhysicsBody> physicsBodyPhysicsBodyPair = new Pair<>(body1, body2);
@@ -71,5 +74,34 @@ public class BasicCollisionDetector implements CollisionDetector {
         for (int i = 0; i < Settings.DEFAULT_SOLVER_ITERATIONS; i++) {
             solver.solvePositionConstraints(constraints);
         }
+    }
+
+    public boolean pipeCollisionSolve(AbstractShape shape1, AbstractShape shape2, Penetration penetration){
+        Pipe pipe;
+        Circle circle;
+
+        if(shape1 instanceof Pipe && shape2 instanceof Circle){
+            pipe = (Pipe) shape1;
+            circle = (Circle) shape2;
+        } else if(shape2 instanceof Pipe && shape1 instanceof Circle){
+            pipe = (Pipe) shape2;
+            circle = (Circle) shape1;
+        } else{
+            return true;
+        }
+
+        Vector2 normal = penetration.getNormal();
+
+        double x = normal.x;
+        double y = normal.y;
+
+        //判断球弹入方向
+        if((Math.abs(x) > Math.abs(y) && pipe.getPipeDirection() == Pipe.PipeDirection.TRANSVERSE)
+          || (Math.abs(x) <= Math.abs(y) && pipe.getPipeDirection() == Pipe.PipeDirection.VERTICAL)){
+            return false;
+        }
+
+        //正常多边形碰撞，无事发生
+        return true;
     }
 }

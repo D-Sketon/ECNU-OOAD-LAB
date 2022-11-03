@@ -22,7 +22,7 @@ public enum GizmoType {
 
     BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.circleBodyCreator),
 
-    PIPE("gizmo/pipe", DraggableGizmoComponent.rectangleBodyCreator),
+    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator),
 
     CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator),
 

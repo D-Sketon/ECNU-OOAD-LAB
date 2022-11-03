@@ -107,18 +107,6 @@ public class Vector2 {
     }
 
     /**
-     * Adds this {@link Vector2} and the given {@link Vector2} returning
-     * a new {@link Vector2} containing the result.
-     *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return Vector2
-     */
-    public Vector2 sum(double x, double y) {
-        return new Vector2(this.x + x, this.y + y);
-    }
-
-    /**
      * Subtracts the given {@link Vector2} from this {@link Vector2}.
      *
      * @param vector the {@link Vector2}
@@ -155,18 +143,6 @@ public class Vector2 {
     }
 
     /**
-     * Subtracts the given {@link Vector2} from this {@link Vector2} returning
-     * a new {@link Vector2} containing the result.
-     *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return {@link Vector2}
-     */
-    public Vector2 difference(double x, double y) {
-        return new Vector2(this.x - x, this.y - y);
-    }
-
-    /**
      * Creates a {@link Vector2} from this {@link Vector2} to the given {@link Vector2}.
      *
      * @param vector the {@link Vector2}
@@ -174,17 +150,6 @@ public class Vector2 {
      */
     public Vector2 to(Vector2 vector) {
         return new Vector2(vector.x - this.x, vector.y - this.y);
-    }
-
-    /**
-     * Creates a {@link Vector2} from this {@link Vector2} to the given {@link Vector2}.
-     *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return {@link Vector2}
-     */
-    public Vector2 to(double x, double y) {
-        return new Vector2(x - this.x, y - this.y);
     }
 
     /**
@@ -224,18 +189,6 @@ public class Vector2 {
     }
 
     /**
-     * Divides this {@link Vector2} by the given scalar returning
-     * a new {@link Vector2} containing the result.
-     *
-     * @param scalar the scalar
-     * @return {@link Vector2}
-     * @since 3.4.0
-     */
-    public Vector2 quotient(double scalar) {
-        return new Vector2(this.x / scalar, this.y / scalar);
-    }
-
-    /**
      * Returns the dot product of the given {@link Vector2}
      * and this {@link Vector2}.
      *
@@ -244,18 +197,6 @@ public class Vector2 {
      */
     public double dot(Vector2 vector) {
         return this.x * vector.x + this.y * vector.y;
-    }
-
-    /**
-     * Returns the dot product of the given {@link Vector2}
-     * and this {@link Vector2}.
-     *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return double
-     */
-    public double dot(double x, double y) {
-        return this.x * x + this.y * y;
     }
 
     /**
@@ -268,16 +209,6 @@ public class Vector2 {
         return this.x * vector.y - this.y * vector.x;
     }
 
-    /**
-     * Returns the cross product of the this {@link Vector2} and the given {@link Vector2}.
-     *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return double
-     */
-    public double cross(double x, double y) {
-        return this.x * y - this.y * x;
-    }
 
     /**
      * Returns the cross product of this {@link Vector2} and the z value of the right {@link Vector2}.
@@ -317,20 +248,6 @@ public class Vector2 {
     }
 
     /**
-     * Projects this {@link Vector2} onto the given {@link Vector2}.
-     *
-     * @param vector the {@link Vector2}
-     * @return Vector2
-     */
-    public Vector2 project(Vector2 vector) {
-        double dotProd = this.dot(vector);
-        double denominator = vector.dot(vector);
-        if (denominator <= Epsilon.E) return new Vector2();
-        denominator = dotProd / denominator;
-        return new Vector2(denominator * vector.x, denominator * vector.y);
-    }
-
-    /**
      * Returns the right-handed normal of this vector.
      *
      * @return {@link Vector2} the right hand orthogonal {@link Vector2}
@@ -339,20 +256,11 @@ public class Vector2 {
         return new Vector2(-this.y, this.x);
     }
 
-    /**
-     * Returns the left-handed normal of this vector.
-     *
-     * @return {@link Vector2} the left hand orthogonal {@link Vector2}
-     */
-    public Vector2 getLeftHandOrthogonalVector() {
-        return new Vector2(this.y, -this.x);
-    }
 
     /**
      * Sets this vector to the left-handed normal of this vector.
      *
      * @return {@link Vector2} this vector
-     * @see #getLeftHandOrthogonalVector()
      */
     public Vector2 left() {
         double temp = this.x;
@@ -363,6 +271,7 @@ public class Vector2 {
 
     /**
      * Sets the {@link Vector2} to the zero {@link Vector2}
+     *
      * @return {@link Vector2} this vector
      */
     public Vector2 zero() {

@@ -22,6 +22,7 @@ public class ManifoldSolver {
      * @param penetration 穿透信息
      * @param shape1      被碰撞图形
      * @param shape2      碰撞图形
+     * @param shape       近似图形
      * @param manifold    碰撞点信息
      * @return boolean
      */
@@ -133,8 +134,6 @@ public class ManifoldSolver {
             e.multiply(u);
             e.add(p1);
             if (d1 > 0.0) {
-                points.add(new PointFeature(e));
-            } else {
                 points.add(new PointFeature(e));
             }
         }

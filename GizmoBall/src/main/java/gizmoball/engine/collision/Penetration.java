@@ -1,11 +1,9 @@
 package gizmoball.engine.collision;
 
 import gizmoball.engine.geometry.Vector2;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class Penetration {
     /**
      * The normalized axis of projection
@@ -19,11 +17,6 @@ public class Penetration {
 
     public Penetration() {
         this.normal = new Vector2();
-    }
-
-    protected Penetration(Vector2 normal, double depth) {
-        this.normal = normal.copy();
-        this.depth = depth;
     }
 
 }

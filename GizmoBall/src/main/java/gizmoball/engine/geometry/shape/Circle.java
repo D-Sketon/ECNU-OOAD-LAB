@@ -13,6 +13,9 @@ import lombok.Setter;
 @Setter
 public class Circle extends AbstractShape {
 
+    /**
+     * 半径
+     */
     private double radius;
 
     public Circle(double radius) {
@@ -22,10 +25,6 @@ public class Circle extends AbstractShape {
     public Circle(double radius, Transform transform) {
         super(transform);
         this.radius = radius;
-    }
-
-    public Circle(Transform transform) {
-        super(transform);
     }
 
     @Override

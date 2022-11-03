@@ -1,6 +1,7 @@
 package gizmoball.engine.physics;
 
 import gizmoball.engine.Settings;
+import gizmoball.engine.collision.Interval;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
@@ -16,7 +17,6 @@ import java.util.List;
  * 代表一个物体，他也可以是一个组件包含多个基础物体
  */
 @Data
-@RequiredArgsConstructor
 public class PhysicsBody {
 
     /**
@@ -61,6 +61,9 @@ public class PhysicsBody {
      */
     protected final AbstractShape shape;
 
+    /**
+     * 重力系数
+     */
     protected double gravityScale;
 
     /**
@@ -68,10 +71,19 @@ public class PhysicsBody {
      */
     protected boolean isTrigger;
 
+    /**
+     * 阻力系数
+     */
     protected double friction;
 
+    /**
+     * 回弹系数
+     */
     protected double restitution;
 
+    /**
+     * 回弹速度
+     */
     protected double restitutionVelocity;
 
     public PhysicsBody(AbstractShape shape) {
@@ -145,7 +157,7 @@ public class PhysicsBody {
         if (this.linearDamping != 0.0) {
             // Because DEFAULT_LINEAR_DAMPING is 0.0 apply linear damping only if needed
             double linear = 1.0 - elapsedTime * this.linearDamping;
-            linear = Transform.sandwich(linear, 0.0, 1.0);
+            linear = Interval.sandwich(linear, 0.0, 1.0);
 
             // inline body.velocity.multiply(linear);
             this.linearVelocity.x *= linear;
@@ -154,7 +166,7 @@ public class PhysicsBody {
 
         // apply angular damping
         double angular = 1.0 - elapsedTime * Settings.DEFAULT_ANGULAR_DAMPING;
-        angular = Transform.sandwich(angular, 0.0, 1.0);
+        angular = Interval.sandwich(angular, 0.0, 1.0);
 
         this.angularVelocity *= angular;
     }

@@ -20,6 +20,9 @@ public abstract class AbstractShape implements Convex {
      */
     protected Transform transform;
 
+    /**
+     * 物体缩放比率
+     */
     protected int rate = 1;
 
     protected AbstractShape(Transform transform) {
@@ -90,10 +93,20 @@ public abstract class AbstractShape implements Convex {
         transform.translate(vector2);
     }
 
-    public Mass createMass(double density) {
-        return null;
-    }
+    /**
+     * 根据所给物体密度获得物体质量
+     *
+     * @param density 物体密度
+     * @return Mass
+     */
+    public abstract Mass createMass(double density);
 
+    /**
+     * 获得本地坐标系下的点坐标
+     *
+     * @param worldPoint 世界坐标系下的坐标
+     * @return Vector2
+     */
     public Vector2 getLocalPoint(Vector2 worldPoint) {
         return this.transform.getInverseTransformed(worldPoint);
     }

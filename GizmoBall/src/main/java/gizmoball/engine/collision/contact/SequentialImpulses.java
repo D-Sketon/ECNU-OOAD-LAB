@@ -1,6 +1,7 @@
 package gizmoball.engine.collision.contact;
 
 import gizmoball.engine.Settings;
+import gizmoball.engine.collision.Interval;
 import gizmoball.engine.collision.Matrix22;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
@@ -386,7 +387,7 @@ public class SequentialImpulses {
                 minSeparation = Math.min(minSeparation, penetration);
 
                 // allow for penetration to avoid jitter
-                double cp = baumgarte * Transform.sandwich(penetration + allowedPenetration, -maxLinearCorrection, 0.0);
+                double cp = baumgarte * Interval.sandwich(penetration + allowedPenetration, -maxLinearCorrection, 0.0);
 
                 // compute the position impulse
                 double K = this.getMassCoefficient(contactConstraint, r1, r2, N);

@@ -2,14 +2,14 @@ package gizmoball.engine.collision.feature;
 
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.Circle;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * 点的碰撞特征（基于{@link Circle}）
  */
 @Data
-@NoArgsConstructor
+@AllArgsConstructor
 public class PointFeature extends Feature {
 
     /**
@@ -17,7 +17,4 @@ public class PointFeature extends Feature {
      */
     private Vector2 point;
 
-    public PointFeature(Vector2 point) {
-        this.point = point;
-    }
 }

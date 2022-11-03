@@ -3,6 +3,9 @@ package gizmoball.engine.geometry.shape;
 import gizmoball.engine.collision.feature.Feature;
 import gizmoball.engine.geometry.Vector2;
 
+/**
+ * 凸多边形的接口
+ */
 public interface Convex {
 
     /**

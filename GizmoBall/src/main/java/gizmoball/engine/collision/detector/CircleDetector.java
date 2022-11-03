@@ -14,8 +14,9 @@ public class CircleDetector {
      *
      * @param circle1     待测圆
      * @param circle2     待测圆
+     * @param shape       近似图形
      * @param penetration 穿透信息
-     * @return boolean
+     * @return DetectorResult
      */
     public static DetectorResult detect(Circle circle1, Circle circle2, AbstractShape shape, Penetration penetration) {
         Transform transform1 = circle1.getTransform();
@@ -33,9 +34,9 @@ public class CircleDetector {
                 penetration.getNormal().x = v.x;
                 penetration.getNormal().y = v.y;
             }
-            return new DetectorResult(true,shape);
+            return new DetectorResult(true, shape);
         }
-        return new DetectorResult(false,shape);
+        return new DetectorResult(false, shape);
     }
 
 }

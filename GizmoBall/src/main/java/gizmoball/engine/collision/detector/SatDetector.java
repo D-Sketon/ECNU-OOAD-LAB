@@ -16,18 +16,26 @@ public class SatDetector {
      *
      * @param shape1      待测图形
      * @param shape2      待测图形
+     * @param shape       近似图形
      * @param penetration 穿透信息
-     * @return boolean
+     * @return DetectorResult
      */
     public static DetectorResult detect(AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Penetration penetration) {
-        // 如果两个都是圆则直接调用CircleDetector
+        if (shape1 instanceof QuarterCircle && shape2 instanceof QuarterCircle) {
+            // 不考虑扇形和扇形的碰撞
+            return new DetectorResult(false, null);
+        }
         if (shape1 instanceof Circle && shape2 instanceof Circle) {
+            // 圆形和圆形碰撞
             return CircleDetector.detect((Circle) shape1, (Circle) shape2, shape, penetration);
         } else if (shape1 instanceof Circle && shape2 instanceof QuarterCircle) {
+            // 圆形和扇形碰撞
             return QuarterCirCleDetector.detect((QuarterCircle) shape2, (Circle) shape1, penetration, true);
         } else if (shape2 instanceof Circle && shape1 instanceof QuarterCircle) {
+            // 扇形和圆形碰撞
             return QuarterCirCleDetector.detect((QuarterCircle) shape1, (Circle) shape2, penetration, false);
         } else if (shape1 instanceof QuarterCircle) {
+            // 扇形和多边形碰撞
             QuarterCircle shape11 = (QuarterCircle) shape1;
             Vector2[] vertices = shape11.getVertices();
             Polygon polygon = new Polygon(shape11.getTransform().copy(),
@@ -37,19 +45,20 @@ public class SatDetector {
                             new Vector2(shape11.getRadius() / Math.sqrt(2), shape11.getRadius() / Math.sqrt(2))});
             return detect(polygon, shape2, polygon, penetration);
         } else if (shape2 instanceof QuarterCircle) {
+            // 多边形和扇形碰撞
             QuarterCircle shape21 = (QuarterCircle) shape2;
             Vector2[] vertices = shape21.getVertices();
             Polygon polygon = new Polygon(shape21.getTransform().copy(),
                     new Vector2[]{vertices[0],
-                    vertices[1],
-                    vertices[2],
-                    new Vector2(shape21.getRadius() / Math.sqrt(2), shape21.getRadius() / Math.sqrt(2))});
+                            vertices[1],
+                            vertices[2],
+                            new Vector2(shape21.getRadius() / Math.sqrt(2), shape21.getRadius() / Math.sqrt(2))});
             return detect(shape1, polygon, polygon, penetration);
         }
-        // 获得焦点数组
+        // 多边形和多边形碰撞
         Vector2[] foci1 = shape1.getFoci();
         Vector2[] foci2 = shape2.getFoci();
-        // 获得分离轴数组
+
         Vector2[] axes1 = shape1.getAxes(foci2);
         Vector2[] axes2 = shape2.getAxes(foci1);
 

@@ -13,8 +13,14 @@ import lombok.Setter;
 @Setter
 public class QuarterCircle extends AbstractShape {
 
+    /**
+     * 半径
+     */
     private double radius;
 
+    /**
+     * 顶点数组
+     */
     private Vector2[] vertices;
 
     public QuarterCircle(double radius) {

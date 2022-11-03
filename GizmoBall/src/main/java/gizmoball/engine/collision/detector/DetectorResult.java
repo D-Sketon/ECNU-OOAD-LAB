@@ -8,7 +8,13 @@ import lombok.Data;
 @AllArgsConstructor
 public class DetectorResult {
 
+    /**
+     * 是否发生碰撞
+     */
     private boolean hasCollision;
 
+    /**
+     * 近似图形（适用于扇形）
+     */
     private AbstractShape approximateShape;
 }

@@ -50,6 +50,11 @@ public class AABB {
         this.maxY += y;
     }
 
+    /**
+     * 按给定{@link Vector2}平移
+     *
+     * @param vector2 给定平移{@link Vector2}
+     */
     public void translate(Vector2 vector2) {
         this.translate(vector2.x, vector2.y);
     }

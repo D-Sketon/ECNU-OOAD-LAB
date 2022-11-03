@@ -27,5 +27,13 @@ public class Pipe extends Rectangle{
         VERTICAL
     };
 
+    @Override
+
+
+    public void rotate(double theta, double x, double y) {
+        transform.rotate(theta, x, y);
+        this.pipeDirection = this.pipeDirection == PipeDirection.TRANSVERSE ? PipeDirection.VERTICAL : PipeDirection.TRANSVERSE;
+    }
+
 
 }

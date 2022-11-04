@@ -97,7 +97,7 @@ public class World {
         this.collisionDetector = new BasicCollisionDetector();
         this.solver = new SequentialImpulses();
 
-        BallListener ballListener = new BallListener(balls, gravity);
+        BallListener ballListener = new BallListener(balls);
         BlackholeListener blackholeListener = new BlackholeListener(balls, blackholes);
         PipeListener pipeListener = new PipeListener(balls, pipes);
         ObstacleListener obstacleListener = new ObstacleListener(balls, obstacles);
@@ -122,18 +122,25 @@ public class World {
     }
 
     public void removeBodies(PhysicsBody... bodies) {
+        this.blackholes.removeAll(Arrays.asList(bodies));
+        this.pipes.removeAll(Arrays.asList(bodies));
+        this.balls.removeAll(Arrays.asList(bodies));
         this.obstacles.removeAll(Arrays.asList(bodies));
     }
 
     public List<PhysicsBody> getBodies() {
-        return this.obstacles;
+        List<PhysicsBody> bodies = new ArrayList<>();
+        bodies.addAll(obstacles);
+        bodies.addAll(balls);
+        bodies.addAll(blackholes);
+        bodies.addAll(pipes);
+        return bodies;
     }
 
     /**
      * 游戏更新以tick为单位，每个tick更新一次
      */
     public void tick() {
-        // -- tickListener.before
         List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> pairs = new ArrayList<>();
         // 碰撞检测，返回碰撞检测
         for (TickListener listener : tickListeners) {
@@ -141,18 +148,7 @@ public class World {
             pairs.addAll(pair);
         }
         List<ContactConstraint> contactConstraints = collisionDetector.preLocalSolve(pairs);
-        collisionDetector.LocalSolve(solver, gravity, contactConstraints, obstacles);
-
-
-        // -- triggerListener.before
-
-        // 更新物体状态
-        // 1. 根据碰撞信息更新物体速度
-        // 2. 根据物体速度更新物体位置
-
-        // -- triggerListener.after
-
-        // -- tickListener.after
+        collisionDetector.LocalSolve(solver, gravity, contactConstraints, balls);
     }
 
 

@@ -125,6 +125,8 @@ public class GridWorld extends World {
         bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
         PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
         bottomBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        bottomBorder.setRestitution(0.95);
+        bottomBorder.setFriction(0.5);
         addBodies(bottomBorder);
 
         Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
@@ -132,6 +134,8 @@ public class GridWorld extends World {
         topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
         PhysicsBody topBorder = new PhysicsBody(topRectangle);
         topBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        topBorder.setRestitution(0.95);
+        topBorder.setFriction(0.5);
         addBodies(topBorder);
 
         Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
@@ -139,6 +143,8 @@ public class GridWorld extends World {
         leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
         PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
         leftBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        leftBorder.setRestitution(0.95);
+        leftBorder.setFriction(0.5);
         addBodies(leftBorder);
 
         Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
@@ -146,6 +152,8 @@ public class GridWorld extends World {
         rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
         PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
         rightBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        rightBorder.setRestitution(0.95);
+        rightBorder.setFriction(0.5);
         addBodies(rightBorder);
     }
 

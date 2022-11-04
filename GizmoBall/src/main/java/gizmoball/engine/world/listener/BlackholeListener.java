@@ -24,15 +24,15 @@ public class BlackholeListener implements TickListener{
      */
     private final BasicCollisionDetector basicCollisionDetector = new BasicCollisionDetector(){
         @Override
-        public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> listeners) {
+        public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> filters) {
             List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds = new ArrayList<>();
-            for(PhysicsBody physicsBody : bodies1){
-                Ball ball = (Ball) physicsBody.getShape();
-                for(PhysicsBody physicsBody1 : bodies2){
-                    Blackhole blackhole = (Blackhole) physicsBody.getShape();
-                    DetectorResult detect = CircleDetector.detect(blackhole, ball, null, null);
+            for(PhysicsBody body1 : bodies1){
+                Ball ball = (Ball) body1.getShape();
+                for(PhysicsBody body2 : bodies2){
+                    Blackhole blackhole = (Blackhole) body2.getShape();
+                    DetectorResult detect = CircleDetector.detect(ball, blackhole, null, null);
                     if(detect.isHasCollision()){
-                        manifolds.add(new Pair<>(null, new Pair<>(physicsBody1, physicsBody)));
+                        manifolds.add(new Pair<>(null, new Pair<>(body1, body2)));
                     }
                 }
             }
@@ -59,7 +59,7 @@ public class BlackholeListener implements TickListener{
             balls.remove(ball);
         }
 
-        return null;
+        return new ArrayList<>();
     }
 
 

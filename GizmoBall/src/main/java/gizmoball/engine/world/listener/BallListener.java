@@ -24,8 +24,6 @@ public class BallListener implements TickListener{
 
     private List<PhysicsBody> balls;
 
-    private final Vector2 gravity;
-
     /**
      * 重写碰撞检查类
      */
@@ -69,9 +67,8 @@ public class BallListener implements TickListener{
     };
 
 
-    public BallListener(List<PhysicsBody> balls, Vector2 gravity) {
+    public BallListener(List<PhysicsBody> balls) {
         this.balls = balls;
-        this.gravity = gravity;
     }
 
     @Override

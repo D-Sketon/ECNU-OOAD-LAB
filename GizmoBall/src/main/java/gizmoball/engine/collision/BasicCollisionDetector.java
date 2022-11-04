@@ -24,10 +24,8 @@ public class BasicCollisionDetector implements CollisionDetector {
     public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> filters) {
         List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds = new ArrayList<>();
         ManifoldSolver manifoldSolver = new ManifoldSolver();
-        for (PhysicsBody body : bodies1) {
-            for (PhysicsBody physicsBody : bodies2) {
-                PhysicsBody body1 = body;
-                PhysicsBody body2 = physicsBody;
+        for (PhysicsBody body1 : bodies1) {
+            for (PhysicsBody body2 : bodies2) {
                 AbstractShape shape1 = body1.getShape();
                 AbstractShape shape2 = body2.getShape();
                 Manifold manifold = this.processDetect(manifoldSolver, shape1, shape2, filters);
@@ -95,4 +93,5 @@ public class BasicCollisionDetector implements CollisionDetector {
             solver.solvePositionConstraints(constraints);
         }
     }
+
 }

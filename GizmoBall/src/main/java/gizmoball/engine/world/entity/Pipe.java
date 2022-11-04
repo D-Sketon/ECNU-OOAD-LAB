@@ -1,13 +1,14 @@
-package gizmoball.engine.geometry.shape;
+package gizmoball.engine.world.entity;
 
 import gizmoball.engine.geometry.Transform;
+import gizmoball.engine.geometry.shape.Rectangle;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Pipe extends Rectangle{
+public class Pipe extends Rectangle {
 
     private PipeDirection pipeDirection;
 

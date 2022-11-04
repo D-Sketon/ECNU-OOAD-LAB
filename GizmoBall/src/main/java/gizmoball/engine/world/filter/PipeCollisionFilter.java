@@ -1,12 +1,12 @@
-package gizmoball.engine.world.listener;
+package gizmoball.engine.world.filter;
 
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.Pipe;
+import gizmoball.engine.world.entity.Pipe;
 
-public class PipeCollisionListener implements CollisionListener{
+public class PipeCollisionFilter implements CollisionFilter {
     @Override
     public boolean isAllowedBroadPhase(AbstractShape shape1, AbstractShape shape2) {
         return true;

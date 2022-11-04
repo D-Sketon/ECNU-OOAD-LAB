@@ -3,17 +3,15 @@ package gizmoball.engine.world.entity;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.shape.Circle;
 
-public class Blackhole extends Circle {
-
-
-    public Blackhole() {
+public class Ball extends Circle {
+    public Ball() {
     }
 
-    public Blackhole(double radius) {
+    public Ball(double radius) {
         super(radius);
     }
 
-    public Blackhole(double radius, Transform transform) {
+    public Ball(double radius, Transform transform) {
         super(radius, transform);
     }
 }

@@ -1,9 +1,9 @@
-package gizmoball.engine.world.listener;
+package gizmoball.engine.world.filter;
 
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.shape.AbstractShape;
 
-public interface CollisionListener {
+public interface CollisionFilter {
 
     boolean isAllowedBroadPhase(AbstractShape shape1, AbstractShape shape2);
 

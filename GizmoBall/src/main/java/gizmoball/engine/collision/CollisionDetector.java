@@ -5,7 +5,7 @@ import gizmoball.engine.collision.contact.SequentialImpulses;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.listener.CollisionListener;
+import gizmoball.engine.world.filter.CollisionFilter;
 import javafx.util.Pair;
 
 import java.util.List;
@@ -15,10 +15,11 @@ public interface CollisionDetector {
     /**
      * 根据物体列表执行narrowPhase并获得碰撞流形
      *
-     * @param bodies 物体列表
+     * @param bodies1 物体列表1
+     * @param bodies2 物体列表2
      * @return List
      */
-    List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies, List<CollisionListener> listeners);
+    public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> listeners);
 
     /**
      * 本地求解前使用碰撞流形计算出接触约束

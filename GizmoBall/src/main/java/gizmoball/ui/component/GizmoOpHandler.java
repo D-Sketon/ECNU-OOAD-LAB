@@ -51,12 +51,7 @@ public class GizmoOpHandler {
      * @param gizmoBody /
      */
     public boolean addGizmo(PhysicsBody gizmoBody) {
-        AABB aabb = gizmoBody.getShape().createAABB();
-        if(world.checkOverlay(aabb)){
-            throw new IllegalArgumentException("物件重叠");
-        }
-        world.addBodies(gizmoBody);
-        world.setGrid(aabb, gizmoBody);
+        world.addBodyToGrid(gizmoBody);
         return true;
     }
 

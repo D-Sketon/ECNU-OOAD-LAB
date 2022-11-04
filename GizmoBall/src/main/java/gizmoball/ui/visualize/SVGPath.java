@@ -1,4 +1,4 @@
-package gizmoball.ui.component;
+package gizmoball.ui.visualize;
 
 import javafx.scene.paint.Paint;
 import lombok.AllArgsConstructor;

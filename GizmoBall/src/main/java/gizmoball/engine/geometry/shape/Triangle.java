@@ -9,6 +9,14 @@ import lombok.Setter;
 @Setter
 public class Triangle extends Polygon {
 
+    /**
+     * 反序列化调用
+     */
+    @Deprecated
+    public Triangle() {
+        this(null);
+    }
+
     public Triangle(Vector2[] vertices) {
         this(vertices, new Transform());
     }

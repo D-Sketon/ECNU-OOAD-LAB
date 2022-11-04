@@ -17,6 +17,14 @@ public class QuarterCircle extends AbstractShape {
 
     private Vector2[] vertices;
 
+    /**
+     * 反序列化调用
+     */
+    @Deprecated
+    public QuarterCircle() {
+        this(1);
+    }
+
     public QuarterCircle(double radius) {
         this(new Transform(), radius);
     }

@@ -15,6 +15,14 @@ public class Circle extends AbstractShape {
 
     private double radius;
 
+    /**
+     * 反序列化调用
+     */
+    @Deprecated
+    public Circle() {
+        this(1);
+    }
+
     public Circle(double radius) {
         this(radius, new Transform());
     }

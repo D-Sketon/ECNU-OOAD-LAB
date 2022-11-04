@@ -1,5 +1,8 @@
 package gizmoball.engine.geometry.shape;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gizmoball.engine.collision.Interval;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
@@ -13,6 +16,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class", visible = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractShape implements Convex {
 
     /**
@@ -21,6 +26,10 @@ public abstract class AbstractShape implements Convex {
     protected Transform transform;
 
     protected int rate = 1;
+
+    protected AbstractShape() {
+        this(new Transform());
+    }
 
     protected AbstractShape(Transform transform) {
         this.transform = transform;

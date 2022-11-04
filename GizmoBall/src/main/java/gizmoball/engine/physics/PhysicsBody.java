@@ -1,5 +1,7 @@
 package gizmoball.engine.physics;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gizmoball.engine.Settings;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Data
 @RequiredArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class", visible = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PhysicsBody {
 
     /**
@@ -73,6 +77,11 @@ public class PhysicsBody {
     protected double restitution;
 
     protected double restitutionVelocity;
+
+    // 反序列化调用
+    public PhysicsBody(){
+        this(null);
+    }
 
     public PhysicsBody(AbstractShape shape) {
         this.mass = new Mass();

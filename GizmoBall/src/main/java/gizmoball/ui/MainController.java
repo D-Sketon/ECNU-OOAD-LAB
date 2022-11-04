@@ -1,16 +1,14 @@
 package gizmoball.ui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gizmoball.engine.geometry.AABB;
-import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.AbstractShape;
-import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.Polygon;
-import gizmoball.engine.geometry.shape.Rectangle;
-import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import gizmoball.ui.component.*;
+import gizmoball.ui.file.PersistentUtil;
+import gizmoball.ui.visualize.DefaultCanvasRenderer;
+import gizmoball.ui.visualize.ImagePhysicsBody;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +28,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -38,8 +38,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
-
+@Slf4j
 public class MainController extends Application implements Initializable {
 
     /**
@@ -190,6 +191,8 @@ public class MainController extends Application implements Initializable {
             }
         };
 
+        AtomicReference<String> physicsBodiesSnapshot = new AtomicReference<>();
+
         // 开始游戏
         final ScheduledFuture<?>[] scheduledFuture = new ScheduledFuture<?>[1];
         ImageLabelComponent play = gameOps[0];
@@ -200,6 +203,7 @@ public class MainController extends Application implements Initializable {
             }
             selectedBody = null;
             inDesign = false;
+            world.snapshot();
             scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 50, TimeUnit.MILLISECONDS);
         });
         play.getImageView().setCursor(Cursor.HAND);
@@ -212,6 +216,8 @@ public class MainController extends Application implements Initializable {
             }
             inDesign = true;
             scheduledFuture[0].cancel(true);
+            world.restore();
+            drawGizmo(gizmoCanvas.getGraphicsContext2D());
         });
         design.getImageView().setCursor(Cursor.HAND);
     }
@@ -262,37 +268,6 @@ public class MainController extends Application implements Initializable {
         world = new GridWorld(World.SUN_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
         preferredSize = new Vector2(world.getGridSize(), world.getGridSize());
         gizmoOpHandler = new GizmoOpHandler(world);
-
-        {
-            // init border
-            Rectangle bottomRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
-            bottomRectangle.getTransform().setX(bottomRectangle.getHalfWidth());
-            bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
-            PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
-            bottomBorder.setMass(new Mass(new Vector2(),0.0,0.0));
-            world.addBodies(bottomBorder);
-
-            Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
-            topRectangle.getTransform().setX(topRectangle.getHalfWidth());
-            topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
-            PhysicsBody topBorder = new PhysicsBody(topRectangle);
-            topBorder.setMass(new Mass(new Vector2(),0.0,0.0));
-            world.addBodies(topBorder);
-
-            Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
-            leftRectangle.getTransform().setX(-leftRectangle.getHalfWidth());
-            leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
-            PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
-            leftBorder.setMass(new Mass(new Vector2(),0.0,0.0));
-            world.addBodies(leftBorder);
-
-            Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
-            rightRectangle.getTransform().setX(worldWidth + rightRectangle.getHalfWidth());
-            rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
-            PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
-            rightBorder.setMass(new Mass(new Vector2(),0.0,0.0));
-            world.addBodies(rightBorder);
-        }
     }
 
     @Override
@@ -378,7 +353,7 @@ public class MainController extends Application implements Initializable {
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {
-
+                // TODO Toast
             }
 
             drawGizmo(gc);
@@ -407,78 +382,18 @@ public class MainController extends Application implements Initializable {
         }
     }
 
+    private static final DefaultCanvasRenderer canvasRenderer = DefaultCanvasRenderer.INSTANCE;
+
     private void drawGizmo(GraphicsContext gc) {
         clearCanvas(gc);
         drawGrid(gc);
 
         List<PhysicsBody> bodies = world.getBodies();
         for (PhysicsBody physicsBody : bodies) {
-            AbstractShape shape = physicsBody.getShape();
-            Transform transform = shape.getTransform();
             if (physicsBody instanceof ImagePhysicsBody) {
-                ImagePhysicsBody body = (ImagePhysicsBody) physicsBody;
-                int scale = body.getShape().getRate();
-                int gridSize = world.getGridSize();
-                AABB aabb = body.getShape().createAABB();
-
-
-                SVGNode svgNode = body.getSvgNode();
-                if(svgNode != null){
-                    gc.save();
-
-
-                    double sx = gridSize / svgNode.getWidth();
-                    double sy = gridSize / svgNode.getHeight();
-                    double why1_5 = 1.0 / 5;
-                    Affine affine = new Affine();
-                    affine.appendRotation(transform.getAngle(), transform.x, transform.y); // TODO center
-                    affine.appendTranslation(transform.getX() - gridSize / 2.0 * scale,
-                            transform.getY() - gridSize / 2.0 * scale + aabb.maxY - aabb.minY); // aabb.maxY - aabb.minY为了处理图片上下翻转
-                    affine.appendScale(sx * scale * why1_5 , -sy * scale * why1_5);
-                    gc.transform(affine);
-
-                    gc.beginPath();
-                    for (SVGPath svgPath : svgNode.getSvgPaths()) {
-                        gc.appendSVGPath(svgPath.getPath());
-                        gc.setFill(svgPath.getFill());
-                    }
-                    gc.fill();
-                    gc.closePath();
-
-                    gc.restore();
-                    continue;
-                }
-
-                gc.save();
-                Affine affine = new Affine();
-                affine.appendRotation(transform.getAngle(), transform.x, transform.y);
-                gc.transform(affine);
-                gc.drawImage(body.getImage(),
-                        transform.getX() - gridSize / 2.0 * scale,
-                        transform.getY() - gridSize / 2.0 * scale,
-                        gridSize * scale, gridSize * scale);
-                gc.restore();
-
-            } else if (shape instanceof Polygon) {
-                // 画多边形
-                Polygon polygon = (Polygon) shape;
-                gc.setFill(Color.RED);
-
-                Vector2[] vertices = polygon.getVertices();
-                double[] xpoints = new double[vertices.length];
-                double[] ypoints = new double[vertices.length];
-                for (int i = 0; i < vertices.length; i++) {
-                    Vector2 transformed = transform.getTransformed(vertices[i]);
-                    xpoints[i] = transformed.x;
-                    ypoints[i] = transformed.y;
-                }
-                gc.fillPolygon(xpoints, ypoints, vertices.length);
-            } else if (shape instanceof Circle) {
-                Circle circle = (Circle) shape;
-                gc.setFill(Color.BLUE);
-                gc.fillOval(circle.getTransform().getX() - circle.getRadius(),
-                        circle.getTransform().getY() - circle.getRadius(),
-                        circle.getRadius() * 2, circle.getRadius() * 2);
+                ((ImagePhysicsBody) physicsBody).drawToCanvas(gc);
+            } else {
+                canvasRenderer.drawToCanvas(gc, physicsBody);
             }
         }
     }

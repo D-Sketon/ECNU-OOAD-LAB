@@ -45,6 +45,14 @@ public class Rectangle extends Polygon {
         this(halfWidth, halfHeight, new Transform());
     }
 
+    /**
+     * 反序列化调用
+     */
+    @Deprecated
+    public Rectangle() {
+        this(0.0, 0.0);
+    }
+
     @Override
     public void zoom(int rate) {
         super.zoom(rate);

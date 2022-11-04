@@ -1,4 +1,4 @@
-package gizmoball.ui.component;
+package gizmoball.ui.visualize;
 
 import javafx.scene.paint.Color;
 import lombok.Data;
@@ -34,6 +34,7 @@ public class SVGNode {
             SVGNode svg = new SVGNode();
             svg.svgPaths = new ArrayList<>();
             SVGDocument document = FACTORY.createSVGDocument(SVG_NAMESPACE, in);
+            // 此处只解析iconfont下载的svg文件
             SVGSVGElement root = document.getRootElement();
             svg.height = Double.parseDouble(root.getAttribute("width"));
             svg.width = Double.parseDouble(root.getAttribute("height"));

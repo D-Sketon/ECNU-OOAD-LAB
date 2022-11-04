@@ -37,6 +37,14 @@ public class ImageLabelComponent {
         this.imageHeight = imageHeight;
     }
 
+    public ImageLabelComponent(Image image, String labelText) {
+        this.image = image;
+        this.labelText = labelText;
+        this.imageWidth = image.getWidth();
+        this.imageHeight = image.getHeight();
+    }
+
+
     public VBox createVBox() {
         vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);

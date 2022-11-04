@@ -3,6 +3,7 @@ package gizmoball.engine.collision.detector;
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
 
 public class CircleDetector {
@@ -13,10 +14,11 @@ public class CircleDetector {
      *
      * @param circle1     待测圆
      * @param circle2     待测圆
+     * @param shape       近似图形
      * @param penetration 穿透信息
-     * @return boolean
+     * @return DetectorResult
      */
-    public static boolean detect(Circle circle1, Circle circle2, Penetration penetration) {
+    public static DetectorResult detect(Circle circle1, Circle circle2, AbstractShape shape, Penetration penetration) {
         Transform transform1 = circle1.getTransform();
         Transform transform2 = circle2.getTransform();
         // 构造圆心坐标
@@ -32,9 +34,9 @@ public class CircleDetector {
                 penetration.getNormal().x = v.x;
                 penetration.getNormal().y = v.y;
             }
-            return true;
+            return new DetectorResult(true, shape);
         }
-        return false;
+        return new DetectorResult(false, shape);
     }
 
 }

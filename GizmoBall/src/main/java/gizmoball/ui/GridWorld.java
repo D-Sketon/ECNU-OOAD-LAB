@@ -8,6 +8,7 @@ import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import gizmoball.ui.file.PersistentUtil;
+import gizmoball.engine.world.listener.CollisionListener;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Getter
 @Slf4j
@@ -35,15 +37,15 @@ public class GridWorld extends World {
     protected int gridSize;
 
     public GridWorld(Vector2 gravity) {
-        this(gravity, 600, 600);
+        this(gravity, 600, 600, new ArrayList<>());
     }
 
-    public GridWorld(Vector2 gravity, int width, int height) {
-        this(gravity, width, height, 30);
+    public GridWorld(Vector2 gravity, int width, int height, List<CollisionListener> listeners) {
+        this(gravity, width, height, 30, listeners);
     }
 
-    public GridWorld(Vector2 gravity, int width, int height, int gridSize) {
-        super(gravity);
+    public GridWorld(Vector2 gravity, int width, int height, int gridSize, List<CollisionListener> listeners) {
+        super(gravity, listeners);
         this.gridSize = gridSize;
         boundaryAABB = new AABB(0, 0, width, height);
         gizmoGridBodies = new PhysicsBody[(int) (width / gridSize)][(int) (height / gridSize)];

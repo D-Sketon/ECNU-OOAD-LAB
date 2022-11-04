@@ -10,10 +10,12 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.Mass;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
+@ToString(callSuper = true)
 @NoArgsConstructor
-public abstract class Polygon extends AbstractShape {
+public class Polygon extends AbstractShape {
 
     /**
      * 多边形顶点数组
@@ -25,14 +27,35 @@ public abstract class Polygon extends AbstractShape {
      */
     protected Vector2[] normals;
 
-    protected Polygon(Transform transform) {
-        super(transform);
+    public Polygon(Transform transform, Vector2[] vertices) {
+        this(transform, vertices, getCounterClockwiseEdgeNormals(vertices));
     }
 
-    protected Polygon(Transform transform, Vector2[] vertices, Vector2[] normals) {
+    public Polygon(Vector2[] vertices) {
+        this(new Transform(), vertices, getCounterClockwiseEdgeNormals(vertices));
+    }
+
+    public Polygon(Transform transform, Vector2[] vertices, Vector2[] normals) {
         super(transform);
         this.vertices = vertices;
         this.normals = normals;
+    }
+
+    public static Vector2[] getCounterClockwiseEdgeNormals(Vector2[] vertices) {
+        if (vertices == null) return null;
+
+        int size = vertices.length;
+        if (size == 0) return null;
+
+        Vector2[] normals = new Vector2[size];
+        for (int i = 0; i < size; i++) {
+            Vector2 p1 = vertices[i];
+            Vector2 p2 = (i + 1 == size) ? vertices[0] : vertices[i + 1];
+            Vector2 n = p1.to(p2).left();
+            n.normalize();
+            normals[i] = n;
+        }
+        return normals;
     }
 
     @Override
@@ -134,13 +157,13 @@ public abstract class Polygon extends AbstractShape {
 
             Vector2 left = transform.getTransformed(this.vertices[l]);
             PointFeature vl = new PointFeature(left);
-            return new EdgeFeature(vm, vl, vm, maximum.to(left), index + 1);
+            return new EdgeFeature(vm, vl, vm, maximum.to(left));
         } else {
             int r = (index == 0) ? count - 1 : index - 1;
 
             Vector2 right = transform.getTransformed(this.vertices[r]);
             PointFeature vr = new PointFeature(right);
-            return new EdgeFeature(vr, vm, vm, right.to(maximum), index);
+            return new EdgeFeature(vr, vm, vm, right.to(maximum));
         }
     }
 
@@ -181,8 +204,8 @@ public abstract class Polygon extends AbstractShape {
         int n = this.vertices.length;
         // get the average center
         Vector2 ac = new Vector2();
-        for (int i = 0; i < n; i++) {
-            ac.add(this.vertices[i]);
+        for (Vector2 vertex : this.vertices) {
+            ac.add(vertex);
         }
         ac.divide(n);
         // loop through the vertices using two variables to avoid branches in the loop

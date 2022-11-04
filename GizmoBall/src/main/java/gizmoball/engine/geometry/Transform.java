@@ -1,7 +1,9 @@
 package gizmoball.engine.geometry;
 
+import gizmoball.engine.collision.Interval;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 /**
@@ -9,6 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class Transform {
 
     /**
@@ -42,6 +45,11 @@ public class Transform {
         this.y = y;
     }
 
+    /**
+     * 基于本{@link Transform}复制一个新{@link Transform}
+     *
+     * @return Transform
+     */
     public Transform copy() {
         return new Transform(this.cost, this.sint, this.x, this.y);
     }
@@ -57,8 +65,8 @@ public class Transform {
     public void rotate(double c, double s, double x, double y) {
         double cosT = this.cost;
         double sinT = this.sint;
-        this.cost = Transform.sandwich(c * cosT - s * sinT, -1.0, 1.0);
-        this.sint = Transform.sandwich(s * cosT + c * sinT, -1.0, 1.0);
+        this.cost = Interval.sandwich(c * cosT - s * sinT, -1.0, 1.0);
+        this.sint = Interval.sandwich(s * cosT + c * sinT, -1.0, 1.0);
         double cx = this.x - x;
         double cy = this.y - y;
         this.x = c * cx - s * cy + x;
@@ -96,19 +104,6 @@ public class Transform {
         this.translate(vector2.x, vector2.y);
     }
 
-
-    /**
-     * 夹逼，消除double误差
-     *
-     * @param value 原值
-     * @param left  下界
-     * @param right 上界
-     * @return double
-     */
-    public static double sandwich(double value, double left, double right) {
-        return (value <= right && value >= left) ? value : (value < left ? left : right);
-    }
-
     /**
      * 对给定{@link Vector2}的的x坐标进行变换
      *
@@ -132,6 +127,19 @@ public class Transform {
     /**
      * 对给定{@link Vector2}的的x和y坐标进行旋转平移变换
      *
+     * @param vector 变换{@link Vector2}
+     */
+    public void transform(Vector2 vector) {
+        double x = vector.x;
+        double y = vector.y;
+        vector.x = this.cost * x - this.sint * y + this.x;
+        vector.y = this.sint * x + this.cost * y + this.y;
+    }
+
+
+    /**
+     * 对给定{@link Vector2}的的x和y坐标进行旋转平移变换，返回变换后的新向量
+     *
      * @param vector 待变换{@link Vector2}
      * @return Vector2
      */
@@ -145,30 +153,11 @@ public class Transform {
     }
 
     /**
-     * Transforms the given {@link Vector2} only by the rotation and returns the
-     * result in the given {@link Vector2}.
+     * 对给定{@link Vector2}的的x和y坐标进行逆旋转平移变换，返回变换后的新向量
      *
-     * @param vector the {@link Vector2} to transform
+     * @param vector 待变换{@link Vector2}
+     * @return Vector
      */
-    public void transformR(Vector2 vector) {
-        double x = vector.x;
-        double y = vector.y;
-        vector.x = this.cost * x - this.sint * y;
-        vector.y = this.sint * x + this.cost * y;
-    }
-
-    /**
-     * 对给定{@link Vector2}的的x和y坐标进行旋转平移变换
-     *
-     * @param vector 变换{@link Vector2}
-     */
-    public void transform(Vector2 vector) {
-        double x = vector.x;
-        double y = vector.y;
-        vector.x = this.cost * x - this.sint * y + this.x;
-        vector.y = this.sint * x + this.cost * y + this.y;
-    }
-
     public Vector2 getInverseTransformed(Vector2 vector) {
         Vector2 tv = new Vector2();
         double tx = vector.x - this.x;
@@ -179,7 +168,7 @@ public class Transform {
     }
 
     /**
-     * 对给定{@link Vector2}的的x和y坐标进行旋转变换
+     * 对给定{@link Vector2}的的x和y坐标进行旋转变换，返回变换后的新向量
      *
      * @param vector 待变换{@link Vector2}
      * @return Vector2
@@ -192,6 +181,19 @@ public class Transform {
         v.y = this.sint * x + this.cost * y;
         return v;
     }
+
+    /**
+     * 对给定{@link Vector2}的的x和y坐标进行旋转变换
+     *
+     * @param vector 待变换{@link Vector2}
+     */
+    public void transformR(Vector2 vector) {
+        double x = vector.x;
+        double y = vector.y;
+        vector.x = this.cost * x - this.sint * y;
+        vector.y = this.sint * x + this.cost * y;
+    }
+
 
     /**
      * 对给定{@link Vector2}的的x和y坐标进行旋转逆变换

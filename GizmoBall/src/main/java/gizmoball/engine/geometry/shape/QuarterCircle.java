@@ -13,8 +13,14 @@ import lombok.Setter;
 @Setter
 public class QuarterCircle extends AbstractShape {
 
+    /**
+     * 半径
+     */
     private double radius;
 
+    /**
+     * 顶点数组
+     */
     private Vector2[] vertices;
 
     /**
@@ -55,7 +61,8 @@ public class QuarterCircle extends AbstractShape {
 
         double mass = density * Math.PI * r2 / 4;
         double inertia = mass * r2 * 0.5;
-        return new Mass(new Vector2(4 * Math.sqrt(2) * radius / 3 / Math.PI - 1, 4 * Math.sqrt(2) * radius / 3 / Math.PI - 1), mass, inertia);
+        return new Mass(new Vector2(4 * Math.sqrt(2) * radius / 3 / Math.PI - radius / 2,
+                4 * Math.sqrt(2) * radius / 3 / Math.PI - radius / 2), mass, inertia);
     }
 
     @Override

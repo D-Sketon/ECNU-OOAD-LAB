@@ -1,12 +1,12 @@
 package gizmoball.ui;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
+import gizmoball.engine.world.listener.CollisionListener;
+import gizmoball.engine.world.listener.PipeCollisionListener;
 import gizmoball.ui.component.*;
-import gizmoball.ui.file.PersistentUtil;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImagePhysicsBody;
 import javafx.application.Application;
@@ -20,25 +20,23 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 public class MainController extends Application implements Initializable {
@@ -90,6 +88,8 @@ public class MainController extends Application implements Initializable {
      * 拖拽传参的key
      */
     private static final DataFormat GIZMO_TYPE_DATA = new DataFormat("gizmo");
+
+    private static final int TICKS_PER_SECOND = 60;
 
     private static Vector2 preferredSize;
 
@@ -173,8 +173,7 @@ public class MainController extends Application implements Initializable {
                     }
                 } catch (Exception e) {
                     // TODO toast
-                    System.err.println(e.getMessage());
-                    e.printStackTrace();
+                    log.error("操作物件失败: {}", e.getMessage());
                 }
             });
         }
@@ -191,8 +190,6 @@ public class MainController extends Application implements Initializable {
             }
         };
 
-        AtomicReference<String> physicsBodiesSnapshot = new AtomicReference<>();
-
         // 开始游戏
         final ScheduledFuture<?>[] scheduledFuture = new ScheduledFuture<?>[1];
         ImageLabelComponent play = gameOps[0];
@@ -204,7 +201,7 @@ public class MainController extends Application implements Initializable {
             selectedBody = null;
             inDesign = false;
             world.snapshot();
-            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, 50, TimeUnit.MILLISECONDS);
+            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / TICKS_PER_SECOND), TimeUnit.MILLISECONDS);
         });
         play.getImageView().setCursor(Cursor.HAND);
         //暂停游戏（设计模式）
@@ -265,7 +262,9 @@ public class MainController extends Application implements Initializable {
     private void initWorld() {
         double worldWidth = gizmoCanvas.getWidth();
         double worldHeight = gizmoCanvas.getHeight();
-        world = new GridWorld(World.SUN_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
+        List<CollisionListener> listeners = new ArrayList<>();
+        listeners.add(new PipeCollisionListener());
+        world = new GridWorld(World.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30, listeners);
         preferredSize = new Vector2(world.getGridSize(), world.getGridSize());
         gizmoOpHandler = new GizmoOpHandler(world);
     }
@@ -276,7 +275,7 @@ public class MainController extends Application implements Initializable {
         // 初始化界面
         initGizmoGridPane();
         initGizmoOpHBox();
-        GraphicsContext gc = initCanvas();
+        initCanvas();
     }
 
 
@@ -347,9 +346,12 @@ public class MainController extends Application implements Initializable {
             // 对齐到网格
             Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
             transformedCenter.add(snapped);
-
             PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            physicsBody.setMass(physicsBody.getShape().createMass(10));
+            physicsBody.setMass(physicsBody.getShape().createMass(1));
+            physicsBody.setRestitution(0.9);
+            physicsBody.setFriction(0.5);
+            physicsBody.setRestitution(0.5);
+            physicsBody.setRestitutionVelocity(2);
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {

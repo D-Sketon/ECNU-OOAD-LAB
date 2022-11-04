@@ -1,14 +1,11 @@
 package gizmoball.ui.component;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.ui.component.DraggableGizmoComponent;
 import gizmoball.ui.visualize.CanvasRenderer;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImageRenderer;
 import gizmoball.ui.visualize.SvgRenderer;
-import javafx.scene.canvas.GraphicsContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -28,7 +25,7 @@ public enum GizmoType{
 
     BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.circleBodyCreator, new SvgRenderer("icons/black_hole.svg")),
 
-    PIPE("gizmo/pipe", DraggableGizmoComponent.rectangleBodyCreator, new SvgRenderer("icons/pipe.svg")),
+    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new SvgRenderer("icons/pipe.svg")),
 
     CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle.png")),
 

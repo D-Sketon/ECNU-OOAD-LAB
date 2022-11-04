@@ -4,12 +4,14 @@ import gizmoball.engine.Settings;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
 import gizmoball.engine.collision.detector.AABBDetector;
+import gizmoball.engine.collision.detector.DetectorResult;
 import gizmoball.engine.collision.detector.SatDetector;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.engine.world.listener.CollisionListener;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -17,8 +19,9 @@ import java.util.List;
 
 public class BasicCollisionDetector implements CollisionDetector {
 
+
     @Override
-    public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> narrowPhase(List<PhysicsBody> bodies) {
+    public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies, List<CollisionListener> listeners) {
         List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds = new ArrayList<>();
         ManifoldSolver manifoldSolver = new ManifoldSolver();
         for (int i = 0; i < bodies.size(); i++) {
@@ -27,19 +30,41 @@ public class BasicCollisionDetector implements CollisionDetector {
                 PhysicsBody body2 = bodies.get(j);
                 AbstractShape shape1 = body1.getShape();
                 AbstractShape shape2 = body2.getShape();
-                if (AABBDetector.detect(shape1, shape2)) {
-                    Penetration penetration = new Penetration();
-                    if (SatDetector.detect(shape1, shape2, penetration)) {
-                        Manifold manifold = new Manifold();
-                        if (manifoldSolver.getManifold(penetration, shape1, shape2, manifold)) {
-                            Pair<PhysicsBody, PhysicsBody> physicsBodyPhysicsBodyPair = new Pair<>(body1, body2);
-                            manifolds.add(new Pair<>(manifold, physicsBodyPhysicsBodyPair));
-                        }
-                    }
-               }
+                Manifold manifold = this.processDetect(manifoldSolver, shape1, shape2, listeners);
+                if (manifold != null) {
+                    Pair<PhysicsBody, PhysicsBody> physicsBodyPhysicsBodyPair = new Pair<>(body1, body2);
+                    manifolds.add(new Pair<>(manifold, physicsBodyPhysicsBodyPair));
+                }
             }
         }
         return manifolds;
+    }
+
+    private Manifold processDetect(ManifoldSolver manifoldSolver, AbstractShape shape1, AbstractShape shape2, List<CollisionListener> listeners) {
+        for (CollisionListener listener : listeners) {
+            if (!listener.isAllowedBroadPhase(shape1, shape2)) return null;
+        }
+        if (!AABBDetector.detect(shape1, shape2)) {
+            return null;
+        }
+
+        for (CollisionListener listener : listeners) {
+            if (!listener.isAllowedNarrowPhase(shape1, shape2)) return null;
+        }
+        Penetration penetration = new Penetration();
+        DetectorResult detect = SatDetector.detect(shape1, shape2, null, penetration);
+        if (!detect.isHasCollision()) {
+            return null;
+        }
+
+        for (CollisionListener listener : listeners) {
+            if (!listener.isAllowedManifold(shape1, shape2, detect.getApproximateShape(), penetration)) return null;
+        }
+        Manifold manifold = new Manifold();
+        if (!manifoldSolver.getManifold(penetration, shape1, shape2, detect.getApproximateShape(), manifold)) {
+            return null;
+        }
+        return manifold;
     }
 
     @Override

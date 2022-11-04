@@ -19,6 +19,10 @@ public class SvgRenderer implements CanvasRenderer {
         this.svgNode = SVGNode.fromResource(getClass().getClassLoader().getResourceAsStream(resource));
     }
 
+    // 30 为网格大小，1024为svg大小
+    // TODO how to get gridSize or render without gridSize
+    private final static double SCALE_RATE = 30.0 / 1024;
+
     @Override
     public void drawToCanvas(GraphicsContext gc, PhysicsBody body) {
         AbstractShape shape = body.getShape();
@@ -34,8 +38,8 @@ public class SvgRenderer implements CanvasRenderer {
             Affine affine = new Affine();
             affine.appendRotation(transform.getAngle(), transform.x, transform.y); // TODO center
             affine.appendTranslation(transform.getX() - shapeWidth / 2,
-                    transform.getY() - shapeHeight / 2 + shapeHeight); // aabb.maxY - aabb.minY为了处理图片上下翻转
-            affine.appendScale(shapeHeight / 1024 , -shapeWidth / 1024);
+                    transform.getY() - shapeHeight / 2 + shapeHeight); // +shapeHeight为了处理图片上下翻转
+            affine.appendScale(shape.getRate() * SCALE_RATE , -shape.getRate() * SCALE_RATE);
             gc.transform(affine);
 
             gc.beginPath();

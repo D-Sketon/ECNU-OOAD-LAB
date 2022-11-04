@@ -34,6 +34,7 @@ public class ImagePhysicsBody extends PhysicsBody implements CanvasRenderer {
     public void drawToCanvas(GraphicsContext graphicsContext) {
         drawToCanvas(graphicsContext, this);
     }
+
     @Override
     public void drawToCanvas(GraphicsContext graphicsContext, PhysicsBody physicsBody) {
         gizmoType.getCanvasRenderer().drawToCanvas(graphicsContext, physicsBody);

@@ -1,17 +1,14 @@
 package gizmoball.engine.collision;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class Interval {
     protected double min;
 
     protected double max;
-
-    public Interval(double min, double max) {
-        this.min = min;
-        this.max = max;
-    }
 
     /**
      * Returns true if the two {@link Interval}s overlap.
@@ -48,6 +45,18 @@ public class Interval {
      */
     public boolean containsExclusive(Interval interval) {
         return interval.min > this.min && interval.max < this.max;
+    }
+
+    /**
+     * 夹逼，消除double误差
+     *
+     * @param value 原值
+     * @param left  下界
+     * @param right 上界
+     * @return double
+     */
+    public static double sandwich(double value, double left, double right) {
+        return (value <= right && value >= left) ? value : (value < left ? left : right);
     }
 
 }

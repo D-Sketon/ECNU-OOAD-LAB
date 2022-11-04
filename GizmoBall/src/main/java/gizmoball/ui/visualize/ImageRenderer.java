@@ -47,21 +47,19 @@ public class ImageRenderer implements CanvasRenderer {
     public void drawToCanvas(GraphicsContext gc, PhysicsBody body) {
         AbstractShape shape = body.getShape();
         Transform transform = shape.getTransform();
+        int scale = shape.getRate();
 
-        AABB aabb = body.getShape().createAABB();
-        double shapeHeight = aabb.maxY - aabb.minY;
-        double shapeWidth = aabb.maxX - aabb.minX;
+        final int gridSize = 30; // TODO how to get gridSize or render without gridSize
 
-        gc.save();
         Affine affine = new Affine();
         affine.appendRotation(transform.getAngle(), transform.x, transform.y);
+        gc.save();
         gc.transform(affine);
         gc.drawImage(image,
-                transform.getX() - shapeWidth / 2,
-                transform.getY() - shapeHeight / 2,
-                shapeWidth, shapeHeight);
+                transform.getX() - gridSize / 2.0 * scale,
+                transform.getY() - gridSize / 2.0 * scale,
+                gridSize * scale, gridSize * scale);
         gc.restore();
-
     }
 
 }

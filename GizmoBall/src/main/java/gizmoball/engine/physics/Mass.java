@@ -13,28 +13,33 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Mass {
 
+    /**
+     * 质量类型
+     */
     private MassType type;
 
+    /**
+     * 质心坐标
+     */
     private Vector2 center;
 
     /**
-     * The mass in kg
+     * 质量大小（kg）
      */
     private double mass;
 
-    // 以下属性计算时**可能**会用到
     /**
-     * The inertia tensor in kg &middot; m<sup>2</sup>
+     * 转动惯量
      */
     private double inertia;
 
     /**
-     * The inverse mass
+     * 质量大小倒数
      */
     private double InverseMass;
 
     /**
-     * The inverse inertia tensor
+     * 转动惯量倒数
      */
     private double InverseInertia;
 

@@ -2,10 +2,7 @@ package gizmoball.ui.component;
 
 
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.QuarterCircle;
-import gizmoball.engine.geometry.shape.Rectangle;
-import gizmoball.engine.geometry.shape.Triangle;
+import gizmoball.engine.geometry.shape.*;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.ui.visualize.ImagePhysicsBody;
 import javafx.scene.Cursor;
@@ -30,6 +27,11 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         return new ImagePhysicsBody(rectangle);
     };
 
+    protected static final Function<Vector2, ImagePhysicsBody> pipeBodyCreator = (preferredSize) -> {
+        Pipe pipe = new Pipe(preferredSize.x / 2.0, preferredSize.y / 2.0);
+        return new ImagePhysicsBody(pipe);
+    };
+
     protected static final Function<Vector2, ImagePhysicsBody> flipperBodyCreator = (preferredSize) -> {
         Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0);
         return new ImagePhysicsBody(rectangle);
@@ -46,7 +48,7 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, ImagePhysicsBody> curvedPipeBodyCreator = (preferredSize) -> {
-        QuarterCircle quarterCircle = new QuarterCircle(preferredSize.x / 2.0);
+        QuarterCircle quarterCircle = new QuarterCircle(preferredSize.x);
         return new ImagePhysicsBody(quarterCircle);
     };
 

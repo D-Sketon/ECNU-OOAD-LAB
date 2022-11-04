@@ -8,7 +8,7 @@ public class Penetration {
     /**
      * The normalized axis of projection
      */
-    protected final Vector2 normal;
+    protected Vector2 normal;
 
     /**
      * The penetration amount on this axis

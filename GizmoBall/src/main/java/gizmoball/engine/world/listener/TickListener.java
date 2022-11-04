@@ -1,8 +1,8 @@
 package gizmoball.engine.world.listener;
 
 import gizmoball.engine.collision.manifold.Manifold;
-import gizmoball.engine.geometry.shape.AbstractShape;
-import gizmoball.engine.physics.PhysicsBody;import javafx.util.Pair;
+import gizmoball.engine.physics.PhysicsBody;
+import javafx.util.Pair;
 
 import java.util.List;
 

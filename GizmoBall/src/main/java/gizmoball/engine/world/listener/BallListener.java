@@ -2,27 +2,24 @@ package gizmoball.engine.world.listener;
 
 import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.Penetration;
-import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.detector.AABBDetector;
 import gizmoball.engine.collision.detector.CircleDetector;
 import gizmoball.engine.collision.detector.DetectorResult;
-import gizmoball.engine.collision.detector.SatDetector;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
-import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Blackhole;
 import gizmoball.engine.world.filter.CollisionFilter;
 import javafx.util.Pair;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public class BallListener implements TickListener{
 
-    private List<PhysicsBody> balls;
+    private final List<PhysicsBody> balls;
 
     /**
      * 重写碰撞检查类
@@ -66,14 +63,8 @@ public class BallListener implements TickListener{
         }
     };
 
-
-    public BallListener(List<PhysicsBody> balls) {
-        this.balls = balls;
-    }
-
     @Override
     public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> tick() {
-
         return basicCollisionDetector.detect(balls, null, null);
     }
 }

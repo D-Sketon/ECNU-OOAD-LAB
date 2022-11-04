@@ -10,10 +10,12 @@ import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.Blackhole;
 import gizmoball.engine.world.filter.CollisionFilter;
 import javafx.util.Pair;
+import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public class BlackholeListener implements TickListener {
 
     private final List<PhysicsBody> balls;
@@ -53,11 +55,6 @@ public class BlackholeListener implements TickListener {
 
         }
     };
-
-    public BlackholeListener(List<PhysicsBody> balls, List<PhysicsBody> blackholes) {
-        this.balls = balls;
-        this.blackholes = blackholes;
-    }
 
     /**
      * 黑洞和球碰撞

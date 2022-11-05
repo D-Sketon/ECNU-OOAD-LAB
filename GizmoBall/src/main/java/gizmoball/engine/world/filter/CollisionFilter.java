@@ -2,13 +2,14 @@ package gizmoball.engine.world.filter;
 
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.shape.AbstractShape;
+import gizmoball.engine.physics.PhysicsBody;
 
 public interface CollisionFilter {
 
-    boolean isAllowedBroadPhase(AbstractShape shape1, AbstractShape shape2);
+    boolean isAllowedBroadPhase(PhysicsBody body1, PhysicsBody body2);
 
-    boolean isAllowedNarrowPhase(AbstractShape shape1, AbstractShape shape2);
+    boolean isAllowedNarrowPhase(PhysicsBody body1, PhysicsBody body2);
 
-    boolean isAllowedManifold(AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Penetration penetration);
+    boolean isAllowedManifold(PhysicsBody body1, PhysicsBody body2, AbstractShape shape, Penetration penetration);
 
 }

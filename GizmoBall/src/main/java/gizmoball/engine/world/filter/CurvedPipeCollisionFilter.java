@@ -7,32 +7,33 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.QuarterCircle;
+import gizmoball.engine.physics.PhysicsBody;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class CurvedPipeCollisionFilter implements CollisionFilter {
+
+    private Vector2 gravity;
     @Override
-    public boolean isAllowedBroadPhase(AbstractShape shape1, AbstractShape shape2) {
+    public boolean isAllowedBroadPhase(PhysicsBody body1, PhysicsBody body2) {
         return true;
     }
 
     @Override
-    public boolean isAllowedNarrowPhase(AbstractShape shape1, AbstractShape shape2) {
+    public boolean isAllowedNarrowPhase(PhysicsBody body1, PhysicsBody body2) {
         return true;
     }
 
     @Override
-    public boolean isAllowedManifold(AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Penetration penetration) {
-        QuarterCircle quarterCircle;
-        Circle circle;
+    public boolean isAllowedManifold(PhysicsBody body1, PhysicsBody body2, AbstractShape shape, Penetration penetration) {
+        AbstractShape shape1 = body1.getShape();
+        AbstractShape shape2 = body2.getShape();
 
-        if (shape1 instanceof QuarterCircle && shape2 instanceof Circle) {
-            quarterCircle = (QuarterCircle) shape1;
-            circle = (Circle) shape2;
-        } else if (shape2 instanceof QuarterCircle && shape1 instanceof Circle) {
-            quarterCircle = (QuarterCircle) shape2;
-            circle = (Circle) shape1;
-        } else {
+        if(!(shape2 instanceof QuarterCircle)) {
             return true;
         }
+        QuarterCircle quarterCircle = (QuarterCircle) shape2;
+        Circle circle = (Circle) shape1;
 
         Transform transform1 = quarterCircle.getTransform();
         Transform transform2 = circle.getTransform();
@@ -50,8 +51,10 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         boolean isInSide = r1.cross(c2c) * c2c.cross(r2) >= 0 && r1.cross(c2c) * r1.cross(r2) >= 0;
         // 圆形是否在扇形之中
         boolean isInside = c2c.getMagnitude() < quarterCircle.getRadius();
-
         if (isInside && isInSide) {
+            // 在内部就要施加反重力
+            body1.integrateVelocity(gravity.getNegative());
+
             // 在内和弧线发生碰撞，需要反转法线并改变深度
             if (c2c.getMagnitude() + circle.getRadius() >= quarterCircle.getRadius()) {
                 penetration.getNormal().negate();
@@ -61,10 +64,14 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             // 在内但并没有发生碰撞
             return false;
         } else if (isInside) {
-            // 从管道口进入
-            if(penetration.getNormal().dot(r1) < Epsilon.E || penetration.getNormal().dot(r2) < Epsilon.E) {
+            // 严格判断是否从管道口进出
+            if(penetration.getNormal().dot(r1) < 1e5 * Epsilon.E) {
+                // todo
+            }
+            if (penetration.getNormal().dot(r1) < 1e5 * Epsilon.E || penetration.getNormal().dot(r2) < 1e5 * Epsilon.E) {
                 return false;
             }
+            // 否则视为产生碰撞
             return true;
         } else {
             // 在外和弧线发生碰撞

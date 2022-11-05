@@ -99,7 +99,7 @@ public class World {
 
         BallListener ballListener = new BallListener(balls);
         BlackholeListener blackholeListener = new BlackholeListener(balls, blackholes);
-        PipeListener pipeListener = new PipeListener(balls, pipes);
+        PipeListener pipeListener = new PipeListener(balls, pipes,gravity);
         ObstacleListener obstacleListener = new ObstacleListener(balls, obstacles);
         tickListeners.add(ballListener);
         tickListeners.add(blackholeListener);

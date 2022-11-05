@@ -2,6 +2,7 @@ package gizmoball.engine.world.listener;
 
 import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.manifold.Manifold;
+import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.filter.CollisionFilter;
 import gizmoball.engine.world.filter.CurvedPipeCollisionFilter;
@@ -21,12 +22,12 @@ public class PipeListener implements TickListener {
 
     private final BasicCollisionDetector collisionDetector = new BasicCollisionDetector();
 
-    public PipeListener(List<PhysicsBody> balls, List<PhysicsBody> pipes) {
+    public PipeListener(List<PhysicsBody> balls, List<PhysicsBody> pipes, Vector2 gravity) {
         this.balls = balls;
         this.pipes = pipes;
         this.filters = new ArrayList<>();
         filters.add(new PipeCollisionFilter());
-        filters.add(new CurvedPipeCollisionFilter());
+        filters.add(new CurvedPipeCollisionFilter(gravity));
     }
 
     public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> tick() {

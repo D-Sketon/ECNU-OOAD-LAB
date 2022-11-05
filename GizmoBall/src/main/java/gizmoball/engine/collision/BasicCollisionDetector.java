@@ -26,9 +26,7 @@ public class BasicCollisionDetector implements CollisionDetector {
         ManifoldSolver manifoldSolver = new ManifoldSolver();
         for (PhysicsBody body1 : bodies1) {
             for (PhysicsBody body2 : bodies2) {
-                AbstractShape shape1 = body1.getShape();
-                AbstractShape shape2 = body2.getShape();
-                Manifold manifold = this.processDetect(manifoldSolver, shape1, shape2, filters);
+                Manifold manifold = this.processDetect(manifoldSolver, body1, body2, filters);
                 if (manifold != null) {
                     Pair<PhysicsBody, PhysicsBody> physicsBodyPhysicsBodyPair = new Pair<>(body1, body2);
                     manifolds.add(new Pair<>(manifold, physicsBodyPhysicsBodyPair));
@@ -38,16 +36,18 @@ public class BasicCollisionDetector implements CollisionDetector {
         return manifolds;
     }
 
-    private Manifold processDetect(ManifoldSolver manifoldSolver, AbstractShape shape1, AbstractShape shape2, List<CollisionFilter> filters) {
+    private Manifold processDetect(ManifoldSolver manifoldSolver, PhysicsBody body1, PhysicsBody body2, List<CollisionFilter> filters) {
+        AbstractShape shape1 = body1.getShape();
+        AbstractShape shape2 = body2.getShape();
         for (CollisionFilter filter : filters) {
-            if (!filter.isAllowedBroadPhase(shape1, shape2)) return null;
+            if (!filter.isAllowedBroadPhase(body1, body2)) return null;
         }
         if (!AABBDetector.detect(shape1, shape2)) {
             return null;
         }
 
         for (CollisionFilter filter : filters) {
-            if (!filter.isAllowedNarrowPhase(shape1, shape2)) return null;
+            if (!filter.isAllowedNarrowPhase(body1, body2)) return null;
         }
         Penetration penetration = new Penetration();
         DetectorResult detect = SatDetector.detect(shape1, shape2, null, penetration);
@@ -56,7 +56,7 @@ public class BasicCollisionDetector implements CollisionDetector {
         }
 
         for (CollisionFilter filter : filters) {
-            if (!filter.isAllowedManifold(shape1, shape2, detect.getApproximateShape(), penetration)) return null;
+            if (!filter.isAllowedManifold(body1, body2, detect.getApproximateShape(), penetration)) return null;
         }
         Manifold manifold = new Manifold();
         if (!manifoldSolver.getManifold(penetration, shape1, shape2, detect.getApproximateShape(), manifold)) {
@@ -85,7 +85,6 @@ public class BasicCollisionDetector implements CollisionDetector {
         for (int i = 0; i < Settings.DEFAULT_SOLVER_ITERATIONS; i++) {
             solver.solveVelocityConstraints(constraints);
         }
-
         for (PhysicsBody body : bodies) {
             body.integratePosition();
         }

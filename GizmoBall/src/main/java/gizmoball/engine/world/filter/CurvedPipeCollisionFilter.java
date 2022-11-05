@@ -51,9 +51,10 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         boolean isInside = c2c.getMagnitude() < quarterCircle.getRadius();
 
         if (isInside && isInSide) {
-            // 在内和弧线发生碰撞，需要反转法线
+            // 在内和弧线发生碰撞，需要反转法线并改变深度
             if (c2c.getMagnitude() + circle.getRadius() >= quarterCircle.getRadius()) {
                 penetration.getNormal().negate();
+                penetration.setDepth(circle.getRadius()-penetration.getDepth());
                 return true;
             }
             // 在内但并没有发生碰撞

@@ -27,7 +27,7 @@ public enum GizmoType{
 
     PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new SvgRenderer("icons/pipe.svg")),
 
-    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle.png")),
+    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle2.png")),
 
     LEFT_FLIPPER("gizmo/leftFlipper", DraggableGizmoComponent.flipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 

@@ -345,9 +345,6 @@ public class MainController extends Application implements Initializable {
             Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
             transformedCenter.add(snapped);
             PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            //physicsBody.setMass(physicsBody.getShape().createMass(1));
-            physicsBody.setRestitution(0.95);
-            physicsBody.setFriction(0.5);
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {

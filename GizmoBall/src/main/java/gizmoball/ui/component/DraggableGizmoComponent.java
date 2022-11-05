@@ -24,6 +24,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         Ball ball = new Ball(preferredSize.x / 2.0);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(ball);
         imagePhysicsBody.setMass(imagePhysicsBody.getShape().createMass(1));
+        imagePhysicsBody.setRestitution(0.95);
+        imagePhysicsBody.setFriction(0.4);
+        imagePhysicsBody.setRestitutionVelocity(10);
         return imagePhysicsBody;
     };
 
@@ -32,6 +35,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         Circle circle = new Circle(preferredSize.x / 2.0);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(circle);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(0.95);
+        imagePhysicsBody.setFriction(0.5);
+        imagePhysicsBody.setRestitutionVelocity(10);
         return imagePhysicsBody;
     };
 
@@ -46,6 +52,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 2.0);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(rectangle);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(0.95);
+        imagePhysicsBody.setFriction(0.5);
+        imagePhysicsBody.setRestitutionVelocity(10);
         return imagePhysicsBody;
     };
 
@@ -53,6 +62,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         Pipe pipe = new Pipe(preferredSize.x / 2.0, preferredSize.y / 2.0);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(pipe);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(1.0);
+        imagePhysicsBody.setFriction(0.0);
+        imagePhysicsBody.setRestitutionVelocity(10);
         return imagePhysicsBody;
     };
 
@@ -60,6 +72,8 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         QuarterCircle quarterCircle = new QuarterCircle(preferredSize.x);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(quarterCircle);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(1.0);
+        imagePhysicsBody.setFriction(0.0);
         return imagePhysicsBody;
     };
 
@@ -67,6 +81,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(rectangle);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(0.95);
+        imagePhysicsBody.setFriction(0.5);
+        imagePhysicsBody.setRestitutionVelocity(10);
         return imagePhysicsBody;
     };
 
@@ -79,6 +96,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         Triangle triangle = new Triangle(vertices);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(triangle);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(0.95);
+        imagePhysicsBody.setFriction(0.5);
+        imagePhysicsBody.setRestitutionVelocity(10);
         return imagePhysicsBody;
     };
 

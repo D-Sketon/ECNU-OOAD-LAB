@@ -1,6 +1,7 @@
 package gizmoball.engine.world.filter;
 
 import gizmoball.engine.collision.Penetration;
+import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
@@ -54,21 +55,20 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             // 在内和弧线发生碰撞，需要反转法线并改变深度
             if (c2c.getMagnitude() + circle.getRadius() >= quarterCircle.getRadius()) {
                 penetration.getNormal().negate();
-                penetration.setDepth(circle.getRadius()-penetration.getDepth());
+                penetration.setDepth(circle.getRadius() - penetration.getDepth());
                 return true;
             }
             // 在内但并没有发生碰撞
             return false;
-        } else if (isInside && !isInSide) {
-            // 理论上不存在这种状态
-            return false;
-        } else if (!isInside && isInSide) {
+        } else if (isInside) {
+            // 从管道口进入
+            if(penetration.getNormal().dot(r1) < Epsilon.E || penetration.getNormal().dot(r2) < Epsilon.E) {
+                return false;
+            }
+            return true;
+        } else {
             // 在外和弧线发生碰撞
             return true;
-        } else if (!isInside && !isInSide) {
-            // 从管道口进入
-            return false;
         }
-        return true;
     }
 }

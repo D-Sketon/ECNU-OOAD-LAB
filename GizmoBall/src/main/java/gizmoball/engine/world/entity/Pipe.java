@@ -39,11 +39,12 @@ public class Pipe extends Rectangle {
     @Override
     public void rotate(double theta, double x, double y) {
         transform.rotate(theta, x, y);
-
-        if(this.getTransform().cost == 1 || this.getTransform().cost == -1){
-            this.pipeDirection = PipeDirection.TRANSVERSE;
-        } else{
+        System.out.println(this.getTransform().sint);
+        if(Math.abs(this.getTransform().sint) > 0.5){
             this.pipeDirection = PipeDirection.VERTICAL;
+
+        } else{
+            this.pipeDirection = PipeDirection.TRANSVERSE;
         }
     }
 

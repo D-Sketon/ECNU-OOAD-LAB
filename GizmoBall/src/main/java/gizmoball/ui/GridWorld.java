@@ -194,6 +194,7 @@ public class GridWorld extends World {
         try {
             List<PhysicsBody> o = PersistentUtil.fromJsonString(snapshot);
             this.obstacles.clear();
+            //其他四个列表也要清空
             for (PhysicsBody[] gizmoGridBody : this.gizmoGridBodies) {
                 Arrays.fill(gizmoGridBody, null);
             }

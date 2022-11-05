@@ -26,7 +26,7 @@ public class PipeListener implements TickListener {
         this.balls = balls;
         this.pipes = pipes;
         this.filters = new ArrayList<>();
-        filters.add(new PipeCollisionFilter());
+        filters.add(new PipeCollisionFilter(gravity));
         filters.add(new CurvedPipeCollisionFilter(gravity));
     }
 

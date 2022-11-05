@@ -20,6 +20,9 @@ public class PipeCollisionFilter implements CollisionFilter {
 
     @Override
     public boolean isAllowedManifold(AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Penetration penetration) {
+        if(!(shape2 instanceof Pipe)) {
+            return true;
+        }
         Ball ball = (Ball) shape1;
         Pipe pipe = (Pipe) shape2;
 

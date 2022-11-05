@@ -25,7 +25,7 @@ public enum GizmoType{
 
     TRIANGLE("gizmo/triangle", DraggableGizmoComponent.triangleBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
-    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new SvgRenderer("icons/pipe.svg")),
+    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new ImageRenderer("icons/pipe.png")),
 
     CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle2.png")),
 

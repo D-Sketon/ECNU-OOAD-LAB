@@ -29,9 +29,9 @@ public enum GizmoType{
 
     CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle2.png")),
 
-    LEFT_FLIPPER("gizmo/leftFlipper", DraggableGizmoComponent.flipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
+    LEFT_FLIPPER("gizmo/leftFlipper", DraggableGizmoComponent.leftFlipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
-    RIGHT_FLIPPER("gizmo/rightFlipper", DraggableGizmoComponent.flipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
+    RIGHT_FLIPPER("gizmo/rightFlipper", DraggableGizmoComponent.rightFlipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
     ;
 

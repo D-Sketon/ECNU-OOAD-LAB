@@ -4,6 +4,7 @@ import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
+import gizmoball.engine.world.entity.Flipper;
 import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImagePhysicsBody;
@@ -115,7 +116,8 @@ public class MainController extends Application implements Initializable {
             new DraggableGizmoComponent("icons/ball.png", "ball", GizmoType.BALL),
             new DraggableGizmoComponent("icons/rail.png", "rail", GizmoType.PIPE),
             new DraggableGizmoComponent("icons/quarter_circle.png", "quarter circle", GizmoType.CURVED_PIPE),
-            // TODO 左右挡板
+            new DraggableGizmoComponent("icons/rail.png", "rail", GizmoType.LEFT_FLIPPER),
+            new DraggableGizmoComponent("icons/quarter_circle.png", "quarter circle", GizmoType.RIGHT_FLIPPER),
     };
 
     private static final CommandComponent[] gizmoOps = {
@@ -327,6 +329,21 @@ public class MainController extends Application implements Initializable {
         initGizmoOpHBox();
         initCanvas();
         initMenuItem();
+
+        anchorPane.setOnMouseClicked(event -> {
+            gizmoCanvas.requestFocus();
+        });
+
+        anchorPane.setOnKeyPressed(event -> {
+            switch (event.getCode()){
+                case LEFT:
+                    world.flipper(Flipper.Direction.LEFT);
+                    break;
+                case RIGHT:
+                    world.flipper(Flipper.Direction.RIGHT);
+                    break;
+            }
+        });
     }
 
 

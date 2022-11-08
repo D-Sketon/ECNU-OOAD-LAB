@@ -7,6 +7,7 @@ import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.Blackhole;
+import gizmoball.engine.world.entity.Flipper;
 import gizmoball.engine.world.entity.Pipe;
 import gizmoball.ui.visualize.ImagePhysicsBody;
 import javafx.scene.Cursor;
@@ -77,16 +78,6 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         return imagePhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> flipperBodyCreator = (preferredSize) -> {
-        Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(rectangle);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.5);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
-    };
-
     protected static final Function<Vector2, ImagePhysicsBody> triangleBodyCreator = (preferredSize) -> {
         Vector2[] vertices = new Vector2[]{
                 new Vector2(-preferredSize.y / 2.0, -preferredSize.y / 2.0),
@@ -102,6 +93,25 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         return imagePhysicsBody;
     };
 
+    protected static final Function<Vector2, ImagePhysicsBody> leftFlipperBodyCreator = (preferredSize) -> {
+        Flipper flipper = new Flipper(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0, Flipper.Direction.LEFT);
+        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(flipper);
+        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(0.95);
+        imagePhysicsBody.setFriction(0.5);
+        imagePhysicsBody.setRestitutionVelocity(10);
+        return imagePhysicsBody;
+    };
+
+    protected static final Function<Vector2, ImagePhysicsBody> rightFlipperBodyCreator = (preferredSize) -> {
+        Flipper flipper = new Flipper(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0, Flipper.Direction.RIGHT);
+        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(flipper);
+        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        imagePhysicsBody.setRestitution(0.95);
+        imagePhysicsBody.setFriction(0.5);
+        imagePhysicsBody.setRestitutionVelocity(10);
+        return imagePhysicsBody;
+    };
 
 
     private GizmoType gizmoType;

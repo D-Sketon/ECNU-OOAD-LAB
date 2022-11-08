@@ -94,7 +94,7 @@ public class PipeCollisionFilter implements CollisionFilter {
         return ballX > minX && ballX < maxX && ballY < maxY && ballY > minY;
     }
 
-    public void solveCollision(Ball ball, Pipe pipe, Penetration penetration) {
+    private void solveCollision(Ball ball, Pipe pipe, Penetration penetration) {
         Vector2 normal = penetration.getNormal();
         if (pipeDirection == Pipe.PipeDirection.TRANSVERSE) {
             boolean isHigh = ball.getTransform().y > pipe.getTransform().y;
@@ -121,7 +121,7 @@ public class PipeCollisionFilter implements CollisionFilter {
         }
     }
 
-    public boolean isOutPipe() {
+    private boolean isOutPipe() {
         if (pipeDirection == Pipe.PipeDirection.TRANSVERSE) {
             return !((ballY < maxY) && (ballY > minY));
         } else {
@@ -129,7 +129,7 @@ public class PipeCollisionFilter implements CollisionFilter {
         }
     }
 
-    public boolean isCollision() {
+    private boolean isCollision() {
         if (pipeDirection == Pipe.PipeDirection.TRANSVERSE) {
             return ballY + radius > maxY || ballY - radius < minY;
         } else {
@@ -138,6 +138,7 @@ public class PipeCollisionFilter implements CollisionFilter {
     }
 
     private void maintainPipeProperty(PhysicsBody body1, PhysicsBody body2) {
+        body1.getForces().clear();
         body1.integrateVelocity(gravity.getNegative());
         if (body1.getShape().getRate() == body2.getShape().getRate()) {
             if (pipeDirection == Pipe.PipeDirection.TRANSVERSE) {

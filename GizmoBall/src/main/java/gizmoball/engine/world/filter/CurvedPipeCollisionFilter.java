@@ -54,6 +54,7 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         boolean isInside = c2c.getMagnitude() < quarterCircle.getRadius();
         if (isInside && isInSide) {
             // 在内部就要施加反重力
+            body1.getForces().clear();
             body1.integrateVelocity(gravity.getNegative());
             if (linearVelocity.getMagnitude() < 90) {
                 linearVelocity.multiply(90 / linearVelocity.getMagnitude());

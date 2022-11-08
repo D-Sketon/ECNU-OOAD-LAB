@@ -28,6 +28,7 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
     public boolean isAllowedManifold(PhysicsBody body1, PhysicsBody body2, AbstractShape shape, Penetration penetration) {
         AbstractShape shape1 = body1.getShape();
         AbstractShape shape2 = body2.getShape();
+        Vector2 linearVelocity = body1.getLinearVelocity();
 
         if(!(shape2 instanceof QuarterCircle)) {
             return true;
@@ -54,7 +55,9 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         if (isInside && isInSide) {
             // 在内部就要施加反重力
             body1.integrateVelocity(gravity.getNegative());
-
+            if (linearVelocity.getMagnitude() < 90) {
+                linearVelocity.multiply(90 / linearVelocity.getMagnitude());
+            }
             // 在内和弧线发生碰撞，需要反转法线并改变深度
             if (c2c.getMagnitude() + circle.getRadius() >= quarterCircle.getRadius()) {
                 penetration.getNormal().negate();
@@ -65,9 +68,6 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             return false;
         } else if (isInside) {
             // 严格判断是否从管道口进出
-            if(penetration.getNormal().dot(r1) < 1e5 * Epsilon.E) {
-                // todo
-            }
             if (penetration.getNormal().dot(r1) < 1e5 * Epsilon.E || penetration.getNormal().dot(r2) < 1e5 * Epsilon.E) {
                 return false;
             }

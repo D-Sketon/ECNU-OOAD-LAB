@@ -3,6 +3,7 @@ package gizmoball.ui.component;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import lombok.Data;
@@ -24,6 +25,11 @@ public class ImageLabelComponent {
 
     private ImageView imageView;
 
+    /**
+     * 由于SVG图片点击透明处无效，包装ImageView，添加事件监听器。
+     */
+    private Pane imageWrapper;
+
     private Label label;
 
     public ImageLabelComponent(String resource, String labelText) {
@@ -31,7 +37,8 @@ public class ImageLabelComponent {
     }
 
     public ImageLabelComponent(String resource, String labelText, int imageWidth, int imageHeight) {
-        this.image = new Image(getClass().getClassLoader().getResourceAsStream(resource), imageWidth, imageHeight, true, true);
+        this.image = new Image(getClass().getClassLoader().getResourceAsStream(resource),
+                imageWidth, imageHeight, true, true);
         this.labelText = labelText;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
@@ -48,15 +55,23 @@ public class ImageLabelComponent {
     public VBox createVBox() {
         vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
+
+        imageWrapper = new Pane();
+        imageWrapper.setMaxSize(imageWidth, imageHeight);
+        imageWrapper.setCursor(javafx.scene.Cursor.HAND);
+
         imageView = new ImageView(image);
         imageView.setFitHeight(imageHeight);
         imageView.setFitWidth(imageWidth);
-        vBox.getChildren().add(imageView);
+        imageWrapper.getChildren().add(imageView);
+        vBox.getChildren().add(imageWrapper);
+
         label = new Label(this.labelText);
         label.setPrefWidth(100);
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
         vBox.getChildren().add(label);
+
         return vBox;
     }
 }

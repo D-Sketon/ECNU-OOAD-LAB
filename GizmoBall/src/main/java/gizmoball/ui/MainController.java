@@ -4,8 +4,6 @@ import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
-import gizmoball.engine.world.filter.CollisionFilter;
-import gizmoball.engine.world.filter.PipeCollisionFilter;
 import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImagePhysicsBody;
@@ -15,17 +13,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.FileChooser;
@@ -36,7 +31,6 @@ import java.io.File;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -76,6 +70,12 @@ public class MainController extends Application implements Initializable {
 
     @FXML
     MenuItem menuItemSave;
+
+    @FXML
+    ImageView previewImageView;
+
+    @FXML
+    AnchorPane anchorPane;
 
     private static final boolean DEV_MODE = true;
 
@@ -155,7 +155,7 @@ public class MainController extends Application implements Initializable {
             // 添加拖拽事件监听器
             // 拖拽传参为gizmo的类型
             int finalI = i;
-            gizmo.getImageView().setOnDragDetected(event -> {
+            gizmo.getImageWrapper().setOnDragDetected(event -> {
                 if (!DEV_MODE && !inDesign) {
                     return;
                 }
@@ -173,7 +173,7 @@ public class MainController extends Application implements Initializable {
         // 初始物件操作
         for (CommandComponent gizmoOp : gizmoOps) {
             gizmoOp.createVBox().setMaxWidth(70);
-            gizmoOp.getImageView().setOnMouseClicked(event -> {
+            gizmoOp.getImageWrapper().setOnMouseClicked(event -> {
                 if (selectedBody == null || !inDesign) {
                     return;
                 }
@@ -209,7 +209,7 @@ public class MainController extends Application implements Initializable {
         final ScheduledFuture<?>[] scheduledFuture = new ScheduledFuture<?>[1];
         ImageLabelComponent play = gameOps[0];
         play.createVBox();
-        play.getImageView().setOnMouseClicked(event -> {
+        play.getImageWrapper().setOnMouseClicked(event -> {
             if (!inDesign) {
                 return;
             }
@@ -218,11 +218,11 @@ public class MainController extends Application implements Initializable {
             world.snapshot();
             scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / TICKS_PER_SECOND), TimeUnit.MILLISECONDS);
         });
-        play.getImageView().setCursor(Cursor.HAND);
+
         //暂停游戏（设计模式）
         ImageLabelComponent design = gameOps[1];
         design.createVBox();
-        design.getImageView().setOnMouseClicked(event -> {
+        design.getImageWrapper().setOnMouseClicked(event -> {
             if (inDesign) {
                 return;
             }
@@ -231,7 +231,6 @@ public class MainController extends Application implements Initializable {
             world.restore();
             drawGizmo(gizmoCanvas.getGraphicsContext2D());
         });
-        design.getImageView().setCursor(Cursor.HAND);
     }
 
     /**
@@ -251,15 +250,15 @@ public class MainController extends Application implements Initializable {
         lowerHBox.getChildren().add(gameOps[0].getVBox());
 
         BorderPane borderPane = new BorderPane();
-        BorderPane.setAlignment(gizmoOps[4].getImageView(), Pos.CENTER);
-        BorderPane.setAlignment(gizmoOps[5].getImageView(), Pos.CENTER_RIGHT);
-        BorderPane.setAlignment(gizmoOps[6].getImageView(), Pos.CENTER);
-        BorderPane.setAlignment(gizmoOps[7].getImageView(), Pos.CENTER_LEFT);
+        BorderPane.setAlignment(gizmoOps[4].getImageWrapper(), Pos.CENTER);
+        BorderPane.setAlignment(gizmoOps[5].getImageWrapper(), Pos.CENTER_RIGHT);
+        BorderPane.setAlignment(gizmoOps[6].getImageWrapper(), Pos.CENTER);
+        BorderPane.setAlignment(gizmoOps[7].getImageWrapper(), Pos.CENTER_LEFT);
 
-        borderPane.setTop(gizmoOps[4].getImageView());
-        borderPane.setRight(gizmoOps[5].getImageView());
-        borderPane.setBottom(gizmoOps[6].getImageView());
-        borderPane.setLeft(gizmoOps[7].getImageView());
+        borderPane.setTop(gizmoOps[4].getImageWrapper());
+        borderPane.setRight(gizmoOps[5].getImageWrapper());
+        borderPane.setBottom(gizmoOps[6].getImageWrapper());
+        borderPane.setLeft(gizmoOps[7].getImageWrapper());
 
         Pane pane = new Pane();
         pane.setPrefWidth(60);
@@ -333,6 +332,9 @@ public class MainController extends Application implements Initializable {
 
     //------------canvas-----------------
 
+    /**
+     * 高亮当前选中物体
+     */
     protected void updateGizmoOutlineRectangle() {
         if (selectedBody == null) {
             gizmoOutlineRectangle.setVisible(false);
@@ -346,21 +348,19 @@ public class MainController extends Application implements Initializable {
         gizmoOutlineRectangle.setVisible(true);
     }
 
-    private GraphicsContext initCanvas() {
+    private void initCanvas() {
         // 设置坐标系转换
         GraphicsContext gc = gizmoCanvas.getGraphicsContext2D();
         Affine affine = new Affine();
         // 正常设置
         affine.appendScale(1, -1);
         affine.appendTranslation(0, -gizmoCanvas.getHeight());
-        // 显示边界 但是拖拽对齐会有问题，调试用
-//        affine.appendScale(.9, -.9);
-//        affine.appendTranslation(gizmoCanvas.getWidth() * .05, -gizmoCanvas.getHeight() * 1.05);
         gc.setTransform(affine);
 
         // 增加拖拽监听器
         Canvas target = gizmoCanvas;
         target.setOnMouseClicked(event -> {
+            target.requestFocus();
             if (event.getButton() == MouseButton.PRIMARY) {
                 double x = event.getX();
                 double y = world.boundaryAABB.maxY - event.getY();
@@ -372,10 +372,35 @@ public class MainController extends Application implements Initializable {
                 }
             }
         });
+        // 拖到画布上时显示物件预览/能否拖拽
         target.setOnDragOver(event -> {
             if (event.getGestureSource() != target) {
-                event.acceptTransferModes(TransferMode.COPY);
+
+                Dragboard db = event.getDragboard();
+                int gizmoIndex = (int) db.getContent(GIZMO_TYPE_DATA);
+                DraggableGizmoComponent gizmo = gizmos[gizmoIndex];
+
+                // 显示预览图片
+                double x = event.getX();
+                double y = event.getY();
+                int[] index = world.getGridIndex(x, y);
+                if(index != null){
+                    PhysicsBody[][] gridBodies = world.gizmoGridBodies;
+                    int i = index[0];
+                    int j = gridBodies[0].length - index[1] - 1;
+                    if(gridBodies[i][j] == null){
+                        previewImageView.setVisible(true);
+                        previewImageView.setImage(gizmo.getImage());
+                        previewImageView.setLayoutX(index[0] * world.getGridSize());
+                        previewImageView.setLayoutY(index[1] * world.getGridSize());
+                        event.acceptTransferModes(TransferMode.COPY);
+                    }
+                }
             }
+            event.consume();
+        });
+        target.setOnDragExited(event -> {
+            previewImageView.setVisible(false);
             event.consume();
         });
         target.setOnDragDropped(event -> {
@@ -406,13 +431,12 @@ public class MainController extends Application implements Initializable {
             }
 
             drawGizmo(gc);
+            previewImageView.setVisible(false);
             event.setDropCompleted(true);
             event.consume();
         });
 
         drawGizmo(gc);
-
-        return gc;
     }
 
     private void clearCanvas(GraphicsContext gc) {

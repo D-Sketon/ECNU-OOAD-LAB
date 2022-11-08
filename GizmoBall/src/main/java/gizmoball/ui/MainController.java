@@ -17,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -37,6 +38,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
 
 @Slf4j
 public class MainController extends Application implements Initializable {
@@ -76,6 +78,8 @@ public class MainController extends Application implements Initializable {
 
     @FXML
     AnchorPane anchorPane;
+
+    Label toastLabel = new Label();
 
     private static final boolean DEV_MODE = true;
 
@@ -187,7 +191,7 @@ public class MainController extends Application implements Initializable {
                         drawGizmo(gizmoCanvas.getGraphicsContext2D());
                     }
                 } catch (Exception e) {
-                    // TODO toast
+                    Toast.makeText(primaryStage, "操作物件失败: " + e.getMessage(), 2000, 500, 500);
                     log.error("操作物件失败: {}", e.getMessage());
                 }
             });
@@ -384,11 +388,11 @@ public class MainController extends Application implements Initializable {
                 double x = event.getX();
                 double y = event.getY();
                 int[] index = world.getGridIndex(x, y);
-                if(index != null){
+                if (index != null) {
                     PhysicsBody[][] gridBodies = world.gizmoGridBodies;
                     int i = index[0];
                     int j = gridBodies[0].length - index[1] - 1;
-                    if(gridBodies[i][j] == null){
+                    if (gridBodies[i][j] == null) {
                         previewImageView.setVisible(true);
                         previewImageView.setImage(gizmo.getImage());
                         previewImageView.setLayoutX(index[0] * world.getGridSize());
@@ -427,7 +431,7 @@ public class MainController extends Application implements Initializable {
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {
-                // TODO Toast
+                Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
             }
 
             drawGizmo(gc);

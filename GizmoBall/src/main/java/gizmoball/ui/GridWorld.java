@@ -8,7 +8,7 @@ import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import gizmoball.ui.file.PersistentUtil;
-import gizmoball.engine.world.listener.CollisionListener;
+import gizmoball.engine.world.filter.CollisionFilter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
@@ -37,15 +37,15 @@ public class GridWorld extends World {
     protected int gridSize;
 
     public GridWorld(Vector2 gravity) {
-        this(gravity, 600, 600, new ArrayList<>());
+        this(gravity, 600, 600);
     }
 
-    public GridWorld(Vector2 gravity, int width, int height, List<CollisionListener> listeners) {
-        this(gravity, width, height, 30, listeners);
+    public GridWorld(Vector2 gravity, int width, int height) {
+        this(gravity, width, height, 30);
     }
 
-    public GridWorld(Vector2 gravity, int width, int height, int gridSize, List<CollisionListener> listeners) {
-        super(gravity, listeners);
+    public GridWorld(Vector2 gravity, int width, int height, int gridSize) {
+        super(gravity);
         this.gridSize = gridSize;
         boundaryAABB = new AABB(0, 0, width, height);
         gizmoGridBodies = new PhysicsBody[(int) (width / gridSize)][(int) (height / gridSize)];
@@ -125,6 +125,8 @@ public class GridWorld extends World {
         bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
         PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
         bottomBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        bottomBorder.setRestitution(0.95);
+        bottomBorder.setFriction(0.5);
         addBodies(bottomBorder);
 
         Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
@@ -132,6 +134,8 @@ public class GridWorld extends World {
         topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
         PhysicsBody topBorder = new PhysicsBody(topRectangle);
         topBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        topBorder.setRestitution(0.95);
+        topBorder.setFriction(0.5);
         addBodies(topBorder);
 
         Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
@@ -139,6 +143,8 @@ public class GridWorld extends World {
         leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
         PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
         leftBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        leftBorder.setRestitution(0.95);
+        leftBorder.setFriction(0.5);
         addBodies(leftBorder);
 
         Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
@@ -146,6 +152,8 @@ public class GridWorld extends World {
         rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
         PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
         rightBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        rightBorder.setRestitution(0.95);
+        rightBorder.setFriction(0.5);
         addBodies(rightBorder);
     }
 
@@ -168,7 +176,7 @@ public class GridWorld extends World {
 
     public String snapshot() {
         try {
-            snapshot = PersistentUtil.toJsonString(bodies.stream().skip(4).collect(Collectors.toList()));
+            snapshot = PersistentUtil.toJsonString(obstacles.stream().skip(4).collect(Collectors.toList()));
             PersistentUtil.write(snapshot, "snapshot.json");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -185,7 +193,8 @@ public class GridWorld extends World {
     public void restore(String snapshot){
         try {
             List<PhysicsBody> o = PersistentUtil.fromJsonString(snapshot);
-            this.bodies.clear();
+            this.obstacles.clear();
+            //其他四个列表也要清空
             for (PhysicsBody[] gizmoGridBody : this.gizmoGridBodies) {
                 Arrays.fill(gizmoGridBody, null);
             }

@@ -1,13 +1,14 @@
-package gizmoball.engine.geometry.shape;
+package gizmoball.engine.world.entity;
 
 import gizmoball.engine.geometry.Transform;
+import gizmoball.engine.geometry.shape.Rectangle;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Pipe extends Rectangle{
+public class Pipe extends Rectangle {
 
     private PipeDirection pipeDirection;
 
@@ -38,7 +39,13 @@ public class Pipe extends Rectangle{
     @Override
     public void rotate(double theta, double x, double y) {
         transform.rotate(theta, x, y);
-        this.pipeDirection = this.pipeDirection == PipeDirection.TRANSVERSE ? PipeDirection.VERTICAL : PipeDirection.TRANSVERSE;
+        System.out.println(this.getTransform().sint);
+        if(Math.abs(this.getTransform().sint) > 0.5){
+            this.pipeDirection = PipeDirection.VERTICAL;
+
+        } else{
+            this.pipeDirection = PipeDirection.TRANSVERSE;
+        }
     }
 
 

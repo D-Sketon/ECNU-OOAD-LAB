@@ -4,6 +4,7 @@ import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.engine.world.entity.Ball;
 import gizmoball.ui.GridWorld;
 import lombok.extern.slf4j.Slf4j;
 
@@ -131,7 +132,10 @@ public class GizmoOpHandler {
         gizmoBody.getShape().zoom(rate - 1);
         gizmoBody.getShape().translate(-world.getGridSize() / 2.0, -world.getGridSize() / 2.0);
         //修改质量
-        gizmoBody.setMass(gizmoBody.getShape().createMass(10));
+        if(gizmoBody.getShape() instanceof Ball){
+            gizmoBody.setMass(gizmoBody.getShape().createMass(10));
+        }
+
         return true;
     }
 
@@ -153,7 +157,9 @@ public class GizmoOpHandler {
         gizmoBody.getShape().zoom(rate + 1);
         gizmoBody.getShape().translate(world.getGridSize() / 2.0, world.getGridSize() / 2.0);
         //修改质量
-        gizmoBody.setMass(gizmoBody.getShape().createMass(10));
+        if(gizmoBody.getShape() instanceof Ball){
+            gizmoBody.setMass(gizmoBody.getShape().createMass(10));
+        }
         world.setGrid(translatedAABB, gizmoBody);
         return true;
     }

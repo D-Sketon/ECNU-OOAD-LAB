@@ -4,8 +4,8 @@ import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
-import gizmoball.engine.world.listener.CollisionListener;
-import gizmoball.engine.world.listener.PipeCollisionListener;
+import gizmoball.engine.world.filter.CollisionFilter;
+import gizmoball.engine.world.filter.PipeCollisionFilter;
 import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImagePhysicsBody;
@@ -262,9 +262,7 @@ public class MainController extends Application implements Initializable {
     private void initWorld() {
         double worldWidth = gizmoCanvas.getWidth();
         double worldHeight = gizmoCanvas.getHeight();
-        List<CollisionListener> listeners = new ArrayList<>();
-        listeners.add(new PipeCollisionListener());
-        world = new GridWorld(World.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30, listeners);
+        world = new GridWorld(World.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
         preferredSize = new Vector2(world.getGridSize(), world.getGridSize());
         gizmoOpHandler = new GizmoOpHandler(world);
     }
@@ -347,11 +345,6 @@ public class MainController extends Application implements Initializable {
             Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
             transformedCenter.add(snapped);
             PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            physicsBody.setMass(physicsBody.getShape().createMass(1));
-            physicsBody.setRestitution(0.9);
-            physicsBody.setFriction(0.5);
-            physicsBody.setRestitution(0.5);
-            physicsBody.setRestitutionVelocity(2);
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {

@@ -15,19 +15,19 @@ import java.util.function.Function;
 @AllArgsConstructor
 public enum GizmoType{
 
-    BALL("gizmo/ball", DraggableGizmoComponent.circleBodyCreator, new SvgRenderer("icons/ball.svg")),
+    BALL("gizmo/ball", DraggableGizmoComponent.ballBodyCreator, new SvgRenderer("icons/ball.svg")),
+
+    CIRCLE("gizmo/circle", DraggableGizmoComponent.circleBodyCreator, new SvgRenderer("icons/circle.svg")),
+
+    BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.blackholeBodyCreator, new SvgRenderer("icons/black_hole.svg")),
 
     RECTANGLE("gizmo/rectangle", DraggableGizmoComponent.rectangleBodyCreator, new SvgRenderer("icons/rectangle.svg")),
 
     TRIANGLE("gizmo/triangle", DraggableGizmoComponent.triangleBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
-    CIRCLE("gizmo/circle", DraggableGizmoComponent.circleBodyCreator, new SvgRenderer("icons/circle.svg")),
+    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new ImageRenderer("icons/pipe.png")),
 
-    BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.circleBodyCreator, new SvgRenderer("icons/black_hole.svg")),
-
-    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new SvgRenderer("icons/pipe.svg")),
-
-    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle.png")),
+    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle2.png")),
 
     LEFT_FLIPPER("gizmo/leftFlipper", DraggableGizmoComponent.flipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 

@@ -11,7 +11,7 @@ import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.listener.CollisionListener;
+import gizmoball.engine.world.filter.CollisionFilter;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -21,16 +21,12 @@ public class BasicCollisionDetector implements CollisionDetector {
 
 
     @Override
-    public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies, List<CollisionListener> listeners) {
+    public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> filters) {
         List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds = new ArrayList<>();
         ManifoldSolver manifoldSolver = new ManifoldSolver();
-        for (int i = 0; i < bodies.size(); i++) {
-            for (int j = i + 1; j < bodies.size(); j++) {
-                PhysicsBody body1 = bodies.get(i);
-                PhysicsBody body2 = bodies.get(j);
-                AbstractShape shape1 = body1.getShape();
-                AbstractShape shape2 = body2.getShape();
-                Manifold manifold = this.processDetect(manifoldSolver, shape1, shape2, listeners);
+        for (PhysicsBody body1 : bodies1) {
+            for (PhysicsBody body2 : bodies2) {
+                Manifold manifold = this.processDetect(manifoldSolver, body1, body2, filters);
                 if (manifold != null) {
                     Pair<PhysicsBody, PhysicsBody> physicsBodyPhysicsBodyPair = new Pair<>(body1, body2);
                     manifolds.add(new Pair<>(manifold, physicsBodyPhysicsBodyPair));
@@ -40,16 +36,18 @@ public class BasicCollisionDetector implements CollisionDetector {
         return manifolds;
     }
 
-    private Manifold processDetect(ManifoldSolver manifoldSolver, AbstractShape shape1, AbstractShape shape2, List<CollisionListener> listeners) {
-        for (CollisionListener listener : listeners) {
-            if (!listener.isAllowedBroadPhase(shape1, shape2)) return null;
+    private Manifold processDetect(ManifoldSolver manifoldSolver, PhysicsBody body1, PhysicsBody body2, List<CollisionFilter> filters) {
+        AbstractShape shape1 = body1.getShape();
+        AbstractShape shape2 = body2.getShape();
+        for (CollisionFilter filter : filters) {
+            if (!filter.isAllowedBroadPhase(body1, body2)) return null;
         }
         if (!AABBDetector.detect(shape1, shape2)) {
             return null;
         }
 
-        for (CollisionListener listener : listeners) {
-            if (!listener.isAllowedNarrowPhase(shape1, shape2)) return null;
+        for (CollisionFilter filter : filters) {
+            if (!filter.isAllowedNarrowPhase(body1, body2)) return null;
         }
         Penetration penetration = new Penetration();
         DetectorResult detect = SatDetector.detect(shape1, shape2, null, penetration);
@@ -57,8 +55,8 @@ public class BasicCollisionDetector implements CollisionDetector {
             return null;
         }
 
-        for (CollisionListener listener : listeners) {
-            if (!listener.isAllowedManifold(shape1, shape2, detect.getApproximateShape(), penetration)) return null;
+        for (CollisionFilter filter : filters) {
+            if (!filter.isAllowedManifold(body1, body2, detect.getApproximateShape(), penetration)) return null;
         }
         Manifold manifold = new Manifold();
         if (!manifoldSolver.getManifold(penetration, shape1, shape2, detect.getApproximateShape(), manifold)) {
@@ -87,7 +85,6 @@ public class BasicCollisionDetector implements CollisionDetector {
         for (int i = 0; i < Settings.DEFAULT_SOLVER_ITERATIONS; i++) {
             solver.solveVelocityConstraints(constraints);
         }
-
         for (PhysicsBody body : bodies) {
             body.integratePosition();
         }
@@ -95,4 +92,5 @@ public class BasicCollisionDetector implements CollisionDetector {
             solver.solvePositionConstraints(constraints);
         }
     }
+
 }

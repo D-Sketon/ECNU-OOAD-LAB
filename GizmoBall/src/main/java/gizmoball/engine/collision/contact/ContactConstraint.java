@@ -135,11 +135,11 @@ public class ContactConstraint {
 
 
     private double getMixedRestitutionVelocity(PhysicsBody body1, PhysicsBody body2) {
-        return 0;
+        return Math.max(body1.getRestitutionVelocity(), body2.getRestitutionVelocity());
     }
 
     private double getMixedRestitution(PhysicsBody body1, PhysicsBody body2) {
-        return (body1.getRestitution() + body2.getRestitution()) / 2;
+        return Math.min(body1.getRestitution(), body2.getRestitution());
     }
 
     private double getMixedFriction(PhysicsBody body1, PhysicsBody body2) {

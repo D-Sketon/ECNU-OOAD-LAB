@@ -108,7 +108,7 @@ public class PhysicsBody {
         this.gravityScale = 10.0;
     }
 
-    protected void accumulate(double elapsedTime) {
+    protected void accumulate() {
         this.force.zero();
         int size = this.forces.size();
         if (size > 0) {
@@ -119,16 +119,12 @@ public class PhysicsBody {
                 it.remove();
             }
         }
-        // set the current torque to zero
         this.torque = 0.0;
-        // get the number of torques
         size = this.torques.size();
-        // check the size
         if (size > 0) {
-            // apply all the torques
             Iterator<Double> it = this.torques.iterator();
             while (it.hasNext()) {
-                Double torque = it.next();
+                double torque = it.next();
                 this.torque += torque;
                 it.remove();
 
@@ -144,7 +140,7 @@ public class PhysicsBody {
         double elapsedTime = Settings.DEFAULT_STEP_FREQUENCY;
 
         // accumulate the forces and torques
-        this.accumulate(elapsedTime);
+        this.accumulate();
 
         // get the mass properties
         double mass = this.mass.getMass();
@@ -194,7 +190,6 @@ public class PhysicsBody {
         double maxTranslationSquared = maxTranslation * maxTranslation;
         double maxRotation = Settings.DEFAULT_MAXIMUM_ROTATION;
 
-        // if the body isn't moving then don't bother
         if (this.isStatic()) {
             return;
         }

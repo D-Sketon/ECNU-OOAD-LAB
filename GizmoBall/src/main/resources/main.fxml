@@ -32,9 +32,10 @@
          </children></Pane>
       <MenuBar prefHeight="25.0" prefWidth="900.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="文件">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="menuItemSave" mnemonicParsing="false" text="保存" />
+              <MenuItem fx:id="menuItemLoad" mnemonicParsing="false" text="加载" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">

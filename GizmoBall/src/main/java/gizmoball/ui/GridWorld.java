@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -82,9 +83,11 @@ public class GridWorld extends World {
 
     public void setGrid(AABB aabb, PhysicsBody body) {
         int[] bottomLeft = getGridIndex(aabb.getMinX(), aabb.getMinY());
-        int[] topRight = getGridIndex(aabb.getMaxX(), aabb.getMaxY());
-        for (int i = bottomLeft[0]; i < topRight[0]; i++) {
-            for (int j = bottomLeft[1]; j < topRight[1]; j++) {
+        int width = (int) Math.ceil((aabb.getMaxX() - aabb.getMinX()) / gridSize);
+        int height = (int) Math.ceil((aabb.getMaxY() - aabb.getMinY()) / gridSize);
+
+        for (int i = bottomLeft[0]; i < bottomLeft[0] + width; i++) {
+            for (int j = bottomLeft[1]; j < bottomLeft[1] + height; j++) {
                 gizmoGridBodies[i][j] = body;
             }
         }
@@ -106,8 +109,11 @@ public class GridWorld extends World {
         if (topRight == null) {
             return true;
         }
-        for (int i = bottomLeft[0]; i < topRight[0]; i++) {
-            for (int j = bottomLeft[1]; j < topRight[1]; j++) {
+        int width = (int) Math.ceil((aabb.getMaxX() - aabb.getMinX()) / gridSize);
+        int height = (int) Math.ceil((aabb.getMaxY() - aabb.getMinY()) / gridSize);
+
+        for (int i = bottomLeft[0]; i < bottomLeft[0] + width; i++) {
+            for (int j = bottomLeft[1]; j < bottomLeft[1] + height; j++) {
                 if (gizmoGridBodies[i][j] != null) {
                     return true;
                 }
@@ -174,34 +180,80 @@ public class GridWorld extends World {
 
     private String snapshot;
 
+    /**
+     * <p>获取当前世界的物体快照到默认文件".snapshot.json"</p>
+     *
+     * @return json格式的字符串表示每一个物体
+     */
     public String snapshot() {
+        return snapshot(new File(".snapshot.json"));
+    }
+
+    /**
+     * <p>获取当前世界的物体快照到指定文件</p>
+     *
+     * @param file 指定文件
+     * @return json格式的字符串表示每一个物体
+     */
+    public String snapshot(File file){
         try {
-            snapshot = PersistentUtil.toJsonString(obstacles.stream().skip(4).collect(Collectors.toList()));
-            PersistentUtil.write(snapshot, "snapshot.json");
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            log.info("保存快照中...");
+            List<PhysicsBody> bodies = new ArrayList<>();
+            final int borderCount = 4;
+            bodies.addAll(obstacles.stream().skip(borderCount) // 跳过边界
+                    .collect(Collectors.toList()));
+            bodies.addAll(balls);
+            bodies.addAll(blackholes);
+            bodies.addAll(pipes);
+
+            snapshot = PersistentUtil.toJsonString(bodies);
+            log.debug("take snapshot: {}", snapshot);
+
+            PersistentUtil.write(snapshot, file);
+            log.info("已保存{}个物体的快照", bodies.size());
+        } catch (Exception e) {
+            log.error("snapshot error", e);
         }
         return snapshot;
     }
 
-    public void restore(){
-       restore(snapshot);
+    /**
+     * @see #restore(String)
+     */
+    public void restore() {
+        restore(snapshot);
     }
 
-    public void restore(String snapshot){
+    /**
+     * <p>恢复世界的物体</p>
+     *
+     * @param snapshot snapshot获取的json字符串
+     */
+    public void restore(String snapshot) {
         try {
+            log.info("恢复快照中...");
             List<PhysicsBody> o = PersistentUtil.fromJsonString(snapshot);
             this.obstacles.clear();
+            this.balls.clear();
+            this.blackholes.clear();
+            this.pipes.clear();
             //其他四个列表也要清空
             for (PhysicsBody[] gizmoGridBody : this.gizmoGridBodies) {
                 Arrays.fill(gizmoGridBody, null);
             }
             initBoundary();
             setBodiesToGrid(o);
+            log.info("成功加载{}个物体", o.size());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("restore error", e);
+        }
+    }
+
+    public void restore(File file) {
+        try {
+            restore(PersistentUtil.readFromFile(file));
+        } catch (IOException e) {
+            log.error("restore error", e);
         }
     }
 }

@@ -10,6 +10,7 @@ import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImagePhysicsBody;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,6 +20,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -26,10 +28,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -65,6 +71,12 @@ public class MainController extends Application implements Initializable {
     @FXML
     javafx.scene.shape.Rectangle gizmoOutlineRectangle;
 
+    @FXML
+    MenuItem menuItemLoad;
+
+    @FXML
+    MenuItem menuItemSave;
+
     private static final boolean DEV_MODE = true;
 
     /**
@@ -92,6 +104,8 @@ public class MainController extends Application implements Initializable {
     private static final int TICKS_PER_SECOND = 60;
 
     private static Vector2 preferredSize;
+
+    private Stage primaryStage;
 
     private static final DraggableGizmoComponent[] gizmos = {
             new DraggableGizmoComponent("icons/rectangle.png", "rectangle", GizmoType.RECTANGLE),
@@ -131,6 +145,7 @@ public class MainController extends Application implements Initializable {
         primaryStage.setTitle("GizmoBall");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        this.primaryStage = primaryStage;
     }
 
     private void initGizmoGridPane() {
@@ -184,7 +199,7 @@ public class MainController extends Application implements Initializable {
         Runnable r = () -> {
             try {
                 world.tick();
-                drawGizmo(gizmoCanvas.getGraphicsContext2D());
+                Platform.runLater(() -> drawGizmo(gizmoCanvas.getGraphicsContext2D()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -267,6 +282,44 @@ public class MainController extends Application implements Initializable {
         gizmoOpHandler = new GizmoOpHandler(world);
     }
 
+    private void initMenuItem() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("选择文件");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Gizmo", "*.json"),
+                new FileChooser.ExtensionFilter("All Files", "*.*")
+        );
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        menuItemLoad.setOnAction(event -> {
+            fileChooser.setInitialDirectory(new File("."));
+            File file = fileChooser.showOpenDialog(primaryStage);
+            if (file != null) {
+                try {
+                    world.restore(file);
+                    drawGizmo(gizmoCanvas.getGraphicsContext2D());
+                } catch (Exception e) {
+                    log.error("加载文件失败: {}", e.getMessage());
+                }
+            }
+        });
+
+        menuItemSave.setOnAction(event -> {
+            // set current time as filename
+            String time = LocalDateTime.now().format(formatter);
+
+            fileChooser.setInitialFileName("gizmo" + time + ".json");
+            File file = fileChooser.showSaveDialog(primaryStage);
+            if (file != null) {
+                try {
+                    world.snapshot(file);
+                } catch (Exception e) {
+                    log.error("保存文件失败: {}", e.getMessage());
+                }
+            }
+        });
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initWorld();
@@ -274,6 +327,7 @@ public class MainController extends Application implements Initializable {
         initGizmoGridPane();
         initGizmoOpHBox();
         initCanvas();
+        initMenuItem();
     }
 
 

@@ -40,16 +40,24 @@ public class PersistentUtil {
         return wrapper.bodies;
     }
 
-    public static void write(String json, String file){
+    public static void write(String json, File file){
         try {
-            Files.write(new File(file).toPath(), json.getBytes(StandardCharsets.UTF_8));
+            Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             log.error("write file error", e);
         }
     }
 
+    public static void write(String json, String file){
+        write(json, new File(file));
+    }
+
     public static String readFromFile(String path) throws IOException {
         return IOUtils.toString(new FileInputStream(path), "UTF-8");
+    }
+
+    public static String readFromFile(File file) throws IOException {
+        return IOUtils.toString(new FileInputStream(file), "UTF-8");
     }
 
 }

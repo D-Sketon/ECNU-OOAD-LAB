@@ -44,7 +44,7 @@ public class GizmoOpHandler {
         if (function == null) {
             throw new IllegalArgumentException("No function found for command: " + command);
         }
-        log.info("Handling command: " + command);
+        log.debug("Handling command: " + command);
         return gizmoOps.get(command).apply(body);
     }
 

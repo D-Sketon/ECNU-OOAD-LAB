@@ -232,7 +232,12 @@ public class MainController extends Application implements Initializable {
             }
             inDesign = true;
             scheduledFuture[0].cancel(true);
-            world.restore();
+
+            try {
+                world.restore();
+            } catch (RuntimeException e) {
+                Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
+            }
             drawGizmo(gizmoCanvas.getGraphicsContext2D());
         });
     }
@@ -292,7 +297,7 @@ public class MainController extends Application implements Initializable {
                 new FileChooser.ExtensionFilter("Gizmo", "*.json"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss");
 
         menuItemLoad.setOnAction(event -> {
             fileChooser.setInitialDirectory(new File("."));
@@ -302,6 +307,7 @@ public class MainController extends Application implements Initializable {
                     world.restore(file);
                     drawGizmo(gizmoCanvas.getGraphicsContext2D());
                 } catch (Exception e) {
+                    Toast.makeText(primaryStage, "加载文件失败: "+ e.getMessage(), 2000, 500, 500);
                     log.error("加载文件失败: {}", e.getMessage());
                 }
             }
@@ -317,6 +323,7 @@ public class MainController extends Application implements Initializable {
                 try {
                     world.snapshot(file);
                 } catch (Exception e) {
+                    Toast.makeText(primaryStage, "保存文件失败: "+ e.getMessage(), 2000, 500, 500);
                     log.error("保存文件失败: {}", e.getMessage());
                 }
             }

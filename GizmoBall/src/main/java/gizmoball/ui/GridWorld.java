@@ -195,7 +195,7 @@ public class GridWorld extends World {
      * @param file 指定文件
      * @return json格式的字符串表示每一个物体
      */
-    public String snapshot(File file){
+    public String snapshot(File file) {
         try {
             log.info("保存快照中...");
             List<PhysicsBody> bodies = new ArrayList<>();
@@ -220,7 +220,7 @@ public class GridWorld extends World {
     /**
      * @see #restore(String)
      */
-    public void restore() {
+    public void restore() throws RuntimeException {
         restore(snapshot);
     }
 
@@ -229,7 +229,7 @@ public class GridWorld extends World {
      *
      * @param snapshot snapshot获取的json字符串
      */
-    public void restore(String snapshot) {
+    public void restore(String snapshot) throws RuntimeException {
         try {
             log.info("恢复快照中...");
             List<PhysicsBody> o = PersistentUtil.fromJsonString(snapshot);
@@ -246,14 +246,17 @@ public class GridWorld extends World {
             log.info("成功加载{}个物体", o.size());
         } catch (IOException e) {
             log.error("restore error", e);
+            throw new RuntimeException(e);
+
         }
     }
 
-    public void restore(File file) {
+    public void restore(File file) throws RuntimeException {
         try {
             restore(PersistentUtil.readFromFile(file));
         } catch (IOException e) {
             log.error("restore error", e);
+            throw new RuntimeException(e);
         }
     }
 }

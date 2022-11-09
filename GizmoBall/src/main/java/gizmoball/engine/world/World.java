@@ -1,5 +1,6 @@
 package gizmoball.engine.world;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.CollisionDetector;
 import gizmoball.engine.collision.contact.ContactConstraint;
@@ -10,8 +11,8 @@ import gizmoball.engine.geometry.shape.QuarterCircle;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.Blackhole;
+import gizmoball.engine.world.entity.Flipper;
 import gizmoball.engine.world.entity.Pipe;
-import gizmoball.engine.world.filter.CollisionFilter;
 import gizmoball.engine.world.listener.*;
 import javafx.util.Pair;
 import lombok.Getter;
@@ -61,14 +62,13 @@ public class World {
     protected final List<PhysicsBody> pipes;
 
     /**
-     * 左挡板
+     * 两块挡板
      */
-    protected PhysicsBody leftBaffle;
+    protected final List<PhysicsBody> flippers;
 
-    /**
-     * 右挡板
-     */
-    protected PhysicsBody rightBaffle;
+    protected PhysicsBody leftFlipper;
+
+    protected PhysicsBody rightFlipper;
 
     /**
      * 游戏经过ticks数
@@ -91,6 +91,7 @@ public class World {
         this.blackholes = new ArrayList<>();
         this.obstacles = new ArrayList<>();
         this.pipes = new ArrayList<>();
+        this.flippers = new ArrayList<>();
         this.timeTicks = 0;
         this.tickListeners = new ArrayList<>();
         this.triggerListeners = new ArrayList<>();
@@ -99,17 +100,27 @@ public class World {
 
         BallListener ballListener = new BallListener(balls);
         BlackholeListener blackholeListener = new BlackholeListener(balls, blackholes);
-        PipeListener pipeListener = new PipeListener(balls, pipes,gravity);
+        PipeListener pipeListener = new PipeListener(balls, pipes, gravity);
         ObstacleListener obstacleListener = new ObstacleListener(balls, obstacles);
+        FlipperListener flipperListener = new FlipperListener(balls, flippers);
         tickListeners.add(ballListener);
         tickListeners.add(blackholeListener);
         tickListeners.add(pipeListener);
         tickListeners.add(obstacleListener);
+        tickListeners.add(flipperListener);
     }
 
     public void addBodies(PhysicsBody body) {
         //添加球
-        if (body.getShape() instanceof Ball) {
+        if (body.getShape() instanceof Flipper) {
+            flippers.add(body);
+            Flipper shape = (Flipper) body.getShape();
+            if (shape.getDirection() == Flipper.Direction.LEFT) {
+                leftFlipper = body;
+            } else {
+                rightFlipper = body;
+            }
+        } else if (body.getShape() instanceof Ball) {
             this.balls.add(body);
         } else if (body.getShape() instanceof Blackhole) {
             this.blackholes.add(body);
@@ -126,6 +137,7 @@ public class World {
         this.pipes.removeAll(Arrays.asList(bodies));
         this.balls.removeAll(Arrays.asList(bodies));
         this.obstacles.removeAll(Arrays.asList(bodies));
+        this.flippers.removeAll(Arrays.asList(bodies));
     }
 
     public List<PhysicsBody> getBodies() {
@@ -134,7 +146,20 @@ public class World {
         bodies.addAll(balls);
         bodies.addAll(blackholes);
         bodies.addAll(pipes);
+        bodies.addAll(flippers);
         return bodies;
+    }
+
+    public void flipper(Flipper.Direction direction) {
+        if (direction == Flipper.Direction.LEFT && leftFlipper != null) {
+            Flipper flipper = (Flipper) leftFlipper.getShape();
+            flipper.rise();
+            leftFlipper.setAngularVelocity(Settings.DEFAULT_FLIPPER_ANGULAR);
+        } else if (direction == Flipper.Direction.RIGHT && rightFlipper != null) {
+            Flipper flipper = (Flipper) rightFlipper.getShape();
+            flipper.rise();
+            rightFlipper.setAngularVelocity(-Settings.DEFAULT_FLIPPER_ANGULAR);
+        }
     }
 
     /**

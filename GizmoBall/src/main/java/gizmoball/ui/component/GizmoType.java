@@ -5,7 +5,7 @@ import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.ui.visualize.CanvasRenderer;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImageRenderer;
-import gizmoball.ui.visualize.SvgRenderer;
+import gizmoball.ui.visualize.SVGRenderer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,23 +15,23 @@ import java.util.function.Function;
 @AllArgsConstructor
 public enum GizmoType{
 
-    BALL("gizmo/ball", DraggableGizmoComponent.ballBodyCreator, new SvgRenderer("icons/ball.svg")),
+    BALL("gizmo/ball", DraggableGizmoComponent.ballBodyCreator, new SVGRenderer("icons/ball.svg")),
 
-    CIRCLE("gizmo/circle", DraggableGizmoComponent.circleBodyCreator, new SvgRenderer("icons/circle.svg")),
+    CIRCLE("gizmo/circle", DraggableGizmoComponent.circleBodyCreator, new SVGRenderer("icons/circle.svg")),
 
-    BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.blackholeBodyCreator, new SvgRenderer("icons/black_hole.svg")),
+    BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.blackholeBodyCreator, new SVGRenderer("icons/black_hole.svg")),
 
-    RECTANGLE("gizmo/rectangle", DraggableGizmoComponent.rectangleBodyCreator, new SvgRenderer("icons/rectangle.svg")),
+    RECTANGLE("gizmo/rectangle", DraggableGizmoComponent.rectangleBodyCreator, new SVGRenderer("icons/rectangle.svg")),
 
     TRIANGLE("gizmo/triangle", DraggableGizmoComponent.triangleBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
     PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new ImageRenderer("icons/pipe.png")),
 
-    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle2.png")),
+    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/quarter_circle.png")),
 
-    LEFT_FLIPPER("gizmo/leftFlipper", DraggableGizmoComponent.flipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
+    LEFT_FLIPPER("gizmo/leftFlipper", DraggableGizmoComponent.leftFlipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
-    RIGHT_FLIPPER("gizmo/rightFlipper", DraggableGizmoComponent.flipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
+    RIGHT_FLIPPER("gizmo/rightFlipper", DraggableGizmoComponent.rightFlipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
     ;
 

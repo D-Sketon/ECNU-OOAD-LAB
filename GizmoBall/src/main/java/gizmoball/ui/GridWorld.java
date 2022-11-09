@@ -100,7 +100,7 @@ public class GridWorld extends World {
      * @param aabb /
      * @return /
      */
-    public boolean checkOverlay(AABB aabb) {
+    public boolean checkOverlay(AABB aabb, PhysicsBody body) {
         int[] bottomLeft = getGridIndex(aabb.getMinX(), aabb.getMinY());
         if (bottomLeft == null) {
             return true;
@@ -114,7 +114,7 @@ public class GridWorld extends World {
 
         for (int i = bottomLeft[0]; i < bottomLeft[0] + width; i++) {
             for (int j = bottomLeft[1]; j < bottomLeft[1] + height; j++) {
-                if (gizmoGridBodies[i][j] != null) {
+                if (gizmoGridBodies[i][j] != null && body != gizmoGridBodies[i][j]) {
                     return true;
                 }
             }
@@ -165,7 +165,7 @@ public class GridWorld extends World {
 
     public void addBodyToGrid(PhysicsBody body) throws IllegalArgumentException {
         AABB aabb = body.getShape().createAABB();
-        if (checkOverlay(aabb)) {
+        if (checkOverlay(aabb, body)) {
             throw new IllegalArgumentException("物件重叠");
         }
         super.addBodies(body);
@@ -205,6 +205,7 @@ public class GridWorld extends World {
             bodies.addAll(balls);
             bodies.addAll(blackholes);
             bodies.addAll(pipes);
+            bodies.addAll(flippers);
 
             snapshot = PersistentUtil.toJsonString(bodies);
             log.debug("take snapshot: {}", snapshot);
@@ -237,6 +238,7 @@ public class GridWorld extends World {
             this.balls.clear();
             this.blackholes.clear();
             this.pipes.clear();
+            this.flippers.clear();
             //其他四个列表也要清空
             for (PhysicsBody[] gizmoGridBody : this.gizmoGridBodies) {
                 Arrays.fill(gizmoGridBody, null);

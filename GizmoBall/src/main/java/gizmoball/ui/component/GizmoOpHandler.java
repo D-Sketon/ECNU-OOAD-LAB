@@ -1,13 +1,19 @@
 package gizmoball.ui.component;
 
 import gizmoball.engine.geometry.AABB;
+import gizmoball.engine.geometry.Epsilon;
+import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
+import gizmoball.engine.world.entity.Flipper;
+import gizmoball.ui.GeometryUtil;
 import gizmoball.ui.GridWorld;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
 
@@ -65,6 +71,7 @@ public class GizmoOpHandler {
         }
         world.removeBodies(gizmoBody);
         AABB aabb = gizmoBody.getShape().createAABB();
+        GeometryUtil.padToSquare(aabb);
         world.setGrid(aabb, null);
         return true;
     }
@@ -87,15 +94,16 @@ public class GizmoOpHandler {
 
     public boolean moveGizmo(PhysicsBody gizmoBody, Vector2 position) {
         AABB originAABB = gizmoBody.getShape().createAABB();
+        GeometryUtil.padToSquare(originAABB);
         AABB translatedAABB = new AABB(originAABB);
         translatedAABB.translate(position);
-        // 先将原本的位置设为null，避免检测到自己
-        world.setGrid(originAABB, null);
-        if (world.checkOverlay(translatedAABB)) {
-            world.setGrid(originAABB, gizmoBody);
+
+        if (world.checkOverlay(translatedAABB, gizmoBody)) {
             throw new IllegalArgumentException("物件重叠");
         }
 
+        // 先将原本的位置设为null
+        world.setGrid(originAABB, null);
         gizmoBody.getShape().translate(position);
         world.setGrid(translatedAABB, gizmoBody);
         return true;
@@ -124,6 +132,7 @@ public class GizmoOpHandler {
         }
 
         AABB aabb = gizmoBody.getShape().createAABB();
+        GeometryUtil.padToSquare(aabb);
         world.setGrid(aabb, null);
         aabb.maxY -= world.getGridSize();
         aabb.maxX -= world.getGridSize();
@@ -131,11 +140,6 @@ public class GizmoOpHandler {
 
         gizmoBody.getShape().zoom(rate - 1);
         gizmoBody.getShape().translate(-world.getGridSize() / 2.0, -world.getGridSize() / 2.0);
-        //修改质量
-        if(gizmoBody.getShape() instanceof Ball){
-            gizmoBody.setMass(gizmoBody.getShape().createMass(10));
-        }
-
         return true;
     }
 
@@ -145,21 +149,15 @@ public class GizmoOpHandler {
         AABB translatedAABB = new AABB(originAABB);
         translatedAABB.maxY += world.getGridSize();
         translatedAABB.maxX += world.getGridSize();
-        // 先将原本的位置设为null，避免检测到自己
-        world.setGrid(originAABB, null);
-        if (world.checkOverlay(translatedAABB)) {
-            world.setGrid(originAABB, gizmoBody);
+        GeometryUtil.padToSquare(translatedAABB);
+
+        if (world.checkOverlay(translatedAABB, gizmoBody)) {
             throw new IllegalArgumentException("物件重叠");
         }
 
         int rate = gizmoBody.getShape().getRate();
-
         gizmoBody.getShape().zoom(rate + 1);
         gizmoBody.getShape().translate(world.getGridSize() / 2.0, world.getGridSize() / 2.0);
-        //修改质量
-        if(gizmoBody.getShape() instanceof Ball){
-            gizmoBody.setMass(gizmoBody.getShape().createMass(10));
-        }
         world.setGrid(translatedAABB, gizmoBody);
         return true;
     }

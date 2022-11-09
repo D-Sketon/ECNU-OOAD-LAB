@@ -1,8 +1,8 @@
 package gizmoball.engine.world.listener;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.manifold.Manifold;
-import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Flipper;
 import javafx.util.Pair;
@@ -12,11 +12,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
-
 @Getter
 @Setter
-public class FlipperListener implements TickListener{
+public class FlipperListener implements TickListener {
 
     private final List<PhysicsBody> balls;
 
@@ -30,7 +28,6 @@ public class FlipperListener implements TickListener{
     }
 
 
-
     @Override
     public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> tick() {
         updatePosition(flippers);
@@ -39,27 +36,31 @@ public class FlipperListener implements TickListener{
 
     /**
      * 每个tick更新挡板位置
+     *
      * @param flippers
      */
-    public void updatePosition(List<PhysicsBody> flippers){
-        for(PhysicsBody physicsBody : flippers){
+    public void updatePosition(List<PhysicsBody> flippers) {
+        for (PhysicsBody physicsBody : flippers) {
             Flipper flipper = (Flipper) physicsBody.getShape();
             double angular = flipper.getAngular();
             //上升状态
-            if(flipper.isUp()){
+            if (flipper.isUp()) {
                 //还未转到90度，继续旋转
-                if(angular < 30){
-                    flipper.setAngular(angular + 10);
+                if (angular <= 30) {
+                    flipper.setAngular(angular + Settings.DEFAULT_FLIPPER_ROTATION);
                     flipper.flip();
                     continue;
                 }
                 //转至90度，停止
                 flipper.setUp(false);
+                physicsBody.setAngularVelocity(-physicsBody.getAngularVelocity());
             } else { //下降状态
                 //还未归位，继续归位
-                if(flipper.getAngular() > 0){
-                    flipper.setAngular(angular - 10);
+                if (flipper.getAngular() > 0) {
+                    flipper.setAngular(angular - Settings.DEFAULT_FLIPPER_ROTATION);
                     flipper.flip();
+                } else if (flipper.getAngular() == 0) {
+                    physicsBody.setAngularVelocity(0);
                 }
             }
         }

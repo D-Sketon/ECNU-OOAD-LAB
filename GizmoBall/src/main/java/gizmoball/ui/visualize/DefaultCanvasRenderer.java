@@ -6,12 +6,9 @@ import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Flipper;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class DefaultCanvasRenderer implements CanvasRenderer {
 
     public static final DefaultCanvasRenderer INSTANCE = new DefaultCanvasRenderer();
@@ -32,11 +29,6 @@ public class DefaultCanvasRenderer implements CanvasRenderer {
             gc.setFill(FILL_COLOR);
 
             Vector2[] vertices = polygon.getVertices();
-            if(shape instanceof Flipper){
-                for (Vector2 vertex : vertices) {
-                    log.info(vertex.toString());
-                }
-            }
             double[] xpoints = new double[vertices.length];
             double[] ypoints = new double[vertices.length];
             for (int i = 0; i < vertices.length; i++) {

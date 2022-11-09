@@ -39,7 +39,6 @@ public class Pipe extends Rectangle {
     @Override
     public void rotate(double theta, double x, double y) {
         transform.rotate(theta, x, y);
-        System.out.println(this.getTransform().sint);
         if(Math.abs(this.getTransform().sint) > 0.5){
             this.pipeDirection = PipeDirection.VERTICAL;
 

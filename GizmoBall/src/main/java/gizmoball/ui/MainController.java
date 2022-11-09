@@ -114,7 +114,7 @@ public class MainController extends Application implements Initializable {
             new DraggableGizmoComponent("icons/triangle.png", "triangle", GizmoType.TRIANGLE),
             new DraggableGizmoComponent("icons/black_hole.png", "black hole", GizmoType.BLACK_HOLE),
             new DraggableGizmoComponent("icons/ball.png", "ball", GizmoType.BALL),
-            new DraggableGizmoComponent("icons/rail.png", "rail", GizmoType.PIPE),
+            new DraggableGizmoComponent("icons/pipe.png", "rail", GizmoType.PIPE),
             new DraggableGizmoComponent("icons/quarter_circle.png", "quarter circle", GizmoType.CURVED_PIPE),
             new DraggableGizmoComponent("icons/rail.png", "rail", GizmoType.LEFT_FLIPPER),
             new DraggableGizmoComponent("icons/quarter_circle.png", "quarter circle", GizmoType.RIGHT_FLIPPER),

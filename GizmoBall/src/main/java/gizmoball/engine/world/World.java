@@ -1,5 +1,6 @@
 package gizmoball.engine.world;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.CollisionDetector;
 import gizmoball.engine.collision.contact.ContactConstraint;
@@ -12,7 +13,6 @@ import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.Blackhole;
 import gizmoball.engine.world.entity.Flipper;
 import gizmoball.engine.world.entity.Pipe;
-import gizmoball.engine.world.filter.CollisionFilter;
 import gizmoball.engine.world.listener.*;
 import javafx.util.Pair;
 import lombok.Getter;
@@ -100,7 +100,7 @@ public class World {
 
         BallListener ballListener = new BallListener(balls);
         BlackholeListener blackholeListener = new BlackholeListener(balls, blackholes);
-        PipeListener pipeListener = new PipeListener(balls, pipes,gravity);
+        PipeListener pipeListener = new PipeListener(balls, pipes, gravity);
         ObstacleListener obstacleListener = new ObstacleListener(balls, obstacles);
         FlipperListener flipperListener = new FlipperListener(balls, flippers);
         tickListeners.add(ballListener);
@@ -112,16 +112,15 @@ public class World {
 
     public void addBodies(PhysicsBody body) {
         //添加球
-        if(body.getShape() instanceof Flipper){
+        if (body.getShape() instanceof Flipper) {
             flippers.add(body);
             Flipper shape = (Flipper) body.getShape();
-            if(shape.getDirection() == Flipper.Direction.LEFT){
+            if (shape.getDirection() == Flipper.Direction.LEFT) {
                 leftFlipper = body;
             } else {
                 rightFlipper = body;
             }
-        }
-        else if (body.getShape() instanceof Ball) {
+        } else if (body.getShape() instanceof Ball) {
             this.balls.add(body);
         } else if (body.getShape() instanceof Blackhole) {
             this.blackholes.add(body);
@@ -152,14 +151,14 @@ public class World {
     }
 
     public void flipper(Flipper.Direction direction) {
-        if(direction == Flipper.Direction.LEFT && leftFlipper != null) {
+        if (direction == Flipper.Direction.LEFT && leftFlipper != null) {
             Flipper flipper = (Flipper) leftFlipper.getShape();
             flipper.rise();
-            leftFlipper.setAngularVelocity(5);
-        } else if(direction == Flipper.Direction.RIGHT && rightFlipper != null) {
+            leftFlipper.setAngularVelocity(Settings.DEFAULT_FLIPPER_ANGULAR);
+        } else if (direction == Flipper.Direction.RIGHT && rightFlipper != null) {
             Flipper flipper = (Flipper) rightFlipper.getShape();
             flipper.rise();
-            rightFlipper.setAngularVelocity(5);
+            rightFlipper.setAngularVelocity(-Settings.DEFAULT_FLIPPER_ANGULAR);
         }
     }
 
@@ -176,7 +175,6 @@ public class World {
         List<ContactConstraint> contactConstraints = collisionDetector.preLocalSolve(pairs);
         collisionDetector.LocalSolve(solver, gravity, contactConstraints, balls);
     }
-
 
 
 }

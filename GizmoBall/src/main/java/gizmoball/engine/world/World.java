@@ -138,6 +138,7 @@ public class World {
         this.pipes.removeAll(Arrays.asList(bodies));
         this.balls.removeAll(Arrays.asList(bodies));
         this.obstacles.removeAll(Arrays.asList(bodies));
+        this.flippers.removeAll(Arrays.asList(bodies));
     }
 
     public List<PhysicsBody> getBodies() {

@@ -228,6 +228,7 @@ public class MainController extends Application implements Initializable {
             if (inDesign) {
                 return;
             }
+            selectedBody = null;
             inDesign = true;
             scheduledFuture[0].cancel(true);
             world.restore();

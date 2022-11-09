@@ -11,11 +11,11 @@ import javafx.scene.transform.Affine;
  * <p><b>仅支持iconfont下载下来的svg</b></p>
  * <p>因为{@link javafx.scene.image.Image}不支持SVG，所以没有继承{@link ImageRenderer}</p>
  */
-public class SvgRenderer implements CanvasRenderer {
+public class SVGRenderer implements CanvasRenderer {
 
     private final SVGNode svgNode;
 
-    public SvgRenderer(String resource) {
+    public SVGRenderer(String resource) {
         this.svgNode = SVGNode.fromResource(getClass().getClassLoader().getResourceAsStream(resource));
     }
 

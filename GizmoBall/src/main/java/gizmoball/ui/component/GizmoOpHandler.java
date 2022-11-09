@@ -1,13 +1,19 @@
 package gizmoball.ui.component;
 
 import gizmoball.engine.geometry.AABB;
+import gizmoball.engine.geometry.Epsilon;
+import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
+import gizmoball.engine.world.entity.Flipper;
+import gizmoball.ui.GeometryUtil;
 import gizmoball.ui.GridWorld;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
 
@@ -89,13 +95,13 @@ public class GizmoOpHandler {
         AABB originAABB = gizmoBody.getShape().createAABB();
         AABB translatedAABB = new AABB(originAABB);
         translatedAABB.translate(position);
-        // 先将原本的位置设为null，避免检测到自己
-        world.setGrid(originAABB, null);
-        if (world.checkOverlay(translatedAABB)) {
-            world.setGrid(originAABB, gizmoBody);
+
+        if (world.checkOverlay(translatedAABB, gizmoBody)) {
             throw new IllegalArgumentException("物件重叠");
         }
 
+        // 先将原本的位置设为null
+        world.setGrid(originAABB, null);
         gizmoBody.getShape().translate(position);
         world.setGrid(translatedAABB, gizmoBody);
         return true;
@@ -116,21 +122,55 @@ public class GizmoOpHandler {
         return true;
     }
 
+    /**
+     * 将不足格子的AABB填充到一个格子的大小
+     */
+    private void padAABBToGrid(AABB aabb){
+        double width = aabb.maxX - aabb.minX;
+        double height = aabb.maxY - aabb.minY;
+        int gridSize = world.getGridSize();
+        double modw = width % gridSize;
+        double modh = height % gridSize;
+        if(modw > Epsilon.E){
+            aabb.maxX += (gridSize - modw) / 2;
+            aabb.minX -= (gridSize - modw) / 2;
+        }
+        if(modh > Epsilon.E){
+            aabb.maxY += (gridSize - modh) / 2;
+            aabb.minY -= (gridSize - modh) / 2;
+        }
+    }
+
     public boolean zoomInGizmo(PhysicsBody gizmoBody) {
         // 固定左下角点，往左下角缩小
-        int rate = gizmoBody.getShape().getRate();
+        AbstractShape shape = gizmoBody.getShape();
+        AABB originAABB = shape.createAABB();
+        int gridSize = world.getGridSize();
+        int rate = shape.getRate();
         if (rate == 1) {
             throw new IllegalArgumentException("物件已经最小");
         }
 
-        AABB aabb = gizmoBody.getShape().createAABB();
-        world.setGrid(aabb, null);
-        aabb.maxY -= world.getGridSize();
-        aabb.maxX -= world.getGridSize();
-        world.setGrid(aabb, gizmoBody);
+        shape.zoom(rate - 1);
+        AABB translatedAABB = shape.createAABB();
+        padAABBToGrid(translatedAABB);
+        Vector2 offset = GeometryUtil.snapToGrid(translatedAABB, gridSize, gridSize);
+        // 往左下角缩小
+        if (offset.x > 0) {
+            offset.x -= gridSize;
+        }
+        if (offset.y > 0) {
+            offset.y -= gridSize;
+        }
 
-        gizmoBody.getShape().zoom(rate - 1);
-        gizmoBody.getShape().translate(-world.getGridSize() / 2.0, -world.getGridSize() / 2.0);
+        translatedAABB.translate(offset);
+        if (world.checkOverlay(translatedAABB, gizmoBody)) {
+            throw new Error("Not reachable");
+        }
+
+        world.setGrid(originAABB, null);
+        shape.translate(offset);
+        world.setGrid(translatedAABB, gizmoBody);
         //修改质量
         if(gizmoBody.getShape() instanceof Ball){
             gizmoBody.setMass(gizmoBody.getShape().createMass(10));
@@ -141,22 +181,35 @@ public class GizmoOpHandler {
 
     public boolean zoomOutGizmo(PhysicsBody gizmoBody) {
         // 固定左下角点，往右上角放大，如果越界或者重叠，就不缩放
-        AABB originAABB = gizmoBody.getShape().createAABB();
-        AABB translatedAABB = new AABB(originAABB);
-        translatedAABB.maxY += world.getGridSize();
-        translatedAABB.maxX += world.getGridSize();
-        // 先将原本的位置设为null，避免检测到自己
-        world.setGrid(originAABB, null);
-        if (world.checkOverlay(translatedAABB)) {
-            world.setGrid(originAABB, gizmoBody);
+        AbstractShape shape = gizmoBody.getShape();
+        AABB originAABB = shape.createAABB();
+        int gridSize = world.getGridSize();
+        int originRate = shape.getRate();
+
+        // try zoom
+        shape.zoom(originRate + 1);
+        AABB translatedAABB = shape.createAABB();
+        // 除了挡板其他都是一个格子大小，理应不需要pad
+        padAABBToGrid(translatedAABB);
+        Vector2 offset = GeometryUtil.snapToGrid(translatedAABB, gridSize, gridSize);
+        // 往右上角缩放
+        if (offset.x < 0) {
+            offset.x += gridSize;
+        }
+        if (offset.y < 0) {
+            offset.y += gridSize;
+        }
+        translatedAABB.translate(offset);
+        if(world.checkOverlay(translatedAABB, gizmoBody)){
+            // 如果重叠，改回原来的大小
+            shape.zoom(originRate);
             throw new IllegalArgumentException("物件重叠");
         }
 
-        int rate = gizmoBody.getShape().getRate();
-
-        gizmoBody.getShape().zoom(rate + 1);
-        gizmoBody.getShape().translate(world.getGridSize() / 2.0, world.getGridSize() / 2.0);
-        //修改质量
+        // 先将原本的位置设为null
+        world.setGrid(originAABB, null);
+        shape.translate(offset);
+        // 修改质量
         if(gizmoBody.getShape() instanceof Ball){
             gizmoBody.setMass(gizmoBody.getShape().createMass(10));
         }

@@ -47,8 +47,15 @@ public class Flipper extends Rectangle {
         this.direction = direction;
     }
 
+    /**
+     * 反序列化用
+     */
+    @Deprecated
+    public Flipper(){
+
+    }
+
     public void flip() {
-        System.out.println((this.angular / 180) * Math.PI);
         if(this.direction == Direction.LEFT){
             rotate(this.lb, this.lt, (this.angular / 180) * Math.PI);
             rotate(this.lb, this.rb, (this.angular / 180) * Math.PI);
@@ -58,7 +65,6 @@ public class Flipper extends Rectangle {
             rotate(this.rb, this.lb, (-this.angular / 180) * Math.PI);
             rotate(this.rb, this.rt, (-this.angular / 180) * Math.PI);
         }
-        System.out.println(this.vertices);
     }
 
     public enum Direction{

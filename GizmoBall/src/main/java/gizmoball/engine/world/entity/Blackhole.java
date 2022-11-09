@@ -5,7 +5,10 @@ import gizmoball.engine.geometry.shape.Circle;
 
 public class Blackhole extends Circle {
 
-
+    /**
+     * 反序列化用
+     */
+    @Deprecated
     public Blackhole() {
     }
 

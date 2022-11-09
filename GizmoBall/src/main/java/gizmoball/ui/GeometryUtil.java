@@ -57,4 +57,22 @@ public class GeometryUtil {
         offsetY = offsetY > gridHeight / 2.0 ? gridHeight - offsetY : -offsetY;
         return new Vector2(offsetX, offsetY);
     }
+
+    /**
+     * 将AABB补成一个正方形
+     *
+     * @param aabb /
+     */
+    public static void padToSquare(AABB aabb){
+        double width = aabb.maxX - aabb.minX;
+        double height = aabb.maxY - aabb.minY;
+        double delta = Math.abs(width - height);
+        if(width > height){
+            aabb.minY -= delta / 2.0;
+            aabb.maxY += delta / 2.0;
+        } else {
+            aabb.minX -= delta / 2.0;
+            aabb.maxX += delta / 2.0;
+        }
+    }
 }

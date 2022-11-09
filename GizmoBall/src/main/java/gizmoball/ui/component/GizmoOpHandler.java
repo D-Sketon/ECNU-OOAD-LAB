@@ -71,6 +71,7 @@ public class GizmoOpHandler {
         }
         world.removeBodies(gizmoBody);
         AABB aabb = gizmoBody.getShape().createAABB();
+        GeometryUtil.padToSquare(aabb);
         world.setGrid(aabb, null);
         return true;
     }
@@ -93,6 +94,7 @@ public class GizmoOpHandler {
 
     public boolean moveGizmo(PhysicsBody gizmoBody, Vector2 position) {
         AABB originAABB = gizmoBody.getShape().createAABB();
+        GeometryUtil.padToSquare(originAABB);
         AABB translatedAABB = new AABB(originAABB);
         translatedAABB.translate(position);
 
@@ -122,97 +124,40 @@ public class GizmoOpHandler {
         return true;
     }
 
-    /**
-     * 将不足格子的AABB填充到一个格子的大小
-     */
-    private void padAABBToGrid(AABB aabb){
-        double width = aabb.maxX - aabb.minX;
-        double height = aabb.maxY - aabb.minY;
-        int gridSize = world.getGridSize();
-        double modw = width % gridSize;
-        double modh = height % gridSize;
-        if(modw > Epsilon.E){
-            aabb.maxX += (gridSize - modw) / 2;
-            aabb.minX -= (gridSize - modw) / 2;
-        }
-        if(modh > Epsilon.E){
-            aabb.maxY += (gridSize - modh) / 2;
-            aabb.minY -= (gridSize - modh) / 2;
-        }
-    }
-
     public boolean zoomInGizmo(PhysicsBody gizmoBody) {
         // 固定左下角点，往左下角缩小
-        AbstractShape shape = gizmoBody.getShape();
-        AABB originAABB = shape.createAABB();
-        int gridSize = world.getGridSize();
-        int rate = shape.getRate();
+        int rate = gizmoBody.getShape().getRate();
         if (rate == 1) {
             throw new IllegalArgumentException("物件已经最小");
         }
 
-        shape.zoom(rate - 1);
-        AABB translatedAABB = shape.createAABB();
-        padAABBToGrid(translatedAABB);
-        Vector2 offset = GeometryUtil.snapToGrid(translatedAABB, gridSize, gridSize);
-        // 往左下角缩小
-        if (offset.x > 0) {
-            offset.x -= gridSize;
-        }
-        if (offset.y > 0) {
-            offset.y -= gridSize;
-        }
+        AABB aabb = gizmoBody.getShape().createAABB();
+        GeometryUtil.padToSquare(aabb);
+        world.setGrid(aabb, null);
+        aabb.maxY -= world.getGridSize();
+        aabb.maxX -= world.getGridSize();
+        world.setGrid(aabb, gizmoBody);
 
-        translatedAABB.translate(offset);
-        if (world.checkOverlay(translatedAABB, gizmoBody)) {
-            throw new Error("Not reachable");
-        }
-
-        world.setGrid(originAABB, null);
-        shape.translate(offset);
-        world.setGrid(translatedAABB, gizmoBody);
-        //修改质量
-        if(gizmoBody.getShape() instanceof Ball){
-            gizmoBody.setMass(gizmoBody.getShape().createMass(10));
-        }
-
+        gizmoBody.getShape().zoom(rate - 1);
+        gizmoBody.getShape().translate(-world.getGridSize() / 2.0, -world.getGridSize() / 2.0);
         return true;
     }
 
     public boolean zoomOutGizmo(PhysicsBody gizmoBody) {
         // 固定左下角点，往右上角放大，如果越界或者重叠，就不缩放
-        AbstractShape shape = gizmoBody.getShape();
-        AABB originAABB = shape.createAABB();
-        int gridSize = world.getGridSize();
-        int originRate = shape.getRate();
+        AABB originAABB = gizmoBody.getShape().createAABB();
+        AABB translatedAABB = new AABB(originAABB);
+        translatedAABB.maxY += world.getGridSize();
+        translatedAABB.maxX += world.getGridSize();
+        GeometryUtil.padToSquare(translatedAABB);
 
-        // try zoom
-        shape.zoom(originRate + 1);
-        AABB translatedAABB = shape.createAABB();
-        // 除了挡板其他都是一个格子大小，理应不需要pad
-        padAABBToGrid(translatedAABB);
-        Vector2 offset = GeometryUtil.snapToGrid(translatedAABB, gridSize, gridSize);
-        // 往右上角缩放
-        if (offset.x < 0) {
-            offset.x += gridSize;
-        }
-        if (offset.y < 0) {
-            offset.y += gridSize;
-        }
-        translatedAABB.translate(offset);
-        if(world.checkOverlay(translatedAABB, gizmoBody)){
-            // 如果重叠，改回原来的大小
-            shape.zoom(originRate);
+        if (world.checkOverlay(translatedAABB, gizmoBody)) {
             throw new IllegalArgumentException("物件重叠");
         }
 
-        // 先将原本的位置设为null
-        world.setGrid(originAABB, null);
-        shape.translate(offset);
-        // 修改质量
-        if(gizmoBody.getShape() instanceof Ball){
-            gizmoBody.setMass(gizmoBody.getShape().createMass(10));
-        }
+        int rate = gizmoBody.getShape().getRate();
+        gizmoBody.getShape().zoom(rate + 1);
+        gizmoBody.getShape().translate(world.getGridSize() / 2.0, world.getGridSize() / 2.0);
         world.setGrid(translatedAABB, gizmoBody);
         return true;
     }

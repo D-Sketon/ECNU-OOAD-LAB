@@ -185,7 +185,7 @@ public class MainController extends Application implements Initializable {
                         if (gizmoOp.getGizmoCommand() == GizmoCommand.REMOVE) {
                             selectedBody = null;
                         }
-                        updateGizmoOutlineRectangle();
+                        highlightSelectedBody();
                         drawGizmo(gizmoCanvas.getGraphicsContext2D());
                     }
                 } catch (Exception e) {
@@ -216,6 +216,7 @@ public class MainController extends Application implements Initializable {
                 return;
             }
             selectedBody = null;
+            highlightSelectedBody();
             inDesign = false;
             world.snapshot();
             scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / TICKS_PER_SECOND), TimeUnit.MILLISECONDS);
@@ -229,6 +230,7 @@ public class MainController extends Application implements Initializable {
                 return;
             }
             selectedBody = null;
+            highlightSelectedBody();
             inDesign = true;
             scheduledFuture[0].cancel(true);
             world.restore();
@@ -353,12 +355,13 @@ public class MainController extends Application implements Initializable {
     /**
      * 高亮当前选中物体
      */
-    protected void updateGizmoOutlineRectangle() {
+    protected void highlightSelectedBody() {
         if (selectedBody == null) {
             gizmoOutlineRectangle.setVisible(false);
             return;
         }
         AABB aabb = selectedBody.getShape().createAABB();
+        GeometryUtil.padToSquare(aabb);
         gizmoOutlineRectangle.setX(aabb.minX);
         gizmoOutlineRectangle.setY(world.boundaryAABB.maxY - aabb.maxY);
         gizmoOutlineRectangle.setWidth(aabb.maxX - aabb.minX);
@@ -386,7 +389,7 @@ public class MainController extends Application implements Initializable {
                 int[] index = world.getGridIndex(x, y);
                 if (index != null) {
                     selectedBody = world.gizmoGridBodies[index[0]][index[1]];
-                    updateGizmoOutlineRectangle();
+                    highlightSelectedBody();
                 }
             }
         });

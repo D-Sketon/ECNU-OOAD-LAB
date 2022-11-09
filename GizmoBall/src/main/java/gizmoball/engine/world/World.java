@@ -154,11 +154,11 @@ public class World {
         if(direction == Flipper.Direction.LEFT && leftFlipper != null) {
             Flipper flipper = (Flipper) leftFlipper.getShape();
             flipper.rise();
-            leftFlipper.setAngularVelocity(5);
+            leftFlipper.setAngularVelocity(50);
         } else if(direction == Flipper.Direction.RIGHT && rightFlipper != null) {
             Flipper flipper = (Flipper) rightFlipper.getShape();
             flipper.rise();
-            rightFlipper.setAngularVelocity(5);
+            rightFlipper.setAngularVelocity(50);
         }
     }
 

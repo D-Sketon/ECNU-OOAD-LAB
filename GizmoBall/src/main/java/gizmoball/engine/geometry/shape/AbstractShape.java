@@ -60,6 +60,14 @@ public abstract class AbstractShape implements Convex {
     public abstract Interval project(Vector2 axis);
 
     /**
+     * 根据所给物体密度获得物体质量
+     *
+     * @param density 物体密度
+     * @return Mass
+     */
+    public abstract Mass createMass(double density);
+
+    /**
      * 绕着某一点做旋转
      *
      * @param c 旋转角度的cos
@@ -100,14 +108,6 @@ public abstract class AbstractShape implements Convex {
     public void translate(Vector2 vector2) {
         transform.translate(vector2);
     }
-
-    /**
-     * 根据所给物体密度获得物体质量
-     *
-     * @param density 物体密度
-     * @return Mass
-     */
-    public abstract Mass createMass(double density);
 
     /**
      * 获得本地坐标系下的点坐标

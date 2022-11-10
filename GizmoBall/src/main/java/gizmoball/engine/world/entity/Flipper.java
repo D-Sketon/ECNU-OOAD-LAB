@@ -117,9 +117,10 @@ public class Flipper extends Rectangle {
     /**
      * 绕着定点旋转theta度
      *
-     * @param fix
-     * @param move
-     * @param theta
+     * @param fix   固定点
+     * @param move  被旋转点旋转前的位置
+     * @param v     被旋转点
+     * @param theta 旋转角度
      */
     private void rotate(Vector2 fix, Vector2 move, Vector2 v, double theta) {
         double c = Math.cos(theta);

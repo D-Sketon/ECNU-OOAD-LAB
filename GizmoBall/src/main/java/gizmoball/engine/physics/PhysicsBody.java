@@ -58,8 +58,6 @@ public class PhysicsBody {
      */
     protected final List<Vector2> forces;
 
-    protected final List<Double> torques;
-
     /**
      * 物体组成的部件（简单形状）
      */
@@ -69,11 +67,6 @@ public class PhysicsBody {
      * 重力系数
      */
     protected double gravityScale;
-
-    /**
-     * 是否是触发器（无碰撞，物体可穿过）
-     */
-    protected boolean isTrigger;
 
     /**
      * 阻力系数
@@ -101,8 +94,6 @@ public class PhysicsBody {
         this.linearDamping = 0.0;
         this.force = new Vector2();
         this.forces = new ArrayList<>();
-        this.torques = new ArrayList<>();
-        this.isTrigger = false;
         this.shape = shape;
         this.gravityScale = 10.0;
     }
@@ -118,17 +109,6 @@ public class PhysicsBody {
                 it.remove();
             }
         }
-        this.torque = 0.0;
-        size = this.torques.size();
-        if (size > 0) {
-            Iterator<Double> it = this.torques.iterator();
-            while (it.hasNext()) {
-                double torque = it.next();
-                this.torque += torque;
-                it.remove();
-
-            }
-        }
     }
 
 
@@ -137,11 +117,8 @@ public class PhysicsBody {
             return;
         }
         double elapsedTime = Settings.DEFAULT_STEP_FREQUENCY;
-
-        // accumulate the forces and torques
         this.accumulate();
 
-        // get the mass properties
         double mass = this.mass.getMass();
         double inverseMass = this.mass.getInverseMass();
         double inverseInertia = this.mass.getInverseInertia();

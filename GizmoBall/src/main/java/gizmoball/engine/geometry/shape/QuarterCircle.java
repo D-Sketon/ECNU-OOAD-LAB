@@ -1,7 +1,7 @@
 package gizmoball.engine.geometry.shape;
 
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.collision.feature.Feature;
+import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
@@ -86,7 +86,7 @@ public class QuarterCircle extends AbstractShape {
     }
 
     @Override
-    public Feature getFarthestFeature(Vector2 vector) {
+    public PointFeature getFarthestFeature(Vector2 vector) {
         return null;
     }
 

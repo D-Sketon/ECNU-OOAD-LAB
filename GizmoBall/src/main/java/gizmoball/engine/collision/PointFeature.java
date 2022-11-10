@@ -1,4 +1,4 @@
-package gizmoball.engine.collision.feature;
+package gizmoball.engine.collision;
 
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.Circle;
@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class PointFeature extends Feature {
+public class PointFeature {
 
     /**
      * 点的坐标

@@ -1,6 +1,5 @@
 package gizmoball.engine.collision.contact;
 
-import gizmoball.engine.collision.Matrix22;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldPoint;
 import gizmoball.engine.geometry.Vector2;
@@ -12,83 +11,71 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * 碰撞约束
+ */
 @Data
 @AllArgsConstructor
 public class ContactConstraint {
     /**
-     * The collision pair
+     * 碰撞物体对
      */
     private Pair<PhysicsBody, PhysicsBody> pair;
 
+    /**
+     * 接触信息列表
+     */
     private List<SolvableContact> contacts;
 
     /**
-     * The penetration normal
+     * 碰撞法线
      */
     private Vector2 normal;
 
     /**
-     * The tangent of the normal
+     * 碰撞切线
      */
     private Vector2 tangent;
 
     /**
-     * The coefficient of friction
+     * 阻力系数
      */
     private double friction;
 
     /**
-     * The coefficient of restitution
+     * 回弹系数
      */
     private double restitution;
 
     /**
-     * The minimum velocity at which to apply restitution
+     * 回弹启动速度
      */
     private double restitutionVelocity;
 
     /**
-     * Whether the contact is a sensor contact or not
-     */
-    private boolean sensor;
-
-    /**
-     * The surface speed of the contact patch
+     * 接触面切线速度（用于作用摩擦力）
      */
     private double tangentSpeed;
 
     /**
-     * True if the contact should be evaluated
-     */
-    private boolean enabled;
-
-    /**
-     * The number of contacts to solve
+     * 接触信息列表大小
      */
     private int size;
-
-    /**
-     * The K matrix for block solving a contact pair
-     */
-    private Matrix22 K;
-
-    /**
-     * The inverse of the {@link #K} matrix
-     */
-    private Matrix22 invK;
 
     public ContactConstraint(Pair<PhysicsBody, PhysicsBody> pair) {
         this.pair = pair;
         this.contacts = new ArrayList<>(2);
         this.normal = new Vector2();
         this.tangent = new Vector2();
-        this.sensor = false;
         this.tangentSpeed = 0;
-        this.enabled = true;
         this.size = 0;
     }
 
+    /**
+     * 使用{@link Manifold}来更新本{@link ContactConstraint}
+     *
+     * @param manifold /
+     */
     public void update(Manifold manifold) {
 
         PhysicsBody body1 = this.pair.getKey();
@@ -104,10 +91,8 @@ public class ContactConstraint {
         this.friction = this.getMixedFriction(body1, body2);
         this.restitution = this.getMixedRestitution(body1, body2);
         this.restitutionVelocity = this.getMixedRestitutionVelocity(body1, body2);
-        this.sensor = body1.isTrigger() || body2.isTrigger();
 
         this.tangentSpeed = 0;
-        this.enabled = true;
 
         List<ManifoldPoint> points = manifold.getPoints();
         List<SolvableContact> contacts = new ArrayList<>(points.size());
@@ -125,10 +110,20 @@ public class ContactConstraint {
         this.size = this.contacts.size();
     }
 
+    /**
+     * 返回碰撞对第一个
+     *
+     * @return PhysicsBody
+     */
     public PhysicsBody getBody1() {
         return pair.getKey();
     }
 
+    /**
+     * 返回碰撞对第二个
+     *
+     * @return PhysicsBody
+     */
     public PhysicsBody getBody2() {
         return pair.getValue();
     }

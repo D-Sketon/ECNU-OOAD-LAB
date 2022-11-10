@@ -19,7 +19,7 @@ public enum GizmoType {
 
     CIRCLE("gizmo/circle", DraggableGizmoComponent.circleBodyCreator, new SVGRenderer("icons/circle.svg")),
 
-    BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.blackholeBodyCreator, new SVGRenderer("icons/black_hole.svg")),
+    BLACK_HOLE("gizmo/blackHole", DraggableGizmoComponent.blackHoleBodyCreator, new SVGRenderer("icons/black_hole.svg")),
 
     RECTANGLE("gizmo/rectangle", DraggableGizmoComponent.rectangleBodyCreator, new SVGRenderer("icons/rectangle.svg")),
 

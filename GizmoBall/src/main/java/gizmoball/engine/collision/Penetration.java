@@ -3,15 +3,18 @@ package gizmoball.engine.collision;
 import gizmoball.engine.geometry.Vector2;
 import lombok.Data;
 
+/**
+ * 穿透信息
+ */
 @Data
 public class Penetration {
     /**
-     * The normalized axis of projection
+     * 穿透法线，Shape1指向Shape2
      */
     protected Vector2 normal;
 
     /**
-     * The penetration amount on this axis
+     * 穿透深度
      */
     protected double depth;
 

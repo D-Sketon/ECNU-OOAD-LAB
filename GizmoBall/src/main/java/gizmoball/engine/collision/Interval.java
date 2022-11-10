@@ -3,17 +3,26 @@ package gizmoball.engine.collision;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * 投影间隔，使用于SatDetector
+ */
 @Data
 @AllArgsConstructor
 public class Interval {
+    /**
+     * 最小值
+     */
     protected double min;
 
+    /**
+     * 最大值
+     */
     protected double max;
 
     /**
-     * Returns true if the two {@link Interval}s overlap.
+     * 判断两个{@link Interval}是否发生重叠
      *
-     * @param interval the {@link Interval}
+     * @param interval 传入{@link Interval}
      * @return boolean
      */
     public boolean overlaps(Interval interval) {
@@ -21,13 +30,9 @@ public class Interval {
     }
 
     /**
-     * Returns the amount of overlap between this {@link Interval} and the given
-     * {@link Interval}.
-     * <p>
-     * This method tests to if the {@link Interval}s overlap first.  If they do then
-     * the overlap is returned, if they do not then 0 is returned.
+     * 返回两个{@link Interval}重叠长度，如果没有重叠则返回0
      *
-     * @param interval the {@link Interval}
+     * @param interval 传入{@link Interval}
      * @return double
      */
     public double getOverlap(Interval interval) {
@@ -38,9 +43,9 @@ public class Interval {
     }
 
     /**
-     * Returns true if the given {@link Interval} is contained in this {@link Interval} exclusively.
+     * 判断被传入{@link Interval}是否完全包含于本{@link Interval}
      *
-     * @param interval the {@link Interval}
+     * @param interval 传入{@link Interval}
      * @return boolean
      */
     public boolean containsExclusive(Interval interval) {

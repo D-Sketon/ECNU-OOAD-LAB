@@ -11,5 +11,10 @@ import java.util.List;
  */
 public interface TickListener {
 
+    /**
+     * 每个tick触发一次，返回接触流形和碰撞对的列表
+     *
+     * @return List
+     */
     List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> tick();
 }

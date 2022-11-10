@@ -17,9 +17,10 @@ public interface CollisionDetector {
      *
      * @param bodies1 物体列表1
      * @param bodies2 物体列表2
+     * @param filters 碰撞过滤器列表
      * @return List
      */
-    public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> listeners);
+    List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> filters);
 
     /**
      * 本地求解前使用碰撞流形计算出接触约束

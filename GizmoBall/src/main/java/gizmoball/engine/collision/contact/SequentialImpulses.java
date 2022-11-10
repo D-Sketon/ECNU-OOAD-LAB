@@ -10,31 +10,31 @@ import gizmoball.engine.physics.PhysicsBody;
 
 import java.util.List;
 
-
+/**
+ * 基于连续冲量的本地碰撞求解器
+ */
 public class SequentialImpulses {
 
     /**
-     * Compute the mass coefficient for a {@link SolvableContact}.
+     * 对于所给的{@link SolvableContact}计算其有效质量
      *
-     * @param contactConstraint The {@link ContactConstraint} of the contact
-     * @param contact           The contact
-     * @param n                 The normal
-     * @return The mass coefficient
-     * @since 3.4.0
+     * @param contactConstraint 传入{@link ContactConstraint}
+     * @param contact           传入{@link SolvableContact}
+     * @param n                 法线
+     * @return double
      */
     private double getMassCoefficient(ContactConstraint contactConstraint, SolvableContact contact, Vector2 n) {
         return this.getMassCoefficient(contactConstraint, contact.getR1(), contact.getR2(), n);
     }
 
     /**
-     * Compute the mass coefficient for a {@link SolvableContact}.
+     * 对于所给的{@link SolvableContact}计算其有效质量
      *
-     * @param contactConstraint The {@link ContactConstraint} of the contact
-     * @param r1                The contact.r1 field
-     * @param r2                The contact.r2 field
-     * @param n                 The normal
-     * @return The mass coefficient
-     * @since 3.4.0
+     * @param contactConstraint 传入{@link ContactConstraint}
+     * @param r1                {@link SolvableContact}的r1
+     * @param r2                {@link SolvableContact}的r2
+     * @param n                 法线
+     * @return double
      */
     private double getMassCoefficient(ContactConstraint contactConstraint, Vector2 r1, Vector2 r2, Vector2 n) {
         Mass m1 = contactConstraint.getBody1().getMass();
@@ -47,12 +47,11 @@ public class SequentialImpulses {
     }
 
     /**
-     * Helper method to update the bodies of a {@link ContactConstraint}
+     * 对{@link ContactConstraint}中的物体施加所给冲量，改变物体的线速度和角速度
      *
-     * @param contactConstraint The {@link ContactConstraint} of the bodies
-     * @param contact           The corresponding {@link ContactConstraint}
-     * @param J
-     * @since 3.4.0
+     * @param contactConstraint 传入{@link ContactConstraint}
+     * @param contact           传入{@link SolvableContact}
+     * @param J 冲量
      */
     private void updateBodies(ContactConstraint contactConstraint, SolvableContact contact, Vector2 J) {
         PhysicsBody b1 = contactConstraint.getBody1();
@@ -68,12 +67,11 @@ public class SequentialImpulses {
     }
 
     /**
-     * Compute the relative velocity to the {@link ContactConstraint}'s normal.
+     * 计算传入{@link ContactConstraint}中物体在穿透法线的相对速度
      *
-     * @param contactConstraint The {@link ContactConstraint}
-     * @param contact           The {@link SolvableContact}
+     * @param contactConstraint 传入{@link ContactConstraint}
+     * @param contact           传入{@link SolvableContact}
      * @return double
-     * @since 3.4.0
      */
     private double getRelativeVelocityAlongNormal(ContactConstraint contactConstraint, SolvableContact contact) {
         Vector2 rv = this.getRelativeVelocity(contactConstraint, contact);
@@ -81,12 +79,11 @@ public class SequentialImpulses {
     }
 
     /**
-     * Compute the relative velocity of this {@link ContactConstraint}'s bodies.
+     * 计算传入{@link ContactConstraint}中物体的相对速度
      *
-     * @param contactConstraint The {@link ContactConstraint}
-     * @param contact           The {@link SolvableContact}
-     * @return The relative velocity vector
-     * @since 3.4.0
+     * @param contactConstraint 传入{@link ContactConstraint}
+     * @param contact           传入{@link SolvableContact}
+     * @return Vector2
      */
     private Vector2 getRelativeVelocity(ContactConstraint contactConstraint, SolvableContact contact) {
         PhysicsBody b1 = contactConstraint.getBody1();
@@ -98,7 +95,11 @@ public class SequentialImpulses {
         return lv1.subtract(lv2);
     }
 
-
+    /**
+     * 初始化，为碰撞约束赋初始值
+     *
+     * @param contactConstraints 碰撞约束
+     */
     public void initialize(List<ContactConstraint> contactConstraints) {
         for (ContactConstraint contactConstraint : contactConstraints) {
             double restitutionVelocity = contactConstraint.getRestitutionVelocity();
@@ -145,9 +146,9 @@ public class SequentialImpulses {
     /**
      * 碰撞热启动以减少迭代次数
      *
-     * @param contactConstraints the contact constraints to solve
+     * @param contactConstraints 碰撞约束
      */
-    protected void warmStart(List<ContactConstraint> contactConstraints) {
+    private void warmStart(List<ContactConstraint> contactConstraints) {
         for (ContactConstraint contactConstraint : contactConstraints) {
             Vector2 N = contactConstraint.getNormal();
             Vector2 T = contactConstraint.getTangent();
@@ -215,9 +216,14 @@ public class SequentialImpulses {
         }
     }
 
-    public boolean solvePositionConstraints(List<ContactConstraint> contactConstraints) {
+    /**
+     * 位置求解器
+     *
+     * @param contactConstraints 碰撞约束
+     */
+    public void solvePositionConstraints(List<ContactConstraint> contactConstraints) {
         int size = contactConstraints.size();
-        if (size == 0) return true;
+        if (size == 0) return;
 
         double minSeparation = 0.0;
         // 设置求解约束时使用的最大线性位置校正，这有助于防止过冲
@@ -293,9 +299,5 @@ public class SequentialImpulses {
                 t2.rotate(-m2.getInverseInertia() * r2.cross(J), c2.x, c2.y);
             }
         }
-        // check if the minimum separation between all objects is still
-        // greater than or equal to allowed penetration plus half of allowed penetration
-        // since we cannot expect it to be above allowed penetration alone
-        return minSeparation >= -3.0 * allowedPenetration;
     }
 }

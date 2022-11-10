@@ -10,69 +10,64 @@ import lombok.Data;
 @AllArgsConstructor
 final class SolvableContact {
     /**
-     * The contact point in world space
+     * 世界坐标系下的接触点坐标
      */
     private Vector2 p;
 
     /**
-     * The contact penetration depth
+     * 穿透深度
      */
     private double depth;
 
     /**
-     * The contact point in {@link PhysicsBody}1 space
+     * {@link PhysicsBody}1坐标系下的接触点坐标
      */
     private Vector2 p1;
 
     /**
-     * The contact point in {@link PhysicsBody}2 space
+     * {@link PhysicsBody}2坐标系下的接触点坐标
      */
     private Vector2 p2;
 
     /**
-     * The {@link Vector2} from the center of {@link PhysicsBody}1 to the contact point
+     * {@link PhysicsBody}1中心点到接触点的向量
      */
     private Vector2 r1;
 
     /**
-     * The {@link Vector2} from the center of {@link PhysicsBody}2 to the contact point
+     * {@link PhysicsBody}2中心点到接触点的向量
      */
     private Vector2 r2;
 
     /**
-     * The accumulated normal impulse
+     * 法线冲量，用于施加碰撞冲量
      */
     double jn;
 
     /**
-     * The accumulated tangent impulse
+     * 切线冲量，用于施加摩擦冲量
      */
     double jt;
 
     /**
-     * The accumulated position impulse
+     * 位置冲量，用于位置求解器
      */
     double jp;
 
     /**
-     * The mass normal
+     * 法线质量，用于施加碰撞冲量
      */
     private double massN;
 
     /**
-     * The mass tangent
+     * 切线质量，用于施加摩擦冲量
      */
     private double massT;
 
     /**
-     * The velocity bias
+     * 速度bias，缓解物体镶嵌问题
      */
     double vb;
-
-    /**
-     * True if the contact was ignored during solving
-     */
-    private boolean ignored;
 
     public SolvableContact(Vector2 point, double depth, Vector2 p1, Vector2 p2) {
         this.p = point;

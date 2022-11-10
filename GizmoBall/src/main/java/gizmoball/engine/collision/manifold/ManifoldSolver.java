@@ -6,6 +6,9 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.QuarterCircle;
 
+/**
+ * 接触流形求解器，将{@link Penetration}解析为{@link Manifold}
+ */
 public class ManifoldSolver {
 
     /**

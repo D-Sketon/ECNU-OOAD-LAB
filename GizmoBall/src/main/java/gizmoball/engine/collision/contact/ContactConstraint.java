@@ -11,7 +11,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * 碰撞约束
+ */
 @Data
 @AllArgsConstructor
 public class ContactConstraint {

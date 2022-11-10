@@ -1,19 +1,17 @@
 package gizmoball.ui.component;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-
-
-import javafx.animation.KeyValue;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 
 
 public class Toast {

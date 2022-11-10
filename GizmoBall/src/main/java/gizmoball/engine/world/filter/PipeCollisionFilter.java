@@ -10,7 +10,7 @@ import gizmoball.engine.world.entity.Pipe;
 
 public class PipeCollisionFilter implements CollisionFilter {
 
-    private Vector2 gravity;
+    private final Vector2 gravity;
 
     private double ballX;
     private double ballY;

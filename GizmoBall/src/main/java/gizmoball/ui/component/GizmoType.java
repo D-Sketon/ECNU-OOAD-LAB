@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 @Getter
 @AllArgsConstructor
-public enum GizmoType{
+public enum GizmoType {
 
     BALL("gizmo/ball", DraggableGizmoComponent.ballBodyCreator, new SVGRenderer("icons/ball.svg")),
 

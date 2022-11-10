@@ -26,8 +26,8 @@ public class SVGNode {
     private static final String SVG_NAMESPACE = "http://www.w3.org/2000/svg";
     private static final SAXSVGDocumentFactory FACTORY = new SAXSVGDocumentFactory(XMLResourceDescriptor.getXMLParserClassName());
 
-    public static SVGNode fromResource(InputStream in){
-        if(in == null){
+    public static SVGNode fromResource(InputStream in) {
+        if (in == null) {
             return null;
         }
         try {

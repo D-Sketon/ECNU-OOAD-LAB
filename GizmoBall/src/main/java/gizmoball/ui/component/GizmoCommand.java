@@ -11,6 +11,5 @@ public enum GizmoCommand {
     ROTATE_RIGHT,
     ROTATE_LEFT,
     ZOOM_OUT,
-    ZOOM_IN;
-    ;
+    ZOOM_IN;;
 }

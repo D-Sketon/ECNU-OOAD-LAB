@@ -13,7 +13,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CurvedPipeCollisionFilter implements CollisionFilter {
 
-    private Vector2 gravity;
+    private final Vector2 gravity;
+
     @Override
     public boolean isAllowedBroadPhase(PhysicsBody body1, PhysicsBody body2) {
         return true;
@@ -30,7 +31,7 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         AbstractShape shape2 = body2.getShape();
         Vector2 linearVelocity = body1.getLinearVelocity();
 
-        if(!(shape2 instanceof QuarterCircle)) {
+        if (!(shape2 instanceof QuarterCircle)) {
             return true;
         }
         QuarterCircle quarterCircle = (QuarterCircle) shape2;

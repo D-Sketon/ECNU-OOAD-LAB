@@ -17,20 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-public class BallListener implements TickListener{
+public class BallListener implements TickListener {
 
     private final List<PhysicsBody> balls;
 
     /**
      * 重写碰撞检查类
      */
-    private final BasicCollisionDetector basicCollisionDetector = new BasicCollisionDetector(){
+    private final BasicCollisionDetector basicCollisionDetector = new BasicCollisionDetector() {
         @Override
         public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> listeners) {
             List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds = new ArrayList<>();
             ManifoldSolver manifoldSolver = new ManifoldSolver();
-            for(int i = 0; i < bodies1.size() - 1; i++){
-                for(int j = i + 1; j < bodies1.size(); j++){
+            for (int i = 0; i < bodies1.size() - 1; i++) {
+                for (int j = i + 1; j < bodies1.size(); j++) {
                     PhysicsBody physicsBody1 = bodies1.get(i);
                     PhysicsBody physicsBody2 = bodies1.get(j);
                     Ball ball1 = (Ball) physicsBody1.getShape();

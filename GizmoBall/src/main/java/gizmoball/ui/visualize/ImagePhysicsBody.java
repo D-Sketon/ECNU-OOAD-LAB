@@ -3,7 +3,6 @@ package gizmoball.ui.visualize;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.ui.component.GizmoType;
-import gizmoball.ui.visualize.CanvasRenderer;
 import javafx.scene.canvas.GraphicsContext;
 import lombok.Getter;
 import lombok.Setter;

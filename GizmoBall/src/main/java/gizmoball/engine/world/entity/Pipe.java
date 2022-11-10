@@ -2,7 +2,6 @@ package gizmoball.engine.world.entity;
 
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.shape.Rectangle;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +16,7 @@ public class Pipe extends Rectangle {
      */
     @Deprecated
     public Pipe() {
-        this(0,0);
+        this(0, 0);
     }
 
     public Pipe(double halfWidth, double halfHeight, Transform transform) {
@@ -30,7 +29,7 @@ public class Pipe extends Rectangle {
         this.pipeDirection = PipeDirection.TRANSVERSE;
     }
 
-    public enum PipeDirection{
+    public enum PipeDirection {
         TRANSVERSE,
 
         VERTICAL
@@ -39,10 +38,10 @@ public class Pipe extends Rectangle {
     @Override
     public void rotate(double theta, double x, double y) {
         transform.rotate(theta, x, y);
-        if(Math.abs(this.getTransform().sint) > 0.5){
+        if (Math.abs(this.getTransform().sint) > 0.5) {
             this.pipeDirection = PipeDirection.VERTICAL;
 
-        } else{
+        } else {
             this.pipeDirection = PipeDirection.TRANSVERSE;
         }
     }

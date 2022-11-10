@@ -1,6 +1,5 @@
 package gizmoball.ui;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.Rectangle;
@@ -8,17 +7,16 @@ import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import gizmoball.ui.file.PersistentUtil;
-import gizmoball.engine.world.filter.CollisionFilter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.ArrayList;
 
 @Getter
 @Slf4j

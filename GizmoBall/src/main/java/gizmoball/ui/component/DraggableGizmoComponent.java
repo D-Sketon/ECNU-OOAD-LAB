@@ -2,7 +2,10 @@ package gizmoball.ui.component;
 
 
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.*;
+import gizmoball.engine.geometry.shape.Circle;
+import gizmoball.engine.geometry.shape.QuarterCircle;
+import gizmoball.engine.geometry.shape.Rectangle;
+import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
@@ -131,8 +134,9 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
 
     /**
      * Create a physics body for this gizmo.
+     *
      * @param preferredSize the preferred size of the gizmo.
-     * @param center the center of the gizmo.
+     * @param center        the center of the gizmo.
      * @return the physics body.
      */
     public PhysicsBody createPhysicsBody(Vector2 preferredSize, Vector2 center) {

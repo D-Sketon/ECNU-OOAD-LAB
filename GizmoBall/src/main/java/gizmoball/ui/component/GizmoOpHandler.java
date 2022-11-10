@@ -1,19 +1,12 @@
 package gizmoball.ui.component;
 
 import gizmoball.engine.geometry.AABB;
-import gizmoball.engine.geometry.Epsilon;
-import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.AbstractShape;
-import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Flipper;
 import gizmoball.ui.GeometryUtil;
 import gizmoball.ui.GridWorld;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Function;
 
@@ -40,10 +33,10 @@ public class GizmoOpHandler {
     }
 
     public boolean handleCommand(GizmoCommand command, PhysicsBody body) {
-        if(command == null){
+        if (command == null) {
             throw new IllegalArgumentException("Command cannot be null");
         }
-        if(body == null){
+        if (body == null) {
             throw new IllegalArgumentException("PhysicsBody cannot be null");
         }
         Function<?, ?> function = gizmoOps.get(command);
@@ -66,7 +59,7 @@ public class GizmoOpHandler {
     }
 
     public boolean removeGizmo(PhysicsBody gizmoBody) {
-        if(!world.getBodies().contains(gizmoBody)){
+        if (!world.getBodies().contains(gizmoBody)) {
             throw new IllegalArgumentException("物件不存在");
         }
         world.removeBodies(gizmoBody);

@@ -40,7 +40,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-
 @Slf4j
 public class MainController extends Application implements Initializable {
 
@@ -118,10 +117,10 @@ public class MainController extends Application implements Initializable {
             new DraggableGizmoComponent("icons/triangle.png", "triangle", GizmoType.TRIANGLE),
             new DraggableGizmoComponent("icons/black_hole.png", "black hole", GizmoType.BLACK_HOLE),
             new DraggableGizmoComponent("icons/ball.png", "ball", GizmoType.BALL),
-            new DraggableGizmoComponent("icons/pipe.png", "rail", GizmoType.PIPE),
-            new DraggableGizmoComponent("icons/quarter_circle.png", "quarter circle", GizmoType.CURVED_PIPE),
-            new DraggableGizmoComponent("icons/rail.png", "rail", GizmoType.LEFT_FLIPPER),
-            new DraggableGizmoComponent("icons/quarter_circle.png", "quarter circle", GizmoType.RIGHT_FLIPPER),
+            new DraggableGizmoComponent("icons/pipe.png", "pipe", GizmoType.PIPE),
+            new DraggableGizmoComponent("icons/quarter_circle.png", "curved pipe", GizmoType.CURVED_PIPE),
+            new DraggableGizmoComponent("icons/rail.png", "left flipper", GizmoType.LEFT_FLIPPER),
+            new DraggableGizmoComponent("icons/quarter_circle.png", "right flipper", GizmoType.RIGHT_FLIPPER),
     };
 
     private static final CommandComponent[] gizmoOps = {
@@ -130,7 +129,8 @@ public class MainController extends Application implements Initializable {
             new CommandComponent("icons/zoom_in.png", "zoom in", GizmoCommand.ZOOM_IN),
             new CommandComponent("icons/rotate_right.png", "rotate right", GizmoCommand.ROTATE_RIGHT),
 
-//            new CommandComponent("icons/rotate_left.png", "rotate left", GizmoCommand.ROTATE_LEFT),
+            // new CommandComponent("icons/rotate_left.png", "rotate left",
+            // GizmoCommand.ROTATE_LEFT),
             new CommandComponent("icons/move_up.png", "move up", GizmoCommand.MOVE_UP),
             new CommandComponent("icons/move_right.png", "move right", GizmoCommand.MOVE_RIGHT),
             new CommandComponent("icons/move_down.png", "move down", GizmoCommand.MOVE_DOWN),
@@ -223,10 +223,11 @@ public class MainController extends Application implements Initializable {
             highlightSelectedBody();
             inDesign = false;
             world.snapshot();
-            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / TICKS_PER_SECOND), TimeUnit.MILLISECONDS);
+            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / TICKS_PER_SECOND),
+                    TimeUnit.MILLISECONDS);
         });
 
-        //暂停游戏（设计模式）
+        // 暂停游戏（设计模式）
         ImageLabelComponent design = gameOps[1];
         design.createVBox();
         design.getImageWrapper().setOnMouseClicked(event -> {
@@ -300,8 +301,7 @@ public class MainController extends Application implements Initializable {
         fileChooser.setTitle("选择文件");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Gizmo", "*.json"),
-                new FileChooser.ExtensionFilter("All Files", "*.*")
-        );
+                new FileChooser.ExtensionFilter("All Files", "*.*"));
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss");
 
         menuItemLoad.setOnAction(event -> {
@@ -312,7 +312,7 @@ public class MainController extends Application implements Initializable {
                     world.restore(file);
                     drawGizmo(gizmoCanvas.getGraphicsContext2D());
                 } catch (Exception e) {
-                    Toast.makeText(primaryStage, "加载文件失败: "+ e.getMessage(), 2000, 500, 500);
+                    Toast.makeText(primaryStage, "加载文件失败: " + e.getMessage(), 2000, 500, 500);
                     log.error("加载文件失败: {}", e.getMessage());
                 }
             }
@@ -328,7 +328,7 @@ public class MainController extends Application implements Initializable {
                 try {
                     world.snapshot(file);
                 } catch (Exception e) {
-                    Toast.makeText(primaryStage, "保存文件失败: "+ e.getMessage(), 2000, 500, 500);
+                    Toast.makeText(primaryStage, "保存文件失败: " + e.getMessage(), 2000, 500, 500);
                     log.error("保存文件失败: {}", e.getMessage());
                 }
             }
@@ -349,7 +349,7 @@ public class MainController extends Application implements Initializable {
         });
 
         anchorPane.setOnKeyPressed(event -> {
-            switch (event.getCode()){
+            switch (event.getCode()) {
                 case LEFT:
                     world.flipper(Flipper.Direction.LEFT);
                     break;
@@ -360,8 +360,7 @@ public class MainController extends Application implements Initializable {
         });
     }
 
-
-    //------------canvas-----------------
+    // ------------canvas-----------------
 
     /**
      * 高亮当前选中物体

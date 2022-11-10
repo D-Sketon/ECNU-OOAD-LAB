@@ -1,6 +1,5 @@
 package gizmoball.ui.visualize;
 
-import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
@@ -15,7 +14,7 @@ public class ImageRenderer implements CanvasRenderer {
 
     private final Image image;
 
-    public ImageRenderer(String resource){
+    public ImageRenderer(String resource) {
         this(new Image(ImageRenderer.class.getClassLoader().getResourceAsStream(resource)));
     }
 
@@ -25,6 +24,7 @@ public class ImageRenderer implements CanvasRenderer {
 
     /**
      * 上下翻转图片
+     *
      * @param image /
      * @return /
      */
@@ -43,6 +43,7 @@ public class ImageRenderer implements CanvasRenderer {
 
         return writableImage;
     }
+
     @Override
     public void drawToCanvas(GraphicsContext gc, PhysicsBody body) {
         AbstractShape shape = body.getShape();

@@ -3,7 +3,6 @@ package gizmoball.engine.physics;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Vector2;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import lombok.NoArgsConstructor;
 
 /**

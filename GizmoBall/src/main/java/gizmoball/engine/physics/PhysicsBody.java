@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Interval;
 import gizmoball.engine.geometry.Epsilon;
-import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import lombok.Data;
@@ -92,7 +91,7 @@ public class PhysicsBody {
     protected double restitutionVelocity;
 
     // 反序列化调用
-    public PhysicsBody(){
+    public PhysicsBody() {
         this(null);
     }
 

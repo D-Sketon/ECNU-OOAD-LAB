@@ -32,14 +32,14 @@ public class SVGRenderer implements CanvasRenderer {
         double shapeHeight = aabb.maxY - aabb.minY;
         double shapeWidth = aabb.maxX - aabb.minX;
 
-        if(svgNode != null){
+        if (svgNode != null) {
             gc.save();
 
             Affine affine = new Affine();
             affine.appendRotation(transform.getAngle(), transform.x, transform.y); // TODO center
             affine.appendTranslation(transform.getX() - shapeWidth / 2,
                     transform.getY() - shapeHeight / 2 + shapeHeight); // +shapeHeight为了处理图片上下翻转
-            affine.appendScale(shape.getRate() * SCALE_RATE , -shape.getRate() * SCALE_RATE);
+            affine.appendScale(shape.getRate() * SCALE_RATE, -shape.getRate() * SCALE_RATE);
             gc.transform(affine);
 
             gc.beginPath();

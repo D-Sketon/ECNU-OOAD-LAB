@@ -8,7 +8,9 @@ import gizmoball.engine.physics.PhysicsBody;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -40,7 +42,7 @@ public class PersistentUtil {
         return wrapper.bodies;
     }
 
-    public static void write(String json, File file){
+    public static void write(String json, File file) {
         try {
             Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -48,7 +50,7 @@ public class PersistentUtil {
         }
     }
 
-    public static void write(String json, String file){
+    public static void write(String json, String file) {
         write(json, new File(file));
     }
 

@@ -14,9 +14,9 @@ public class QuarterCirCleDetector {
      * 判断{@link QuarterCircle}和{@link Circle}是否发生碰撞
      *
      * @param quarterCircle 扇形
-     * @param circle 圆形
-     * @param penetration 穿透信息
-     * @param isFlipped 参数是否发生翻转
+     * @param circle        圆形
+     * @param penetration   穿透信息
+     * @param isFlipped     参数是否发生翻转
      * @return DetectorResult
      */
     public static DetectorResult detect(QuarterCircle quarterCircle, Circle circle, Penetration penetration, boolean isFlipped) {

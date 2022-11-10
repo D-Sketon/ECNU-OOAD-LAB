@@ -51,7 +51,7 @@ public class Flipper extends Rectangle {
      * 反序列化用
      */
     @Deprecated
-    public Flipper(){
+    public Flipper() {
 
     }
 
@@ -83,12 +83,21 @@ public class Flipper extends Rectangle {
      * @param move
      * @param theta
      */
-    public void rotate(Vector2 fix, Vector2 move, Vector2 v, double theta) {
+    private void rotate(Vector2 fix, Vector2 move, Vector2 v, double theta) {
         double c = Math.cos(theta);
         double s = Math.sin(theta);
         double cx = move.x - fix.x;
         double cy = move.y - fix.y;
         v.x = c * cx - s * cy + fix.x;
         v.y = s * cx + c * cy + fix.y;
+    }
+
+    @Override
+    public void zoom(int rate) {
+        super.zoom(rate);
+        this.lb = vertices[0].copy();
+        this.lt = vertices[3].copy();
+        this.rb = vertices[1].copy();
+        this.rt = vertices[2].copy();
     }
 }

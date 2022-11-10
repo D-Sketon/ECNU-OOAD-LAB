@@ -1,7 +1,6 @@
 package gizmoball.engine.geometry.shape;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gizmoball.engine.collision.Interval;
 import gizmoball.engine.geometry.AABB;

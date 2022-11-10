@@ -231,6 +231,17 @@ public class Vector2 {
     }
 
     /**
+     * 将本{@link Vector2}置为右手系法线
+     *
+     * @return 本Vector2
+     */
+    public Vector2 right() {
+        left();
+        return negate();
+    }
+
+
+    /**
      * 将本{@link Vector2}置0
      *
      * @return 本Vector2

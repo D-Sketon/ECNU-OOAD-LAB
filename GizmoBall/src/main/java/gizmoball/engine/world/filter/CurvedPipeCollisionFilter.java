@@ -5,8 +5,8 @@ import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
-import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.CurvedPipe;
 import lombok.AllArgsConstructor;
 
@@ -29,16 +29,15 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
     public boolean isAllowedManifold(PhysicsBody body1, PhysicsBody body2, AbstractShape shape, Penetration penetration) {
         AbstractShape shape1 = body1.getShape();
         AbstractShape shape2 = body2.getShape();
-        Vector2 linearVelocity = body1.getLinearVelocity();
 
         if (!(shape2 instanceof CurvedPipe)) {
             return true;
         }
         CurvedPipe curvedPipe = (CurvedPipe) shape2;
-        Circle circle = (Circle) shape1;
+        Ball ball = (Ball) shape1;
 
         Transform transform1 = curvedPipe.getTransform();
-        Transform transform2 = circle.getTransform();
+        Transform transform2 = ball.getTransform();
 
         Vector2 v0 = transform1.getTransformed(curvedPipe.getVertices()[0]);
         Vector2 v1 = transform1.getTransformed(curvedPipe.getVertices()[1]);
@@ -55,15 +54,11 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         boolean isInside = c2c.getMagnitude() < curvedPipe.getRadius();
         if (isInside && isInSide) {
             // 在内部就要施加反重力
-            body1.getForces().clear();
-            body1.integrateVelocity(gravity.getNegative());
-            if (linearVelocity.getMagnitude() < 90) {
-                linearVelocity.multiply(90 / linearVelocity.getMagnitude());
-            }
+            maintainPipeProperty(body1, body2, ce2, ce1);
             // 在内和弧线发生碰撞，需要反转法线并改变深度
-            if (c2c.getMagnitude() + circle.getRadius() >= curvedPipe.getRadius()) {
+            if (c2c.getMagnitude() + ball.getRadius() >= curvedPipe.getRadius()) {
                 penetration.getNormal().negate();
-                penetration.setDepth(circle.getRadius() - penetration.getDepth());
+                penetration.setDepth(ball.getRadius() * 2 - penetration.getDepth());
                 return true;
             }
             // 在内但并没有发生碰撞
@@ -78,6 +73,27 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         } else {
             // 在外和弧线发生碰撞
             return true;
+        }
+    }
+
+    private void maintainPipeProperty(PhysicsBody body1, PhysicsBody body2, Vector2 c0, Vector2 c1) {
+        body1.getForces().clear();
+        body1.integrateVelocity(gravity.getNegative());
+        Vector2 to = c0.to(c1);
+        Vector2 linearVelocity = body1.getLinearVelocity();
+        if (body1.getShape().getRate() == body2.getShape().getRate()) {
+            if (to.cross(linearVelocity) > 0) {
+                Vector2 multiply = to.right().getNormalized().multiply(linearVelocity.getMagnitude());
+                linearVelocity.x = multiply.x;
+                linearVelocity.y = multiply.y;
+            } else {
+                Vector2 multiply = to.left().getNormalized().multiply(linearVelocity.getMagnitude());
+                linearVelocity.x = multiply.x;
+                linearVelocity.y = multiply.y;
+            }
+        }
+        if (linearVelocity.getMagnitude() < 90) {
+            linearVelocity.multiply(90 / linearVelocity.getMagnitude());
         }
     }
 }

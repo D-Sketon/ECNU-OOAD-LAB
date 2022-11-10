@@ -5,6 +5,11 @@ import gizmoball.engine.physics.PhysicsBody;
 
 public class Settings {
 
+    /**
+     * 管道穿模误差
+     */
+    public static final double PIPE_PIERCE_BIAS = 5;
+
     public static final double INV_3 = 1.0 / 3.0;
 
     public static final double DEFAULT_FLIPPER_ANGULAR = 15;

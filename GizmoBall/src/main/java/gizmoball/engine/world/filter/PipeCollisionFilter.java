@@ -8,6 +8,8 @@ import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.Pipe;
 
+import static gizmoball.engine.Settings.PIPE_PIERCE_BIAS;
+
 public class PipeCollisionFilter implements CollisionFilter {
 
     private final Vector2 gravity;
@@ -123,10 +125,45 @@ public class PipeCollisionFilter implements CollisionFilter {
 
     private boolean isOutPipe() {
         if (pipeDirection == Pipe.PipeDirection.TRANSVERSE) {
-            return !((ballY < maxY) && (ballY > minY));
+            if(ballY > maxY || ballY < minY){
+                return true;
+            }
+
+            if(ballX < minX){
+                Vector2 v1 = new Vector2(minX - ballX, maxY - ballY);
+                Vector2 v2 = new Vector2(minX - ballX, minY - ballY);
+                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                    return true;
+                }
+            }
+            else if(ballX > maxX){
+                Vector2 v1 = new Vector2(maxX - ballX, maxY - ballY);
+                Vector2 v2 = new Vector2(maxX - ballX, minY - ballY);
+                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                    return true;
+                }
+            }
         } else {
-            return !((ballX < maxX) && (ballX > minX));
+            if(ballX > maxX || ballX < minX){
+                return true;
+            }
+
+            if(ballY < minY){
+                Vector2 v1 = new Vector2(minX - ballX, minY - ballY);
+                Vector2 v2 = new Vector2(maxX - ballX, minY - ballY);
+                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                    return true;
+                }
+            }
+            else if(ballY > maxY){
+                Vector2 v1 = new Vector2(minX - ballX, maxY - ballY);
+                Vector2 v2 = new Vector2(maxX - ballX, maxY - ballY);
+                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     private boolean isCollision() {

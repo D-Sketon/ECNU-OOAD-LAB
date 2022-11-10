@@ -27,9 +27,9 @@ public interface CollisionFilter {
     /**
      * 是否允许计算接触流形
      *
-     * @param body1 物体1
-     * @param body2 物体2
-     * @param shape 近似图形
+     * @param body1       物体1
+     * @param body2       物体2
+     * @param shape       近似图形
      * @param penetration 穿透信息
      * @return boolean
      */

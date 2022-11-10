@@ -51,7 +51,7 @@ public class SequentialImpulses {
      *
      * @param contactConstraint 传入{@link ContactConstraint}
      * @param contact           传入{@link SolvableContact}
-     * @param J 冲量
+     * @param J                 冲量
      */
     private void updateBodies(ContactConstraint contactConstraint, SolvableContact contact, Vector2 J) {
         PhysicsBody b1 = contactConstraint.getBody1();
@@ -158,7 +158,6 @@ public class SequentialImpulses {
 
             for (int j = 0; j < cSize; j++) {
                 SolvableContact contact = contacts.get(j);
-
                 Vector2 J = new Vector2(N.x * contact.jn + T.x * contact.jt, N.y * contact.jn + T.y * contact.jt);
                 this.updateBodies(contactConstraint, contact, J);
             }
@@ -222,76 +221,63 @@ public class SequentialImpulses {
      * @param contactConstraints 碰撞约束
      */
     public void solvePositionConstraints(List<ContactConstraint> contactConstraints) {
-        int size = contactConstraints.size();
-        if (size == 0) return;
+        if (contactConstraints.size() == 0) return;
 
-        double minSeparation = 0.0;
-        // 设置求解约束时使用的最大线性位置校正，这有助于防止过冲
+        // 最大线性位置校正，用于防止过冲
         double maxLinearCorrection = Settings.DEFAULT_MAXIMUM_LINEAR_CORRECTION;
-        // 线性睡眠容差，当2D刚体线性速度低于该值，刚体进入睡眠
+        // 线性容差，用于防止过冲
         double allowedPenetration = Settings.DEFAULT_LINEAR_TOLERANCE;
-        // 设置比例因子，该比例因子确定解决碰撞重叠的速度
+        // 比例因子，该比例因子确定解决碰撞重叠的速度
         double baumgarte = Settings.DEFAULT_BAUMGARTE;
 
-        // loop through the contact constraints
         for (ContactConstraint contactConstraint : contactConstraints) {
-            // get the contact list
             List<SolvableContact> contacts = contactConstraint.getContacts();
             int cSize = contactConstraint.getSize();
             if (cSize == 0) continue;
 
-            // get the bodies
             PhysicsBody b1 = contactConstraint.getBody1();
             PhysicsBody b2 = contactConstraint.getBody2();
-            // get their transforms
+
             Transform t1 = b1.getShape().getTransform();
             Transform t2 = b2.getShape().getTransform();
-            // get the masses
+
             Mass m1 = b1.getMass();
             Mass m2 = b2.getMass();
 
-            // get the penetration axis
             Vector2 N = contactConstraint.getNormal();
 
-            // solve normal constraints
             for (int k = 0; k < cSize; k++) {
                 SolvableContact contact = contacts.get(k);
 
                 Vector2 c1 = t1.getTransformed(m1.getCenter());
                 Vector2 c2 = t2.getTransformed(m2.getCenter());
 
-                // get r1 and r2
                 Vector2 r1 = contact.getP1().difference(m1.getCenter());
                 t1.transformR(r1);
                 Vector2 r2 = contact.getP2().difference(m2.getCenter());
                 t2.transformR(r2);
 
-                // get the world contact points
                 Vector2 p1 = c1.sum(r1);
                 Vector2 p2 = c2.sum(r2);
                 Vector2 dp = p1.subtract(p2);
 
-                // estimate the current penetration
                 double penetration = dp.dot(N) - contact.getDepth();
 
-                // track the maximum error
-                minSeparation = Math.min(minSeparation, penetration);
-
-                // allow for penetration to avoid jitter
+                // 防止过冲
                 double cp = baumgarte * Interval.sandwich(penetration + allowedPenetration, -maxLinearCorrection, 0.0);
 
-                // compute the position impulse
+                // 计算位置冲量
                 double K = this.getMassCoefficient(contactConstraint, r1, r2, N);
                 double jp = (K > Epsilon.E) ? (-cp / K) : 0.0;
 
-                // clamp the accumulated position impulse
+                // 对位置冲量进行约束
                 double jp0 = contact.jp;
                 contact.jp = Math.max(jp0 + jp, 0.0);
                 jp = contact.jp - jp0;
 
                 Vector2 J = N.product(jp);
 
-                // translate and rotate the objects
+                // 使用计算出的位置冲量对物体进行旋转和平移
                 t1.translate(J.product(m1.getInverseMass()));
                 t1.rotate(m1.getInverseInertia() * r1.cross(J), c1.x, c1.y);
 

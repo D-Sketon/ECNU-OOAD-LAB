@@ -3,6 +3,9 @@ package gizmoball.engine.collision;
 import gizmoball.engine.geometry.Vector2;
 import lombok.Data;
 
+/**
+ * 穿透信息
+ */
 @Data
 public class Penetration {
     /**

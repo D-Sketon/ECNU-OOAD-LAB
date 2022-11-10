@@ -17,6 +17,9 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 非常基础的碰撞探测器，包含碰撞检测和碰撞求解
+ */
 public class BasicCollisionDetector implements CollisionDetector {
 
     @Override

@@ -6,7 +6,6 @@ import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.QuarterCircle;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.CurvedPipe;
 import lombok.AllArgsConstructor;

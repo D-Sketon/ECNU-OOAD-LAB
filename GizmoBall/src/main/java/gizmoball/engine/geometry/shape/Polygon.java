@@ -1,6 +1,5 @@
 package gizmoball.engine.geometry.shape;
 
-import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Interval;
 import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.AABB;
@@ -16,6 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class Polygon extends AbstractShape {
 
+    protected static final double INV_3 = 1.0 / 3.0;
     /**
      * 多边形顶点数组
      */
@@ -28,10 +28,6 @@ public class Polygon extends AbstractShape {
 
     public Polygon(Transform transform, Vector2[] vertices) {
         this(transform, vertices, getCounterClockwiseEdgeNormals(vertices));
-    }
-
-    public Polygon(Vector2[] vertices) {
-        this(new Transform(), vertices, getCounterClockwiseEdgeNormals(vertices));
     }
 
     public Polygon(Transform transform, Vector2[] vertices, Vector2[] normals) {
@@ -203,8 +199,8 @@ public class Polygon extends AbstractShape {
             // (p1 + p2) * (D / 6)
             // = (x1 + x2) * (yi * x(i+1) - y(i+1) * xi) / 6
             // we will divide by the total area later
-            center.x += (p1.x + p2.x) * Settings.INV_3 * triangleArea;
-            center.y += (p1.y + p2.y) * Settings.INV_3 * triangleArea;
+            center.x += (p1.x + p2.x) * INV_3 * triangleArea;
+            center.y += (p1.y + p2.y) * INV_3 * triangleArea;
 
             // (yi * x(i+1) - y(i+1) * xi) * (p2^2 + p2 . p1 + p1^2)
             I += triangleArea * (p2.dot(p2) + p2.dot(p1) + p1.dot(p1));

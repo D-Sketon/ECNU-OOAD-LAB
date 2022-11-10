@@ -6,6 +6,9 @@ import gizmoball.engine.physics.PhysicsBody;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * 接触信息
+ */
 @Data
 @AllArgsConstructor
 final class SolvableContact {

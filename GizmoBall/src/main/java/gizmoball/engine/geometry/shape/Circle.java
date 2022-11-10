@@ -1,7 +1,7 @@
 package gizmoball.engine.geometry.shape;
 
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.collision.feature.PointFeature;
+import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;

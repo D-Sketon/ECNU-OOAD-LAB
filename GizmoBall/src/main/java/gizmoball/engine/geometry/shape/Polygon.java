@@ -1,19 +1,15 @@
 package gizmoball.engine.geometry.shape;
 
-import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.collision.feature.EdgeFeature;
-import gizmoball.engine.collision.feature.PointFeature;
+import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.Mass;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Getter
-@ToString(callSuper = true)
 @NoArgsConstructor
 public class Polygon extends AbstractShape {
 
@@ -31,17 +27,13 @@ public class Polygon extends AbstractShape {
         this(transform, vertices, getCounterClockwiseEdgeNormals(vertices));
     }
 
-    public Polygon(Vector2[] vertices) {
-        this(new Transform(), vertices, getCounterClockwiseEdgeNormals(vertices));
-    }
-
     public Polygon(Transform transform, Vector2[] vertices, Vector2[] normals) {
         super(transform);
         this.vertices = vertices;
         this.normals = normals;
     }
 
-    public static Vector2[] getCounterClockwiseEdgeNormals(Vector2[] vertices) {
+    protected static Vector2[] getCounterClockwiseEdgeNormals(Vector2[] vertices) {
         if (vertices == null) return null;
 
         int size = vertices.length;
@@ -139,32 +131,9 @@ public class Polygon extends AbstractShape {
     }
 
     @Override
-    public EdgeFeature getFarthestFeature(Vector2 vector) {
-        Vector2 localn = transform.getInverseTransformedR(vector);
-
-        int index = getFarthestVertexIndex(localn);
-        int count = this.vertices.length;
-
-        Vector2 maximum = new Vector2(this.vertices[index]);
-        transform.transform(maximum);
-        PointFeature vm = new PointFeature(maximum);
-
-        Vector2 leftN = this.normals[index == 0 ? count - 1 : index - 1];
-        Vector2 rightN = this.normals[index];
-
-        if (leftN.dot(localn) < rightN.dot(localn)) {
-            int l = (index == count - 1) ? 0 : index + 1;
-
-            Vector2 left = transform.getTransformed(this.vertices[l]);
-            PointFeature vl = new PointFeature(left);
-            return new EdgeFeature(vm, vl, vm, maximum.to(left));
-        } else {
-            int r = (index == 0) ? count - 1 : index - 1;
-
-            Vector2 right = transform.getTransformed(this.vertices[r]);
-            PointFeature vr = new PointFeature(right);
-            return new EdgeFeature(vr, vm, vm, right.to(maximum));
-        }
+    public PointFeature getFarthestFeature(Vector2 vector) {
+        // 多边形没有PointFeature
+        return null;
     }
 
     @Override
@@ -196,56 +165,46 @@ public class Polygon extends AbstractShape {
 
     @Override
     public Mass createMass(double density) {
-        // can't use normal centroid calculation since it will be weighted towards sides
-        // that have larger distribution of points.
+        double INV_3 = 1.0 / 3.0;
         Vector2 center = new Vector2();
+        // 总面积
         double area = 0.0;
+        // 转动惯量
         double I = 0.0;
         int n = this.vertices.length;
-        // get the average center
+        // 获得平均中点
         Vector2 ac = new Vector2();
         for (Vector2 vertex : this.vertices) {
             ac.add(vertex);
         }
         ac.divide(n);
-        // loop through the vertices using two variables to avoid branches in the loop
+
         for (int i1 = n - 1, i2 = 0; i2 < n; i1 = i2++) {
-            // get two vertices
             Vector2 p1 = this.vertices[i1];
             Vector2 p2 = this.vertices[i2];
-            // get the vector from the center to the point
             p1 = p1.difference(ac);
             p2 = p2.difference(ac);
-            // perform the cross product (yi * x(i+1) - y(i+1) * xi)
+            // 使用叉乘计算顶点和平均中点围成的的三角形面积
             double D = p1.cross(p2);
-            // multiply by half
             double triangleArea = 0.5 * D;
-            // add it to the total area
             area += triangleArea;
+            // 计算每个三角形重心的横（纵）坐标
+            // 并与该三角形的面积作乘积
+            // 最终将每个乘积加和与总面积作除
+            // 即为质心的横（纵）坐标
+            center.x += (p1.x + p2.x) * INV_3 * triangleArea;
+            center.y += (p1.y + p2.y) * INV_3 * triangleArea;
 
-            // area weighted centroid
-            // (p1 + p2) * (D / 6)
-            // = (x1 + x2) * (yi * x(i+1) - y(i+1) * xi) / 6
-            // we will divide by the total area later
-            center.x += (p1.x + p2.x) * Settings.INV_3 * triangleArea;
-            center.y += (p1.y + p2.y) * Settings.INV_3 * triangleArea;
-
-            // (yi * x(i+1) - y(i+1) * xi) * (p2^2 + p2 . p1 + p1^2)
             I += triangleArea * (p2.dot(p2) + p2.dot(p1) + p1.dot(p1));
-            // we will do the m / 6A = (d / 6) when we have the area summed up
         }
         area = Math.abs(area);
-        // compute the mass
-        double m = density * area;
-        // finish the centroid calculation by dividing by the total area
-        // and adding in the average center
         center.divide(area);
+        // 回到世界坐标系
         Vector2 c = center.sum(ac);
-        // finish the inertia tensor by dividing by the total area and multiplying by d / 6
+
+        // 总质量
+        double m = density * area;
         I *= (density / 6.0);
-        // shift the axis of rotation to the area weighted center
-        // (center is the vector from the average center to the area weighted center since
-        // the average center is used as the origin)
         I -= m * center.getMagnitudeSquared();
 
         return new Mass(c, m, I);

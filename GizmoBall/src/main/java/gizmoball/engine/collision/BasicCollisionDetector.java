@@ -3,9 +3,8 @@ package gizmoball.engine.collision;
 import gizmoball.engine.Settings;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
-import gizmoball.engine.collision.detector.AABBDetector;
 import gizmoball.engine.collision.detector.DetectorResult;
-import gizmoball.engine.collision.detector.SatDetector;
+import gizmoball.engine.collision.detector.DetectorUtil;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;
@@ -17,8 +16,10 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 非常基础的碰撞探测器，包含碰撞检测和碰撞求解
+ */
 public class BasicCollisionDetector implements CollisionDetector {
-
 
     @Override
     public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> filters) {
@@ -36,13 +37,23 @@ public class BasicCollisionDetector implements CollisionDetector {
         return manifolds;
     }
 
+    /**
+     * <p>基础的带{@link CollisionFilter}的完整碰撞解析器</p>
+     * <p>含有BroadPhase和NarrowPhase</p>
+     *
+     * @param manifoldSolver 流形求解器
+     * @param body1          物体1
+     * @param body2          物体2
+     * @param filters        碰撞过滤器
+     * @return Manifold
+     */
     private Manifold processDetect(ManifoldSolver manifoldSolver, PhysicsBody body1, PhysicsBody body2, List<CollisionFilter> filters) {
         AbstractShape shape1 = body1.getShape();
         AbstractShape shape2 = body2.getShape();
         for (CollisionFilter filter : filters) {
             if (!filter.isAllowedBroadPhase(body1, body2)) return null;
         }
-        if (!AABBDetector.detect(shape1, shape2)) {
+        if (!DetectorUtil.AABBDetect(shape1, shape2)) {
             return null;
         }
 
@@ -50,7 +61,7 @@ public class BasicCollisionDetector implements CollisionDetector {
             if (!filter.isAllowedNarrowPhase(body1, body2)) return null;
         }
         Penetration penetration = new Penetration();
-        DetectorResult detect = SatDetector.detect(shape1, shape2, null, penetration);
+        DetectorResult detect = DetectorUtil.satDetect(shape1, shape2, null, penetration);
         if (!detect.isHasCollision()) {
             return null;
         }

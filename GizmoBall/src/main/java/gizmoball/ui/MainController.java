@@ -1,9 +1,11 @@
 package gizmoball.ui;
 
 import gizmoball.engine.geometry.AABB;
+import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
+import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.Flipper;
 import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
@@ -356,6 +358,9 @@ public class MainController extends Application implements Initializable {
                 case RIGHT:
                     world.flipper(Flipper.Direction.RIGHT);
                     break;
+                case F1:
+                    isDebugMode = !isDebugMode;
+                    break;
             }
         });
     }
@@ -496,9 +501,23 @@ public class MainController extends Application implements Initializable {
         for (PhysicsBody physicsBody : bodies) {
             if (physicsBody instanceof ImagePhysicsBody) {
                 ((ImagePhysicsBody) physicsBody).drawToCanvas(gc);
+                if (isDebugMode) {
+                    if(physicsBody.getShape() instanceof Ball) {
+                        Vector2 linearVelocity = physicsBody.getLinearVelocity().copy();
+                        Vector2 normalized = linearVelocity.copy().right().getNormalized();
+                        double angularVelocity = physicsBody.getAngularVelocity()*20;
+                        Transform transform = physicsBody.getShape().getTransform();
+                        gc.setStroke(Color.GREEN);
+                        gc.strokeLine(transform.x, transform.y, transform.x + linearVelocity.x, transform.y + linearVelocity.y);
+                        gc.setStroke(Color.RED);
+                        gc.strokeLine(transform.x, transform.y, transform.x + normalized.x * angularVelocity, transform.y +  normalized.y * angularVelocity);
+                    }
+                }
             } else {
                 canvasRenderer.drawToCanvas(gc, physicsBody);
             }
         }
     }
+
+    private boolean isDebugMode = false;
 }

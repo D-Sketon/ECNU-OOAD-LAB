@@ -7,15 +7,10 @@ import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.QuarterCircle;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Blackhole;
-import gizmoball.engine.world.entity.Flipper;
-import gizmoball.engine.world.entity.Pipe;
+import gizmoball.engine.world.entity.*;
 import gizmoball.engine.world.listener.*;
 import javafx.util.Pair;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +70,6 @@ public class World {
      */
     protected int timeTicks;
 
-    @Getter
     protected final List<TickListener> tickListeners;
 
     protected final CollisionDetector collisionDetector;
@@ -96,7 +90,7 @@ public class World {
         this.solver = new SequentialImpulses();
 
         BallListener ballListener = new BallListener(balls);
-        BlackholeListener blackholeListener = new BlackholeListener(balls, blackholes);
+        BlackHoleListener blackholeListener = new BlackHoleListener(balls, blackholes);
         PipeListener pipeListener = new PipeListener(balls, pipes, gravity);
         ObstacleListener obstacleListener = new ObstacleListener(balls, obstacles);
         FlipperListener flipperListener = new FlipperListener(balls, flippers);
@@ -108,7 +102,6 @@ public class World {
     }
 
     public void addBodies(PhysicsBody body) {
-        //添加球
         if (body.getShape() instanceof Flipper) {
             flippers.add(body);
             Flipper shape = (Flipper) body.getShape();
@@ -119,9 +112,9 @@ public class World {
             }
         } else if (body.getShape() instanceof Ball) {
             this.balls.add(body);
-        } else if (body.getShape() instanceof Blackhole) {
+        } else if (body.getShape() instanceof BlackHole) {
             this.blackholes.add(body);
-        } else if (body.getShape() instanceof Pipe || body.getShape() instanceof QuarterCircle) {
+        } else if (body.getShape() instanceof Pipe || body.getShape() instanceof CurvedPipe) {
             this.pipes.add(body);
         } else {
             this.obstacles.add(body);

@@ -4,7 +4,7 @@ import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.Vector2;
 
 /**
- * 凸多边形的接口
+ * 凸面形接口
  */
 public interface Convex {
 

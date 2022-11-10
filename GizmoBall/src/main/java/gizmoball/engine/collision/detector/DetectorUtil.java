@@ -2,15 +2,101 @@ package gizmoball.engine.collision.detector;
 
 import gizmoball.engine.collision.Interval;
 import gizmoball.engine.collision.Penetration;
+import gizmoball.engine.geometry.AABB;
+import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.AbstractShape;
-import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.Polygon;
-import gizmoball.engine.geometry.shape.QuarterCircle;
-import lombok.extern.slf4j.Slf4j;
+import gizmoball.engine.geometry.shape.*;
 
-@Slf4j
-public class SatDetector {
+public class DetectorUtil {
+
+    /**
+     * <p>使用于broadPhase</p>
+     * 判断两个{@link AbstractShape}的AABB是否发生碰撞
+     *
+     * @param shape1 待测图形
+     * @param shape2 待测图形
+     * @return boolean
+     */
+    public static boolean AABBDetect(AbstractShape shape1, AbstractShape shape2) {
+        AABB a = shape1.createAABB();
+        AABB b = shape2.createAABB();
+        return a.overlaps(b);
+    }
+
+    /**
+     * <p>使用于narrowPhase</p>
+     * 判断两个{@link Circle}是否发生碰撞
+     *
+     * @param circle1     待测圆
+     * @param circle2     待测圆
+     * @param shape       近似图形
+     * @param penetration 穿透信息
+     * @return DetectorResult
+     */
+    public static DetectorResult circleDetect(Circle circle1, Circle circle2, AbstractShape shape, Penetration penetration) {
+        Transform transform1 = circle1.getTransform();
+        Transform transform2 = circle2.getTransform();
+        // 构造圆心坐标
+        Vector2 ce1 = new Vector2(transform1.getX(), transform1.getY());
+        Vector2 ce2 = new Vector2(transform2.getX(), transform2.getY());
+        Vector2 v = ce1.to(ce2);
+        double radii = circle1.getRadius() + circle2.getRadius();
+        double mag = v.getMagnitudeSquared();
+        // 发生碰撞
+        if (mag < radii * radii) {
+            if (penetration != null) {
+                penetration.setDepth(radii - v.normalize());
+                penetration.getNormal().x = v.x;
+                penetration.getNormal().y = v.y;
+            }
+            return new DetectorResult(true, shape);
+        }
+        return new DetectorResult(false, shape);
+    }
+
+    /**
+     * <p>使用于narrowPhase</p>
+     * 判断{@link QuarterCircle}和{@link Circle}是否发生碰撞
+     *
+     * @param quarterCircle 扇形
+     * @param circle        圆形
+     * @param penetration   穿透信息
+     * @param isFlipped     参数是否发生翻转
+     * @return DetectorResult
+     */
+    public static DetectorResult quarterCircleDetect(QuarterCircle quarterCircle, Circle circle, Penetration penetration, boolean isFlipped) {
+        Transform transform1 = quarterCircle.getTransform();
+        Transform transform2 = circle.getTransform();
+
+        Vector2 v0 = transform1.getTransformed(quarterCircle.getVertices()[0]);
+        Vector2 v1 = transform1.getTransformed(quarterCircle.getVertices()[1]);
+        Vector2 v2 = transform1.getTransformed(quarterCircle.getVertices()[2]);
+
+        Vector2 ce1 = v1;
+        Vector2 ce2 = new Vector2(transform2.getX(), transform2.getY());
+        Vector2 r1 = v1.to(v0);
+        Vector2 r2 = v1.to(v2);
+        Vector2 c2c = ce1.to(ce2);
+        // 圆形在扇形的边之中，将扇形近似为圆形
+        if (r1.cross(c2c) * c2c.cross(r2) >= 0 && r1.cross(c2c) * r1.cross(r2) >= 0) {
+            Circle circle1 = new Circle(quarterCircle.getRadius(),
+                    new Transform(transform1.getCost(), transform1.getSint(), ce1.x, ce1.y));
+            if (isFlipped) {
+                return circleDetect(circle, circle1, circle1, penetration);
+            }
+            return circleDetect(circle1, circle, circle1, penetration);
+        } else {
+            // 将扇形近似为多边形
+            Rectangle rectangle = new Rectangle(
+                    quarterCircle.getRadius() / 2,
+                    quarterCircle.getRadius() / 2,
+                    transform1.copy());
+            if (isFlipped) {
+                return satDetect(circle, rectangle, rectangle, penetration);
+            }
+            return satDetect(rectangle, circle, rectangle, penetration);
+        }
+    }
 
     /**
      * <p>使用于narrowPhase</p>
@@ -22,20 +108,20 @@ public class SatDetector {
      * @param penetration 穿透信息
      * @return DetectorResult
      */
-    public static DetectorResult detect(AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Penetration penetration) {
+    public static DetectorResult satDetect(AbstractShape shape1, AbstractShape shape2, AbstractShape shape, Penetration penetration) {
         if (shape1 instanceof QuarterCircle && shape2 instanceof QuarterCircle) {
             // 不考虑扇形和扇形的碰撞
             return new DetectorResult(false, null);
         }
         if (shape1 instanceof Circle && shape2 instanceof Circle) {
             // 圆形和圆形碰撞
-            return CircleDetector.detect((Circle) shape1, (Circle) shape2, shape, penetration);
+            return circleDetect((Circle) shape1, (Circle) shape2, shape, penetration);
         } else if (shape1 instanceof Circle && shape2 instanceof QuarterCircle) {
             // 圆形和扇形碰撞
-            return QuarterCirCleDetector.detect((QuarterCircle) shape2, (Circle) shape1, penetration, true);
+            return quarterCircleDetect((QuarterCircle) shape2, (Circle) shape1, penetration, true);
         } else if (shape2 instanceof Circle && shape1 instanceof QuarterCircle) {
             // 扇形和圆形碰撞
-            return QuarterCirCleDetector.detect((QuarterCircle) shape1, (Circle) shape2, penetration, false);
+            return quarterCircleDetect((QuarterCircle) shape1, (Circle) shape2, penetration, false);
         } else if (shape1 instanceof QuarterCircle) {
             // 扇形和多边形碰撞
             QuarterCircle shape11 = (QuarterCircle) shape1;
@@ -45,7 +131,7 @@ public class SatDetector {
                             vertices[1],
                             vertices[2],
                             new Vector2(shape11.getRadius() / Math.sqrt(2), shape11.getRadius() / Math.sqrt(2))});
-            return detect(polygon, shape2, polygon, penetration);
+            return satDetect(polygon, shape2, polygon, penetration);
         } else if (shape2 instanceof QuarterCircle) {
             // 多边形和扇形碰撞
             QuarterCircle shape21 = (QuarterCircle) shape2;
@@ -55,7 +141,7 @@ public class SatDetector {
                             vertices[1],
                             vertices[2],
                             new Vector2(shape21.getRadius() / Math.sqrt(2), shape21.getRadius() / Math.sqrt(2))});
-            return detect(shape1, polygon, polygon, penetration);
+            return satDetect(shape1, polygon, polygon, penetration);
         }
         // 多边形（圆）和多边形（圆）碰撞
         Vector2[] foci1 = shape1.getFoci();
@@ -137,5 +223,4 @@ public class SatDetector {
         penetration.setDepth(minOverlap);
         return new DetectorResult(true, shape);
     }
-
 }

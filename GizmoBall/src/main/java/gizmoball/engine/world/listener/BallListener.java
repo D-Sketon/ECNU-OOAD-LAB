@@ -2,9 +2,8 @@ package gizmoball.engine.world.listener;
 
 import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.Penetration;
-import gizmoball.engine.collision.detector.AABBDetector;
-import gizmoball.engine.collision.detector.CircleDetector;
 import gizmoball.engine.collision.detector.DetectorResult;
+import gizmoball.engine.collision.detector.DetectorUtil;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.physics.PhysicsBody;
@@ -46,12 +45,12 @@ public class BallListener implements TickListener {
         }
 
         private Manifold processDetect(ManifoldSolver manifoldSolver, Ball ball1, Ball ball2) {
-            if (!AABBDetector.detect(ball1, ball2)) {
+            if (!DetectorUtil.AABBDetect(ball1, ball2)) {
                 return null;
             }
 
             Penetration penetration = new Penetration();
-            DetectorResult detect = CircleDetector.detect(ball1, ball2, null, penetration);
+            DetectorResult detect = DetectorUtil.circleDetect(ball1, ball2, null, penetration);
             if (!detect.isHasCollision()) {
                 return null;
             }

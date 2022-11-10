@@ -41,8 +41,8 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         return imagePhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> blackholeBodyCreator = (preferredSize) -> {
-        Blackhole blackhole = new Blackhole(preferredSize.x / 2.0);
+    protected static final Function<Vector2, ImagePhysicsBody> blackHoleBodyCreator = (preferredSize) -> {
+        BlackHole blackhole = new BlackHole(preferredSize.x / 2.0);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(blackhole);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         return imagePhysicsBody;

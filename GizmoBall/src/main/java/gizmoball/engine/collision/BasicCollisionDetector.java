@@ -3,9 +3,8 @@ package gizmoball.engine.collision;
 import gizmoball.engine.Settings;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
-import gizmoball.engine.collision.detector.AABBDetector;
 import gizmoball.engine.collision.detector.DetectorResult;
-import gizmoball.engine.collision.detector.SatDetector;
+import gizmoball.engine.collision.detector.DetectorUtil;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;
@@ -54,7 +53,7 @@ public class BasicCollisionDetector implements CollisionDetector {
         for (CollisionFilter filter : filters) {
             if (!filter.isAllowedBroadPhase(body1, body2)) return null;
         }
-        if (!AABBDetector.detect(shape1, shape2)) {
+        if (!DetectorUtil.AABBDetect(shape1, shape2)) {
             return null;
         }
 
@@ -62,7 +61,7 @@ public class BasicCollisionDetector implements CollisionDetector {
             if (!filter.isAllowedNarrowPhase(body1, body2)) return null;
         }
         Penetration penetration = new Penetration();
-        DetectorResult detect = SatDetector.detect(shape1, shape2, null, penetration);
+        DetectorResult detect = DetectorUtil.satDetect(shape1, shape2, null, penetration);
         if (!detect.isHasCollision()) {
             return null;
         }

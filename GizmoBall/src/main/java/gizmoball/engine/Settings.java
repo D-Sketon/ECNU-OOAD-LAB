@@ -21,7 +21,7 @@ public class Settings {
     /**
      * 默认每tick时长，单位s
      */
-    public static final double DEFAULT_STEP_FREQUENCY = 1.0 / 50.0;
+    public static final double DEFAULT_STEP_FREQUENCY = 1.0 / 60.0;
 
     /**
      * 默认每tick最大平移距离

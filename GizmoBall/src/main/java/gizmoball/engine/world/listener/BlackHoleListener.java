@@ -1,13 +1,13 @@
 package gizmoball.engine.world.listener;
 
 import gizmoball.engine.collision.BasicCollisionDetector;
-import gizmoball.engine.collision.detector.CircleDetector;
 import gizmoball.engine.collision.detector.DetectorResult;
+import gizmoball.engine.collision.detector.DetectorUtil;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Blackhole;
+import gizmoball.engine.world.entity.BlackHole;
 import gizmoball.engine.world.filter.CollisionFilter;
 import javafx.util.Pair;
 import lombok.AllArgsConstructor;
@@ -16,11 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-public class BlackholeListener implements TickListener {
+public class BlackHoleListener implements TickListener {
 
     private final List<PhysicsBody> balls;
 
-    private final List<PhysicsBody> blackholes;
+    private final List<PhysicsBody> blackHoles;
 
     /**
      * 重写碰撞检查类
@@ -32,9 +32,9 @@ public class BlackholeListener implements TickListener {
             for (PhysicsBody body1 : bodies1) {
                 Ball ball = (Ball) body1.getShape();
                 for (PhysicsBody body2 : bodies2) {
-                    Blackhole blackhole = (Blackhole) body2.getShape();
+                    BlackHole blackhole = (BlackHole) body2.getShape();
                     gravityAccumulation(body1, body2);
-                    DetectorResult detect = CircleDetector.detect(ball, blackhole, null, null);
+                    DetectorResult detect = DetectorUtil.circleDetect(ball, blackhole, null, null);
                     if (detect.isHasCollision()) {
                         manifolds.add(new Pair<>(null, new Pair<>(body1, body2)));
                     }
@@ -49,7 +49,7 @@ public class BlackholeListener implements TickListener {
             Vector2 force = bc1.to(bc2);
             double r = force.getMagnitude();
             force.normalize();
-            Blackhole blackhole = (Blackhole) body2.getShape();
+            BlackHole blackhole = (BlackHole) body2.getShape();
             force.multiply(body1.getMass().getMass() * blackhole.getRadius() * 10000 / r / r);
             body1.getForces().add(force);
 
@@ -64,7 +64,7 @@ public class BlackholeListener implements TickListener {
         for (PhysicsBody ball : balls) {
             ball.getForces().clear();
         }
-        List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect = basicCollisionDetector.detect(balls, blackholes, null);
+        List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect = basicCollisionDetector.detect(balls, blackHoles, null);
 
         for (Pair<Manifold, Pair<PhysicsBody, PhysicsBody>> pair : detect) {
             PhysicsBody ball = pair.getValue().getKey();

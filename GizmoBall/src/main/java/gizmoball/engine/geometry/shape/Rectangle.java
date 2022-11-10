@@ -5,11 +5,9 @@ import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString(callSuper = true)
 public class Rectangle extends Polygon {
 
     /**

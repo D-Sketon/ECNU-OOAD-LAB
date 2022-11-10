@@ -78,8 +78,6 @@ public class World {
     @Getter
     protected final List<TickListener> tickListeners;
 
-    protected final List<TriggerListener> triggerListeners;
-
     protected final CollisionDetector collisionDetector;
 
     protected final SequentialImpulses solver;
@@ -94,7 +92,6 @@ public class World {
         this.flippers = new ArrayList<>();
         this.timeTicks = 0;
         this.tickListeners = new ArrayList<>();
-        this.triggerListeners = new ArrayList<>();
         this.collisionDetector = new BasicCollisionDetector();
         this.solver = new SequentialImpulses();
 

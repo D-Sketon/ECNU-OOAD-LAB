@@ -8,10 +8,7 @@ import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Blackhole;
-import gizmoball.engine.world.entity.Flipper;
-import gizmoball.engine.world.entity.Pipe;
+import gizmoball.engine.world.entity.*;
 import gizmoball.ui.visualize.ImagePhysicsBody;
 import javafx.scene.Cursor;
 import javafx.scene.layout.VBox;
@@ -73,8 +70,8 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, ImagePhysicsBody> curvedPipeBodyCreator = (preferredSize) -> {
-        QuarterCircle quarterCircle = new QuarterCircle(preferredSize.x);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(quarterCircle);
+        CurvedPipe curvedPipe = new CurvedPipe(preferredSize.x);
+        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(curvedPipe);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         imagePhysicsBody.setRestitution(0.95);
         imagePhysicsBody.setFriction(0.0);

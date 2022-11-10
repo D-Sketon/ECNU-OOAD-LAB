@@ -7,7 +7,9 @@ import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.geometry.shape.QuarterCircle;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SatDetector {
 
     /**
@@ -55,7 +57,7 @@ public class SatDetector {
                             new Vector2(shape21.getRadius() / Math.sqrt(2), shape21.getRadius() / Math.sqrt(2))});
             return detect(shape1, polygon, polygon, penetration);
         }
-        // 多边形和多边形碰撞
+        // 多边形（圆）和多边形（圆）碰撞
         Vector2[] foci1 = shape1.getFoci();
         Vector2[] foci2 = shape2.getFoci();
 

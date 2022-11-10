@@ -34,7 +34,7 @@ public class Vector2 {
     /**
      * 基于本{@link Vector2}复制一个新向量
      *
-     * @return Vector2
+     * @return 新Vector2
      */
     public Vector2 copy() {
         return new Vector2(this.x, this.y);
@@ -71,10 +71,10 @@ public class Vector2 {
     }
 
     /**
-     * Adds the given {@link Vector2} to this {@link Vector2}.
+     * 将本{@link Vector2}和传入{@link Vector2}相加
      *
-     * @param vector the {@link Vector2}
-     * @return Vector2
+     * @param vector 传入{@link Vector2}
+     * @return 本Vector2
      */
     public Vector2 add(Vector2 vector) {
         this.x += vector.x;
@@ -83,34 +83,20 @@ public class Vector2 {
     }
 
     /**
-     * Adds the given {@link Vector2} to this {@link Vector2}.
+     * 将本{@link Vector2}和传入{@link Vector2}相加，返回一个新{@link Vector2}
      *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return Vector2
-     */
-    public Vector2 add(double x, double y) {
-        this.x += x;
-        this.y += y;
-        return this;
-    }
-
-    /**
-     * Adds this {@link Vector2} and the given {@link Vector2} returning
-     * a new {@link Vector2} containing the result.
-     *
-     * @param vector the {@link Vector2}
-     * @return Vector2
+     * @param vector 传入{@link Vector2}
+     * @return 新Vector2
      */
     public Vector2 sum(Vector2 vector) {
         return new Vector2(this.x + vector.x, this.y + vector.y);
     }
 
     /**
-     * Subtracts the given {@link Vector2} from this {@link Vector2}.
+     * 将本{@link Vector2}和传入{@link Vector2}相减
      *
-     * @param vector the {@link Vector2}
-     * @return {@link Vector2} this vector
+     * @param vector 传入{@link Vector2}
+     * @return 本Vector2
      */
     public Vector2 subtract(Vector2 vector) {
         this.x -= vector.x;
@@ -119,44 +105,30 @@ public class Vector2 {
     }
 
     /**
-     * Subtracts the given {@link Vector2} from this {@link Vector2}.
+     * 将本{@link Vector2}和传入{@link Vector2}相减，返回一个新Vector2
      *
-     * @param x the x component of the {@link Vector2}
-     * @param y the y component of the {@link Vector2}
-     * @return {@link Vector2} this vector
-     */
-    public Vector2 subtract(double x, double y) {
-        this.x -= x;
-        this.y -= y;
-        return this;
-    }
-
-    /**
-     * Subtracts the given {@link Vector2} from this {@link Vector2} returning
-     * a new {@link Vector2} containing the result.
-     *
-     * @param vector the {@link Vector2}
-     * @return {@link Vector2}
+     * @param vector 传入{@link Vector2}
+     * @return 新Vector2
      */
     public Vector2 difference(Vector2 vector) {
         return new Vector2(this.x - vector.x, this.y - vector.y);
     }
 
     /**
-     * Creates a {@link Vector2} from this {@link Vector2} to the given {@link Vector2}.
+     * 创建一个本{@link Vector2}到传入{@link Vector2}的向量
      *
-     * @param vector the {@link Vector2}
-     * @return {@link Vector2}
+     * @param vector 传入{@link Vector2}
+     * @return 新Vector2
      */
     public Vector2 to(Vector2 vector) {
         return new Vector2(vector.x - this.x, vector.y - this.y);
     }
 
     /**
-     * Multiplies this {@link Vector2} by the given scalar.
+     * 将本{@link Vector2}乘上一个系数
      *
-     * @param scalar the scalar
-     * @return {@link Vector2} this vector
+     * @param scalar 系数
+     * @return 本Vector2
      */
     public Vector2 multiply(double scalar) {
         this.x *= scalar;
@@ -165,11 +137,10 @@ public class Vector2 {
     }
 
     /**
-     * Divides this {@link Vector2} by the given scalar.
+     * 将本{@link Vector2}除上一个系数
      *
      * @param scalar the scalar
-     * @return {@link Vector2} this vector
-     * @since 3.4.0
+     * @return 本Vector2
      */
     public Vector2 divide(double scalar) {
         this.x /= scalar;
@@ -178,21 +149,19 @@ public class Vector2 {
     }
 
     /**
-     * Multiplies this {@link Vector2} by the given scalar returning
-     * a new {@link Vector2} containing the result.
+     * 将本{@link Vector2}乘上一个系数，返回一个新{@link Vector2}
      *
-     * @param scalar the scalar
-     * @return {@link Vector2}
+     * @param scalar 系数
+     * @return 新Vector2
      */
     public Vector2 product(double scalar) {
         return new Vector2(this.x * scalar, this.y * scalar);
     }
 
     /**
-     * Returns the dot product of the given {@link Vector2}
-     * and this {@link Vector2}.
+     * 计算本{@link Vector2}和传入{@link Vector2}的点乘
      *
-     * @param vector the {@link Vector2}
+     * @param vector 传入{@link Vector2}
      * @return double
      */
     public double dot(Vector2 vector) {
@@ -200,9 +169,9 @@ public class Vector2 {
     }
 
     /**
-     * Returns the cross product of the this {@link Vector2} and the given {@link Vector2}.
+     * 计算本{@link Vector2}和传入{@link Vector2}的叉乘
      *
-     * @param vector the {@link Vector2}
+     * @param vector 传入{@link Vector2}
      * @return double
      */
     public double cross(Vector2 vector) {
@@ -211,17 +180,17 @@ public class Vector2 {
 
 
     /**
-     * Returns the cross product of this {@link Vector2} and the z value of the right {@link Vector2}.
+     * 计算本{@link Vector2}和z轴为传入参数的{@link Vector2}的叉乘
      *
-     * @param z the z component of the {@link Vector2}
-     * @return {@link Vector2}
+     * @param z 传入z轴
+     * @return 新Vector2
      */
     public Vector2 cross(double z) {
         return new Vector2(-this.y * z, this.x * z);
     }
 
     /**
-     * Returns true if this {@link Vector2} is the zero {@link Vector2}.
+     * 判断本{@link Vector2}是否为零向量
      *
      * @return boolean
      */
@@ -230,7 +199,9 @@ public class Vector2 {
     }
 
     /**
-     * Negates this {@link Vector2}.
+     * 将本{@link Vector2}取反
+     *
+     * @return 本Vector2
      */
     public Vector2 negate() {
         this.x = -this.x;
@@ -239,28 +210,18 @@ public class Vector2 {
     }
 
     /**
-     * Returns a {@link Vector2} which is the negative of this {@link Vector2}.
+     * 将本{@link Vector2}取反
      *
-     * @return {@link Vector2}
+     * @return 新Vector2
      */
     public Vector2 getNegative() {
         return new Vector2(-this.x, -this.y);
     }
 
     /**
-     * Returns the right-handed normal of this vector.
+     * 将本{@link Vector2}置为左手系法线
      *
-     * @return {@link Vector2} the right hand orthogonal {@link Vector2}
-     */
-    public Vector2 getRightHandOrthogonalVector() {
-        return new Vector2(-this.y, this.x);
-    }
-
-
-    /**
-     * Sets this vector to the left-handed normal of this vector.
-     *
-     * @return {@link Vector2} this vector
+     * @return 本Vector2
      */
     public Vector2 left() {
         double temp = this.x;
@@ -270,9 +231,9 @@ public class Vector2 {
     }
 
     /**
-     * Sets the {@link Vector2} to the zero {@link Vector2}
+     * 将本{@link Vector2}置0
      *
-     * @return {@link Vector2} this vector
+     * @return 本Vector2
      */
     public Vector2 zero() {
         this.x = 0.0;
@@ -283,7 +244,7 @@ public class Vector2 {
     /**
      * 将本{@link Vector2}规范化并返回
      *
-     * @return Vector2
+     * @return 新Vector2
      */
     public Vector2 getNormalized() {
         double magnitude = this.getMagnitude();

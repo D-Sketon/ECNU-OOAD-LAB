@@ -2,14 +2,12 @@ package gizmoball.engine.collision.contact;
 
 import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.collision.Matrix22;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
 
-import java.util.Collections;
 import java.util.List;
 
 
@@ -62,10 +60,10 @@ public class SequentialImpulses {
         Mass m1 = b1.getMass();
         Mass m2 = b2.getMass();
 
-        b1.getLinearVelocity().add(J.x * m1.getInverseMass(), J.y * m1.getInverseMass());
+        b1.getLinearVelocity().add(new Vector2(J.x * m1.getInverseMass(), J.y * m1.getInverseMass()));
         b1.setAngularVelocity(b1.getAngularVelocity() + m1.getInverseInertia() * contact.getR1().cross(J));
 
-        b2.getLinearVelocity().subtract(J.x * m2.getInverseMass(), J.y * m2.getInverseMass());
+        b2.getLinearVelocity().subtract(new Vector2(J.x * m2.getInverseMass(), J.y * m2.getInverseMass()));
         b2.setAngularVelocity(b2.getAngularVelocity() - m2.getInverseInertia() * contact.getR2().cross(J));
     }
 
@@ -119,11 +117,6 @@ public class SequentialImpulses {
             Mass m1 = b1.getMass();
             Mass m2 = b2.getMass();
 
-            double invM1 = m1.getInverseMass();
-            double invM2 = m2.getInverseMass();
-            double invI1 = m1.getInverseInertia();
-            double invI2 = m2.getInverseInertia();
-
             Vector2 c1 = t1.getTransformed(m1.getCenter());
             Vector2 c2 = t2.getTransformed(m2.getCenter());
 
@@ -144,35 +137,6 @@ public class SequentialImpulses {
                     contact.vb += -contactConstraint.getRestitution() * rvn;
                 }
             }
-            // 初始化K矩阵用于计算 LCP 问题
-            if (cSize == 2) {
-                SolvableContact contact1 = contacts.get(0);
-                SolvableContact contact2 = contacts.get(1);
-
-                double rn1A = contact1.getR1().cross(N);
-                double rn1B = contact1.getR2().cross(N);
-                double rn2A = contact2.getR1().cross(N);
-                double rn2B = contact2.getR2().cross(N);
-
-                Matrix22 K = new Matrix22();
-                K.m00 = invM1 + invM2 + invI1 * rn1A * rn1A + invI2 * rn1B * rn1B;
-                K.m01 = invM1 + invM2 + invI1 * rn1A * rn2A + invI2 * rn1B * rn2B;
-                K.m10 = K.m01;
-                K.m11 = invM1 + invM2 + invI1 * rn2A * rn2A + invI2 * rn2B * rn2B;
-
-                final double maxCondition = 1000.0;
-                final double det = K.determinant();
-                if (K.m00 * K.m00 < maxCondition * det) {
-                    contactConstraint.setK(K);
-                    contactConstraint.setInvK(K.getInverse());
-                } else {
-                    contactConstraint.setSize(1);
-                    if (contact1.getDepth() < contact2.getDepth()) {
-                        Collections.swap(contactConstraint.getContacts(), 0, 1);
-                    }
-                    contactConstraint.getContacts().get(1).setIgnored(true);
-                }
-            }
         }
         // 热启动
         this.warmStart(contactConstraints);
@@ -184,8 +148,6 @@ public class SequentialImpulses {
      * @param contactConstraints the contact constraints to solve
      */
     protected void warmStart(List<ContactConstraint> contactConstraints) {
-        double ratio = 1.0;
-
         for (ContactConstraint contactConstraint : contactConstraints) {
             Vector2 N = contactConstraint.getNormal();
             Vector2 T = contactConstraint.getTangent();
@@ -195,9 +157,6 @@ public class SequentialImpulses {
 
             for (int j = 0; j < cSize; j++) {
                 SolvableContact contact = contacts.get(j);
-
-                contact.jn *= ratio;
-                contact.jt *= ratio;
 
                 Vector2 J = new Vector2(N.x * contact.jn + T.x * contact.jt, N.y * contact.jn + T.y * contact.jt);
                 this.updateBodies(contactConstraint, contact, J);
@@ -251,83 +210,9 @@ public class SequentialImpulses {
 
                 Vector2 J = new Vector2(N.x * j, N.y * j);
                 this.updateBodies(contactConstraint, contact, J);
-            } else {
-                SolvableContact contact1 = contacts.get(0);
-                SolvableContact contact2 = contacts.get(1);
-
-                double rvn1 = this.getRelativeVelocityAlongNormal(contactConstraint, contact1);
-                double rvn2 = this.getRelativeVelocityAlongNormal(contactConstraint, contact2);
-
-                Vector2 a = new Vector2(contact1.jn, contact2.jn);
-                Vector2 b = new Vector2(rvn1 - contact1.vb, rvn2 - contact2.vb);
-                b.subtract(contactConstraint.getK().product(a));
-
-                // 使用Block Solver构建两个 LCP，具体参见Box2d
-                Vector2 x = contactConstraint.getInvK().product(b).negate();
-                if (x.x >= 0.0 && x.y >= 0.0) {
-                    this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                    continue;
-                }
-
-                x.x = -contact1.getMassN() * b.x;
-                x.y = 0.0;
-                rvn2 = contactConstraint.getK().m10 * x.x + b.y;
-                if (x.x >= 0.0 && rvn2 >= 0.0) {
-                    this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                    continue;
-                }
-
-                x.x = 0.0;
-                x.y = -contact2.getMassN() * b.y;
-                rvn1 = contactConstraint.getK().m01 * x.y + b.x;
-                if (x.y >= 0.0 && rvn1 >= 0.0) {
-                    this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                    continue;
-                }
-
-                x.x = 0.0f;
-                x.y = 0.0f;
-                rvn1 = b.x;
-                rvn2 = b.y;
-                if (rvn1 >= 0.0 && rvn2 >= 0.0) {
-                    this.updateBodies(contactConstraint, contact1, contact2, x, a);
-                }
             }
+            // 不存在多边形和多边形的碰撞
         }
-    }
-
-    /**
-     * Helper method to update bodies while performing the solveVelocityContraints step.
-     *
-     * @param contactConstraint The {@link ContactConstraint} of the contacts
-     * @param contact1          The first contact
-     * @param contact2          The second contact
-     * @param x
-     * @param a
-     * @since 3.4.0
-     */
-    private void updateBodies(ContactConstraint contactConstraint, SolvableContact contact1, SolvableContact contact2, Vector2 x, Vector2 a) {
-        PhysicsBody b1 = contactConstraint.getBody1();
-        PhysicsBody b2 = contactConstraint.getBody2();
-        Mass m1 = b1.getMass();
-        Mass m2 = b2.getMass();
-
-        Vector2 N = contactConstraint.getNormal();
-
-        Vector2 J1 = N.product(x.x - a.x);
-        Vector2 J2 = N.product(x.y - a.y);
-
-        double Jx = J1.x + J2.x;
-        double Jy = J1.y + J2.y;
-
-        b1.getLinearVelocity().add(Jx * m1.getInverseMass(), Jy * m1.getInverseMass());
-        b1.setAngularVelocity(b1.getAngularVelocity() + m1.getInverseInertia() * (contact1.getR1().cross(J1) + contact2.getR1().cross(J2)));
-
-        b2.getLinearVelocity().subtract(Jx * m2.getInverseMass(), Jy * m2.getInverseMass());
-        b2.setAngularVelocity(b2.getAngularVelocity() - m2.getInverseInertia() * (contact1.getR2().cross(J1) + contact2.getR2().cross(J2)));
-
-        contact1.jn = x.x;
-        contact2.jn = x.y;
     }
 
     public boolean solvePositionConstraints(List<ContactConstraint> contactConstraints) {

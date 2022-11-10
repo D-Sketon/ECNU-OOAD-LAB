@@ -19,7 +19,6 @@ import java.util.List;
 
 public class BasicCollisionDetector implements CollisionDetector {
 
-
     @Override
     public List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> detect(List<PhysicsBody> bodies1, List<PhysicsBody> bodies2, List<CollisionFilter> filters) {
         List<Pair<Manifold, Pair<PhysicsBody, PhysicsBody>>> manifolds = new ArrayList<>();
@@ -36,6 +35,16 @@ public class BasicCollisionDetector implements CollisionDetector {
         return manifolds;
     }
 
+    /**
+     * <p>基础的带{@link CollisionFilter}的完整碰撞解析器</p>
+     * <p>含有BroadPhase和NarrowPhase</p>
+     *
+     * @param manifoldSolver 流形求解器
+     * @param body1          物体1
+     * @param body2          物体2
+     * @param filters        碰撞过滤器
+     * @return Manifold
+     */
     private Manifold processDetect(ManifoldSolver manifoldSolver, PhysicsBody body1, PhysicsBody body2, List<CollisionFilter> filters) {
         AbstractShape shape1 = body1.getShape();
         AbstractShape shape2 = body2.getShape();

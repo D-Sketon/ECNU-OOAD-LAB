@@ -8,6 +8,7 @@ import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.QuarterCircle;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.engine.world.entity.CurvedPipe;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -31,18 +32,18 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         AbstractShape shape2 = body2.getShape();
         Vector2 linearVelocity = body1.getLinearVelocity();
 
-        if (!(shape2 instanceof QuarterCircle)) {
+        if (!(shape2 instanceof CurvedPipe)) {
             return true;
         }
-        QuarterCircle quarterCircle = (QuarterCircle) shape2;
+        CurvedPipe curvedPipe = (CurvedPipe) shape2;
         Circle circle = (Circle) shape1;
 
-        Transform transform1 = quarterCircle.getTransform();
+        Transform transform1 = curvedPipe.getTransform();
         Transform transform2 = circle.getTransform();
 
-        Vector2 v0 = transform1.getTransformed(quarterCircle.getVertices()[0]);
-        Vector2 v1 = transform1.getTransformed(quarterCircle.getVertices()[1]);
-        Vector2 v2 = transform1.getTransformed(quarterCircle.getVertices()[2]);
+        Vector2 v0 = transform1.getTransformed(curvedPipe.getVertices()[0]);
+        Vector2 v1 = transform1.getTransformed(curvedPipe.getVertices()[1]);
+        Vector2 v2 = transform1.getTransformed(curvedPipe.getVertices()[2]);
 
         Vector2 ce1 = v1;
         Vector2 ce2 = new Vector2(transform2.getX(), transform2.getY());
@@ -52,7 +53,7 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         // 圆形是否在扇形的边之中
         boolean isInSide = r1.cross(c2c) * c2c.cross(r2) >= 0 && r1.cross(c2c) * r1.cross(r2) >= 0;
         // 圆形是否在扇形之中
-        boolean isInside = c2c.getMagnitude() < quarterCircle.getRadius();
+        boolean isInside = c2c.getMagnitude() < curvedPipe.getRadius();
         if (isInside && isInSide) {
             // 在内部就要施加反重力
             body1.getForces().clear();
@@ -61,7 +62,7 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
                 linearVelocity.multiply(90 / linearVelocity.getMagnitude());
             }
             // 在内和弧线发生碰撞，需要反转法线并改变深度
-            if (c2c.getMagnitude() + circle.getRadius() >= quarterCircle.getRadius()) {
+            if (c2c.getMagnitude() + circle.getRadius() >= curvedPipe.getRadius()) {
                 penetration.getNormal().negate();
                 penetration.setDepth(circle.getRadius() - penetration.getDepth());
                 return true;

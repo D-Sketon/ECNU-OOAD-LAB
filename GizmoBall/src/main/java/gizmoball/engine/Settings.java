@@ -16,6 +16,8 @@ public class Settings {
 
     public static final double DEFAULT_FLIPPER_ROTATION = 10;
     public static final double DEFAULT_ANGULAR_DAMPING = 0.01;
+
+    public static final Integer FLIPPER_TICKS = 5;
     /**
      * The default step frequency of the dynamics engine; in seconds
      */

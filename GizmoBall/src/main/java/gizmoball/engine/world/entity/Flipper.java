@@ -6,6 +6,8 @@ import gizmoball.engine.geometry.shape.Rectangle;
 import lombok.Getter;
 import lombok.Setter;
 
+import static gizmoball.engine.Settings.FLIPPER_TICKS;
+
 @Getter
 @Setter
 public class Flipper extends Rectangle {
@@ -15,36 +17,49 @@ public class Flipper extends Rectangle {
     private Vector2 lt;
     private Vector2 rt;
 
+    private Vector2[] normal_copy;
+
     private Direction direction;
 
     private boolean isUp;
+
+    /**
+     * 挡板在高点维持一段时间
+     */
+    private Integer ticks;
 
     private double angular;
 
     public Flipper(double halfWidth, double halfHeight, Transform transform, Direction direction) {
         super(halfWidth, halfHeight, transform);
         this.direction = direction;
-        this.lb = vertices[0].copy();
-        this.lt = vertices[3].copy();
-        this.rb = vertices[1].copy();
-        this.rt = vertices[2].copy();
-        this.isUp = false;
-        this.angular = 0;
+        init();
     }
 
     public Flipper(double halfWidth, double halfHeight, Direction direction) {
         super(halfWidth, halfHeight);
         this.direction = direction;
-        this.lb = vertices[0].copy();
-        this.lt = vertices[3].copy();
-        this.rb = vertices[1].copy();
-        this.rt = vertices[2].copy();
-        this.isUp = false;
-        this.angular = 0;
+        init();
     }
 
     public Flipper(Direction direction) {
         this.direction = direction;
+    }
+
+    /**
+     * 初始化信息
+     */
+    void init(){
+        this.lb = vertices[0].copy();
+        this.lt = vertices[3].copy();
+        this.rb = vertices[1].copy();
+        this.rt = vertices[2].copy();
+        normal_copy = new Vector2[4];
+        for(int i = 0; i < 4; i++){
+            normal_copy[i] = normals[i].copy();
+        }
+        this.isUp = false;
+        this.angular = 0;
     }
 
     /**
@@ -60,11 +75,33 @@ public class Flipper extends Rectangle {
             rotate(this.lb, this.lt, vertices[3], (this.angular / 180) * Math.PI);
             rotate(this.lb, this.rb, vertices[1], (this.angular / 180) * Math.PI);
             rotate(this.lb, this.rt, vertices[2], (this.angular / 180) * Math.PI);
+            rotateNormals((this.angular / 180) * Math.PI);
         } else {
             rotate(this.rb, this.lt, vertices[3], -(this.angular / 180) * Math.PI);
             rotate(this.rb, this.lb, vertices[0], -(this.angular / 180) * Math.PI);
             rotate(this.rb, this.rt, vertices[2], -(this.angular / 180) * Math.PI);
+            rotateNormals(-(this.angular / 180) * Math.PI);
         }
+    }
+
+    private void rotateNormals(double theta) {
+        System.out.println("==============================================");
+        for(int i = 0; i < 4; i++){
+            Vector2 vector_copy = normal_copy[i];
+            Vector2 normal = normals[i];
+            System.out.println(vector_copy);
+            double c = Math.cos(theta);
+            double s = Math.sin(theta);
+            double x = vector_copy.x;
+            double y = vector_copy.y;
+            normal.x = c * x - s * y;
+            normal.y = s * x + c * y;
+            System.out.println(vector_copy);
+        }
+    }
+
+    public void decreaseTicks() {
+        this.ticks--;
     }
 
     public enum Direction {
@@ -74,6 +111,7 @@ public class Flipper extends Rectangle {
 
     public void rise() {
         this.isUp = true;
+        this.ticks = FLIPPER_TICKS;
     }
 
     /**

@@ -46,7 +46,7 @@ public class FlipperListener implements TickListener {
             //上升状态
             if (flipper.isUp()) {
                 //还未转到90度，继续旋转
-                if (angular <= 30) {
+                if (angular < 30) {
                     flipper.setAngular(angular + Settings.DEFAULT_FLIPPER_ROTATION);
                     flipper.flip();
                     continue;
@@ -57,6 +57,10 @@ public class FlipperListener implements TickListener {
             } else { //下降状态
                 //还未归位，继续归位
                 if (flipper.getAngular() > 0) {
+                    if(flipper.getTicks() > 0){
+                        flipper.decreaseTicks();
+                        continue;
+                    }
                     flipper.setAngular(angular - Settings.DEFAULT_FLIPPER_ROTATION);
                     flipper.flip();
                 } else if (flipper.getAngular() == 0) {

@@ -154,7 +154,7 @@ public class World {
         if (direction == Flipper.Direction.LEFT && leftFlipper != null) {
             Flipper flipper = (Flipper) leftFlipper.getShape();
             flipper.rise();
-            leftFlipper.setAngularVelocity(Settings.DEFAULT_FLIPPER_ANGULAR);
+            //leftFlipper.setAngularVelocity(Settings.DEFAULT_FLIPPER_ANGULAR);
         } else if (direction == Flipper.Direction.RIGHT && rightFlipper != null) {
             Flipper flipper = (Flipper) rightFlipper.getShape();
             flipper.rise();

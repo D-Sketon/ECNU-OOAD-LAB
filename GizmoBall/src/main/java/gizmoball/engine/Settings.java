@@ -4,6 +4,11 @@ package gizmoball.engine;
 public class Settings {
 
     /**
+     * 管道穿模误差
+     */
+    public static final double PIPE_PIERCE_BIAS = 5;
+    
+    /**
      * 默认挡板角速度
      */
     public static final double DEFAULT_FLIPPER_ANGULAR = 15;

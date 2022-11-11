@@ -148,7 +148,7 @@ public class World {
         } else if (direction == Flipper.Direction.RIGHT && rightFlipper != null) {
             Flipper flipper = (Flipper) rightFlipper.getShape();
             flipper.rise();
-            rightFlipper.setAngularVelocity(-Settings.DEFAULT_FLIPPER_ANGULAR);
+            //rightFlipper.setAngularVelocity(-Settings.DEFAULT_FLIPPER_ANGULAR);
         }
     }
 

@@ -4,10 +4,15 @@ package gizmoball.engine;
 public class Settings {
 
     /**
+     * 挡板在最高点维持的时间
+     */
+    public static final Integer FILPPER_TICKS = 5;
+
+    /**
      * 管道穿模误差
      */
     public static final double PIPE_PIERCE_BIAS = 5;
-    
+
     /**
      * 默认挡板角速度
      */

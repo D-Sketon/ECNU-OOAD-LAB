@@ -3,6 +3,7 @@ package gizmoball.engine.world.listener;
 import gizmoball.engine.Settings;
 import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.manifold.Manifold;
+import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Flipper;
 import javafx.util.Pair;
@@ -47,13 +48,14 @@ public class FlipperListener implements TickListener {
             if (flipper.isUp()) {
                 //还未转到90度，继续旋转
                 if (angular < 30) {
+                    setUpVolocity(physicsBody);
                     flipper.setAngular(angular + Settings.DEFAULT_FLIPPER_ROTATION);
                     flipper.flip();
                     continue;
                 }
                 //转至90度，停止
                 flipper.setUp(false);
-                physicsBody.setAngularVelocity(-physicsBody.getAngularVelocity());
+                physicsBody.setAngularVelocity(0);
             } else { //下降状态
                 //还未归位，继续归位
                 if (flipper.getAngular() > 0) {
@@ -61,12 +63,31 @@ public class FlipperListener implements TickListener {
                         flipper.decreaseTicks();
                         continue;
                     }
+                    setDownVolocity(physicsBody);
                     flipper.setAngular(angular - Settings.DEFAULT_FLIPPER_ROTATION);
                     flipper.flip();
                 } else if (flipper.getAngular() == 0) {
                     physicsBody.setAngularVelocity(0);
                 }
             }
+        }
+    }
+
+    private void setUpVolocity(PhysicsBody physicsBody) {
+        Flipper flipper = (Flipper) physicsBody.getShape();
+        if(flipper.getDirection() == Flipper.Direction.LEFT){
+            physicsBody.setAngularVelocity( Settings.DEFAULT_FLIPPER_ANGULAR);
+        } else {
+            physicsBody.setAngularVelocity(- Settings.DEFAULT_FLIPPER_ANGULAR);
+        }
+    }
+
+    private void setDownVolocity(PhysicsBody physicsBody) {
+        Flipper flipper = (Flipper) physicsBody.getShape();
+        if(flipper.getDirection() == Flipper.Direction.LEFT){
+            physicsBody.setAngularVelocity(-Settings.DEFAULT_FLIPPER_ANGULAR);
+        } else {
+            physicsBody.setAngularVelocity(Settings.DEFAULT_FLIPPER_ANGULAR);
         }
     }
 

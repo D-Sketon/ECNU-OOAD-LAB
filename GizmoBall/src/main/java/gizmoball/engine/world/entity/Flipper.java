@@ -6,7 +6,8 @@ import gizmoball.engine.geometry.shape.Rectangle;
 import lombok.Getter;
 import lombok.Setter;
 
-import static gizmoball.engine.Settings.FLIPPER_TICKS;
+import static gizmoball.engine.Settings.FILPPER_TICKS;
+
 
 @Getter
 @Setter
@@ -85,18 +86,15 @@ public class Flipper extends Rectangle {
     }
 
     private void rotateNormals(double theta) {
-        System.out.println("==============================================");
         for(int i = 0; i < 4; i++){
             Vector2 vector_copy = normal_copy[i];
             Vector2 normal = normals[i];
-            System.out.println(vector_copy);
             double c = Math.cos(theta);
             double s = Math.sin(theta);
             double x = vector_copy.x;
             double y = vector_copy.y;
             normal.x = c * x - s * y;
             normal.y = s * x + c * y;
-            System.out.println(vector_copy);
         }
     }
 
@@ -111,7 +109,7 @@ public class Flipper extends Rectangle {
 
     public void rise() {
         this.isUp = true;
-        this.ticks = FLIPPER_TICKS;
+        this.ticks = FILPPER_TICKS;
     }
 
     /**

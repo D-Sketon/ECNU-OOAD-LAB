@@ -47,6 +47,7 @@ public class Polygon extends AbstractShape {
             n.normalize();
             normals[i] = n;
         }
+
         return normals;
     }
 

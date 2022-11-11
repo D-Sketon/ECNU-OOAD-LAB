@@ -49,11 +49,6 @@ public class PhysicsBody {
     protected final Vector2 force;
 
     /**
-     * 扭转力
-     */
-    protected double torque;
-
-    /**
      * 当前受力列表
      */
     protected final List<Vector2> forces;
@@ -98,7 +93,10 @@ public class PhysicsBody {
         this.gravityScale = 10.0;
     }
 
-    protected void accumulate() {
+    /**
+     * 使用引力列表更新总引力
+     */
+    private void accumulate() {
         this.force.zero();
         int size = this.forces.size();
         if (size > 0) {
@@ -111,7 +109,11 @@ public class PhysicsBody {
         }
     }
 
-
+    /**
+     * 使用重力和引力列表更新速度
+     *
+     * @param gravity 重力
+     */
     public void integrateVelocity(Vector2 gravity) {
         if (this.mass.getType() == MassType.INFINITE || this.mass.getType() == null) {
             return;
@@ -121,45 +123,44 @@ public class PhysicsBody {
 
         double mass = this.mass.getMass();
         double inverseMass = this.mass.getInverseMass();
-        double inverseInertia = this.mass.getInverseInertia();
 
+        // 施加重力和引力
         if (inverseMass > Epsilon.E) {
             this.linearVelocity.x += elapsedTime * inverseMass * (gravity.x * this.gravityScale * mass + this.force.x);
             this.linearVelocity.y += elapsedTime * inverseMass * (gravity.y * this.gravityScale * mass + this.force.y);
         }
 
-        // av1 = av0 + (t / I) * dt
-        if (inverseInertia > Epsilon.E) {
-            // only perform this step if the body does not have
-            // a fixed angular velocity
-            this.angularVelocity += inverseInertia * this.torque * elapsedTime;
-        }
-
-        // apply linear damping
+        // 施加线性阻尼
         if (this.linearDamping != 0.0) {
-            // Because DEFAULT_LINEAR_DAMPING is 0.0 apply linear damping only if needed
             double linear = 1.0 - elapsedTime * this.linearDamping;
             linear = Interval.sandwich(linear, 0.0, 1.0);
 
-            // inline body.velocity.multiply(linear);
             this.linearVelocity.x *= linear;
             this.linearVelocity.y *= linear;
         }
 
-        // apply angular damping
+        // 施加转动阻尼
         double angular = 1.0 - elapsedTime * Settings.DEFAULT_ANGULAR_DAMPING;
         angular = Interval.sandwich(angular, 0.0, 1.0);
 
         this.angularVelocity *= angular;
     }
 
-    public boolean isStatic() {
+    /**
+     * 判断物体是否固定
+     *
+     * @return boolean
+     */
+    private boolean isStatic() {
         return this.mass.getType() == MassType.INFINITE &&
                 Math.abs(this.linearVelocity.x) <= Epsilon.E &&
                 Math.abs(this.linearVelocity.y) <= Epsilon.E &&
                 Math.abs(this.angularVelocity) <= Epsilon.E;
     }
 
+    /**
+     * 使用速度更新位置
+     */
     public void integratePosition() {
         double elapsedTime = Settings.DEFAULT_STEP_FREQUENCY;
         double maxTranslation = Settings.DEFAULT_MAXIMUM_TRANSLATION;
@@ -170,41 +171,37 @@ public class PhysicsBody {
             return;
         }
 
-        // compute the translation and rotation for this time step
+        // 计算1tick内的平移量
         double translationX = this.linearVelocity.x * elapsedTime;
         double translationY = this.linearVelocity.y * elapsedTime;
         double translationMagnitudeSquared = translationX * translationX + translationY * translationY;
 
-        // make sure the translation is not over the maximum
+        // 确保平移量不超过限制
         if (translationMagnitudeSquared > maxTranslationSquared) {
             double translationMagnitude = Math.sqrt(translationMagnitudeSquared);
             double ratio = maxTranslation / translationMagnitude;
 
             this.linearVelocity.multiply(ratio);
-
             translationX *= ratio;
             translationY *= ratio;
         }
 
+        // 计算1tick内的旋转量
         double rotation = this.angularVelocity * elapsedTime;
 
-        // make sure the rotation is not over the maximum
+        // 确保旋转量不超过限制
         if (rotation > maxRotation) {
             double ratio = maxRotation / Math.abs(rotation);
-
             this.angularVelocity *= ratio;
             rotation *= ratio;
         }
 
-        // apply the translation/rotation
+        // 应用平移量和旋转量
         this.getShape().translate(translationX, translationY);
-        this.rotateAboutCenter(rotation);
+        Vector2 center = this.getShape().getTransform().getTransformed(this.getMass().getCenter());
+        this.getShape().rotate(rotation, center.x, center.y);
     }
 
-    private void rotateAboutCenter(double theta) {
-        Vector2 center = this.getShape().getTransform().getTransformed(this.getMass().getCenter());
-        this.getShape().rotate(theta, center.x, center.y);
-    }
 }
 
 

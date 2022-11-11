@@ -3,6 +3,8 @@ package gizmoball.ui;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
+import gizmoball.engine.geometry.shape.AbstractShape;
+import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.World;
 import gizmoball.engine.world.entity.Ball;
@@ -511,6 +513,19 @@ public class MainController extends Application implements Initializable {
                         gc.strokeLine(transform.x, transform.y, transform.x + linearVelocity.x, transform.y + linearVelocity.y);
                         gc.setStroke(Color.RED);
                         gc.strokeLine(transform.x, transform.y, transform.x + normalized.x * angularVelocity, transform.y +  normalized.y * angularVelocity);
+                    } else {
+                        AbstractShape shape = physicsBody.getShape();
+                        if(shape instanceof Polygon) {
+                            Polygon shape1 = (Polygon) shape;
+                            Vector2[] normals = shape1.getNormals();
+                            Transform transform = physicsBody.getShape().getTransform();
+                            for (Vector2 normal : normals) {
+                                Vector2 multiply = normal.copy().multiply(30);
+                                Vector2 transformed = transform.getTransformed(multiply);
+                                gc.setStroke(Color.YELLOW);
+                                gc.strokeLine(transform.x,transform.y,transformed.x,transformed.y);
+                            }
+                        }
                     }
                 }
             } else {

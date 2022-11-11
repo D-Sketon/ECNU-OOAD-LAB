@@ -67,6 +67,12 @@ public class Transform {
         double sinT = this.sint;
         this.cost = Interval.sandwich(c * cosT - s * sinT, -1.0, 1.0);
         this.sint = Interval.sandwich(s * cosT + c * sinT, -1.0, 1.0);
+        if (Math.abs(this.cost) < Epsilon.E) {
+            this.cost = 0;
+        }
+        if (Math.abs(this.sint) < Epsilon.E) {
+            this.sint = 0;
+        }
         double cx = this.x - x;
         double cy = this.y - y;
         this.x = c * cx - s * cy + x;

@@ -57,6 +57,7 @@ public class Mass {
         } else {
             this.InverseInertia = 0.0;
         }
+        // 质量和转动惯量为0就是固定物体
         if (mass <= Epsilon.E && inertia <= Epsilon.E) {
             this.type = MassType.INFINITE;
         }

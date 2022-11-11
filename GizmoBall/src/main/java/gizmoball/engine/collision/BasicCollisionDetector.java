@@ -87,6 +87,19 @@ public class BasicCollisionDetector implements CollisionDetector {
         return contactConstraints;
     }
 
+    /**
+     * <p>非常基础的本地求解器</p>
+     * <p>处理管线较为简单，分为以下几步：</p>
+     * <p>1. 使用重力和引力更新速度和角速度</p>
+     * <p>2. 求解器为碰撞对更新速度和角速度</p>
+     * <p>3. 使用速度和角速度更新位置</p>
+     * <p>4. 求解器反向施加位置冲量防止内嵌</p>
+     *
+     * @param solver      约束求解器
+     * @param gravity     重力大小
+     * @param constraints 接触约束列表
+     * @param bodies      物体列表
+     */
     @Override
     public void LocalSolve(SequentialImpulses solver, Vector2 gravity, List<ContactConstraint> constraints, List<PhysicsBody> bodies) {
         for (PhysicsBody body : bodies) {

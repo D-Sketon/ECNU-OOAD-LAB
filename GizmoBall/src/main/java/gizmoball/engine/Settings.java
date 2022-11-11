@@ -6,7 +6,7 @@ public class Settings {
     /**
      * 挡板在最高点维持的时间
      */
-    public static final Integer FILPPER_TICKS = 5;
+    public static final Integer FLIPPER_TICKS = 5;
 
     /**
      * 管道穿模误差
@@ -21,7 +21,7 @@ public class Settings {
     /**
      * 默认每tick挡板旋转角度
      */
-    public static final double DEFAULT_FLIPPER_ROTATION = 10;
+    public static final double DEFAULT_FLIPPER_ROTATION = 15;
 
     /**
      * 默认角速度衰减

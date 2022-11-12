@@ -42,7 +42,7 @@ public class Flipper extends Rectangle {
     /**
      * 初始化信息
      */
-    void init() {
+    private void init() {
         this.isUp = false;
         this.angular = 0;
     }
@@ -64,7 +64,6 @@ public class Flipper extends Rectangle {
             Vector2 transformed = getTransform().getTransformed(vertices[1]);
             rotate(-theta / 180 * Math.PI, transformed.x, transformed.y);
         }
-        System.out.println(getTransform());
     }
 
     public void decreaseTicks() {

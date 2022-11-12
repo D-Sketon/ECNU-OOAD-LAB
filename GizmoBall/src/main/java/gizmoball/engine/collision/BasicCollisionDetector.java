@@ -50,13 +50,14 @@ public class BasicCollisionDetector implements CollisionDetector {
     private Manifold processDetect(ManifoldSolver manifoldSolver, PhysicsBody body1, PhysicsBody body2, List<CollisionFilter> filters) {
         AbstractShape shape1 = body1.getShape();
         AbstractShape shape2 = body2.getShape();
+        // BroadPhase
         for (CollisionFilter filter : filters) {
             if (!filter.isAllowedBroadPhase(body1, body2)) return null;
         }
         if (!DetectorUtil.AABBDetect(shape1, shape2)) {
             return null;
         }
-
+        // NarrowPhase
         for (CollisionFilter filter : filters) {
             if (!filter.isAllowedNarrowPhase(body1, body2)) return null;
         }
@@ -65,7 +66,7 @@ public class BasicCollisionDetector implements CollisionDetector {
         if (!detect.isHasCollision()) {
             return null;
         }
-
+        // ManifoldSolver
         for (CollisionFilter filter : filters) {
             if (!filter.isAllowedManifold(body1, body2, detect.getApproximateShape(), penetration)) return null;
         }
@@ -94,11 +95,6 @@ public class BasicCollisionDetector implements CollisionDetector {
      * <p>2. 求解器为碰撞对更新速度和角速度</p>
      * <p>3. 使用速度和角速度更新位置</p>
      * <p>4. 求解器反向施加位置冲量防止内嵌</p>
-     *
-     * @param solver      约束求解器
-     * @param gravity     重力大小
-     * @param constraints 接触约束列表
-     * @param bodies      物体列表
      */
     @Override
     public void LocalSolve(SequentialImpulses solver, Vector2 gravity, List<ContactConstraint> constraints, List<PhysicsBody> bodies) {

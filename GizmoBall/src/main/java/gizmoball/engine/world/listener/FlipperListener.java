@@ -39,19 +39,19 @@ public class FlipperListener implements TickListener {
      *
      * @param flippers
      */
-    public void updatePosition(List<PhysicsBody> flippers) {
+    private void updatePosition(List<PhysicsBody> flippers) {
         for (PhysicsBody physicsBody : flippers) {
             Flipper flipper = (Flipper) physicsBody.getShape();
             double angular = flipper.getAngular();
             //上升状态
             if (flipper.isUp()) {
-                //还未转到90度，继续旋转
+                //还未转到30度，继续旋转
                 if (angular < 30) {
                     setUpVelocity(physicsBody);
                     flipper.flip(Settings.DEFAULT_FLIPPER_ROTATION);
                     continue;
                 }
-                //转至90度，停止
+                //转至30度，停止
                 flipper.setUp(false);
                 physicsBody.setAngularVelocity(0);
             } else { //下降状态

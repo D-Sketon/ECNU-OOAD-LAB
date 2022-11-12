@@ -77,9 +77,8 @@ public class ContactConstraint {
      * @param manifold /
      */
     public void update(Manifold manifold) {
-
-        PhysicsBody body1 = this.pair.getKey();
-        PhysicsBody body2 = this.pair.getValue();
+        PhysicsBody body1 = getBody1();
+        PhysicsBody body2 = getBody2();
 
         Vector2 normal = manifold.getNormal();
         this.normal.x = normal.x;
@@ -104,7 +103,6 @@ public class ContactConstraint {
                     body2.getShape().getLocalPoint(point.getPoint()));
             contacts.add(newContact);
         }
-
         this.contacts.clear();
         this.contacts.addAll(contacts);
         this.size = this.contacts.size();

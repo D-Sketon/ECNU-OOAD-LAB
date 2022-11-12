@@ -118,7 +118,7 @@ public class PhysicsBody {
         if (this.mass.getType() == MassType.INFINITE || this.mass.getType() == null) {
             return;
         }
-        double elapsedTime = Settings.DEFAULT_STEP_FREQUENCY;
+        double elapsedTime = Settings.DEFAULT_TICK_FREQUENCY;
         this.accumulate();
 
         double mass = this.mass.getMass();
@@ -162,7 +162,7 @@ public class PhysicsBody {
      * 使用速度更新位置
      */
     public void integratePosition() {
-        double elapsedTime = Settings.DEFAULT_STEP_FREQUENCY;
+        double elapsedTime = Settings.DEFAULT_TICK_FREQUENCY;
         double maxTranslation = Settings.DEFAULT_MAXIMUM_TRANSLATION;
         double maxTranslationSquared = maxTranslation * maxTranslation;
         double maxRotation = Settings.DEFAULT_MAXIMUM_ROTATION;

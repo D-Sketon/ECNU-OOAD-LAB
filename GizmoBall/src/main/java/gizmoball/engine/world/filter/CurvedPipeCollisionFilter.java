@@ -65,7 +65,8 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             return false;
         } else if (isInside) {
             // 严格判断是否从管道口进出
-            if (penetration.getNormal().dot(r1) < 1e5 * Epsilon.E || penetration.getNormal().dot(r2) < 1e5 * Epsilon.E) {
+            if (penetration.getNormal().dot(r1.getNormalized()) < 1e5 * Epsilon.E ||
+                    penetration.getNormal().dot(r2.getNormalized()) < 1e5 * Epsilon.E) {
                 return false;
             }
             // 否则视为产生碰撞
@@ -73,6 +74,7 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         } else {
             // 在外和弧线发生碰撞
             return true;
+//            return false;
         }
     }
 
@@ -81,17 +83,17 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         body1.integrateVelocity(gravity.getNegative());
         Vector2 to = c0.to(c1);
         Vector2 linearVelocity = body1.getLinearVelocity();
-        if (body1.getShape().getRate() == body2.getShape().getRate()) {
-            if (to.cross(linearVelocity) > 0) {
-                Vector2 multiply = to.right().getNormalized().multiply(linearVelocity.getMagnitude());
-                linearVelocity.x = multiply.x;
-                linearVelocity.y = multiply.y;
-            } else {
-                Vector2 multiply = to.left().getNormalized().multiply(linearVelocity.getMagnitude());
-                linearVelocity.x = multiply.x;
-                linearVelocity.y = multiply.y;
-            }
-        }
+//        if (body1.getShape().getRate() == body2.getShape().getRate()) {
+//            if (to.cross(linearVelocity) > 0) {
+//                Vector2 multiply = to.right().getNormalized().multiply(linearVelocity.getMagnitude());
+//                linearVelocity.x = multiply.x;
+//                linearVelocity.y = multiply.y;
+//            } else {
+//                Vector2 multiply = to.left().getNormalized().multiply(linearVelocity.getMagnitude());
+//                linearVelocity.x = multiply.x;
+//                linearVelocity.y = multiply.y;
+//            }
+//        }
         if (linearVelocity.getMagnitude() < 90) {
             linearVelocity.multiply(90 / linearVelocity.getMagnitude());
         }

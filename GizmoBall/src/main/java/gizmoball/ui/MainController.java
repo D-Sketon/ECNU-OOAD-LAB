@@ -1,5 +1,6 @@
 package gizmoball.ui;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
@@ -24,6 +25,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -83,8 +85,6 @@ public class MainController extends Application implements Initializable {
     @FXML
     AnchorPane anchorPane;
 
-    Label toastLabel = new Label();
-
     private static final boolean DEV_MODE = true;
 
     /**
@@ -109,8 +109,6 @@ public class MainController extends Application implements Initializable {
      */
     private static final DataFormat GIZMO_TYPE_DATA = new DataFormat("gizmo");
 
-    private static final int TICKS_PER_SECOND = 60;
-
     private static Vector2 preferredSize;
 
     private Stage primaryStage;
@@ -132,9 +130,7 @@ public class MainController extends Application implements Initializable {
             new CommandComponent("icons/zoom_out.png", "zoom out", GizmoCommand.ZOOM_OUT),
             new CommandComponent("icons/zoom_in.png", "zoom in", GizmoCommand.ZOOM_IN),
             new CommandComponent("icons/rotate_right.png", "rotate right", GizmoCommand.ROTATE_RIGHT),
-
-            // new CommandComponent("icons/rotate_left.png", "rotate left",
-            // GizmoCommand.ROTATE_LEFT),
+            
             new CommandComponent("icons/move_up.png", "move up", GizmoCommand.MOVE_UP),
             new CommandComponent("icons/move_right.png", "move right", GizmoCommand.MOVE_RIGHT),
             new CommandComponent("icons/move_down.png", "move down", GizmoCommand.MOVE_DOWN),
@@ -152,6 +148,7 @@ public class MainController extends Application implements Initializable {
         primaryStage.setOnCloseRequest(e -> {
             System.exit(0);
         });
+        primaryStage.getIcons().add(new Image("icons/ball.png"));
         primaryStage.setTitle("GizmoBall");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
@@ -227,7 +224,7 @@ public class MainController extends Application implements Initializable {
             highlightSelectedBody();
             inDesign = false;
             world.snapshot();
-            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / TICKS_PER_SECOND),
+            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / Settings.TICKS_PER_SECOND),
                     TimeUnit.MILLISECONDS);
         });
 

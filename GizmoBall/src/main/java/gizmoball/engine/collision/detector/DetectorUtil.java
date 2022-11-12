@@ -7,6 +7,9 @@ import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.*;
 
+/**
+ * 碰撞检测工具类
+ */
 public class DetectorUtil {
 
     /**

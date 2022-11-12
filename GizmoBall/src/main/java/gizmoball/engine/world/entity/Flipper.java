@@ -60,6 +60,7 @@ public class Flipper extends Rectangle {
         if (this.direction == Direction.LEFT) {
             Vector2 transformed = getTransform().getTransformed(vertices[0]);
             rotate(theta / 180 * Math.PI, transformed.x, transformed.y);
+            System.out.println(transformed);
         } else {
             Vector2 transformed = getTransform().getTransformed(vertices[1]);
             rotate(-theta / 180 * Math.PI, transformed.x, transformed.y);

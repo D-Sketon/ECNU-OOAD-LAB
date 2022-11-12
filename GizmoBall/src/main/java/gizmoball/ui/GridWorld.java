@@ -163,6 +163,7 @@ public class GridWorld extends World {
 
     public void addBodyToGrid(PhysicsBody body) throws IllegalArgumentException {
         AABB aabb = body.getShape().createAABB();
+        GeometryUtil.padToSquare(aabb);
         if (checkOverlay(aabb, body)) {
             throw new IllegalArgumentException("物件重叠");
         }

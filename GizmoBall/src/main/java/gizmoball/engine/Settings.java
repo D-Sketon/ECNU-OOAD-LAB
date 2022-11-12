@@ -21,7 +21,7 @@ public class Settings {
     /**
      * 默认每tick挡板旋转角度
      */
-    public static final double DEFAULT_FLIPPER_ROTATION = 15;
+    public static final double DEFAULT_FLIPPER_ROTATION = 10;
 
     /**
      * 默认角速度衰减

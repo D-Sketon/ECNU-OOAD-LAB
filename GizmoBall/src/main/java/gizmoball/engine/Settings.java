@@ -28,6 +28,9 @@ public class Settings {
      */
     public static final double DEFAULT_ANGULAR_DAMPING = 0.01;
 
+    /**
+     * 默认每秒Tick数
+     */
     public static final int TICKS_PER_SECOND = 60;
 
     /**

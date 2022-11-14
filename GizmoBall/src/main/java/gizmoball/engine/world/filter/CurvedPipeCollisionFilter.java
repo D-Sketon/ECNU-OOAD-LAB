@@ -1,5 +1,6 @@
 package gizmoball.engine.world.filter;
 
+import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
@@ -73,8 +74,13 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             return true;
         } else {
             // 在外和弧线发生碰撞
+            double magnitude0 = c2c.project(r1.getNormalized()).getMagnitude();
+            double magnitude1 = c2c.project(r2.getNormalized()).getMagnitude();
+            if (magnitude0 - Settings.PIPE_PIERCE_BIAS <= r1.getMagnitude() &&
+                    magnitude1 - Settings.PIPE_PIERCE_BIAS <= r1.getMagnitude()) {
+                return false;
+            }
             return true;
-//            return false;
         }
     }
 
@@ -83,17 +89,17 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         body1.integrateVelocity(gravity.getNegative());
         Vector2 to = c0.to(c1);
         Vector2 linearVelocity = body1.getLinearVelocity();
-//        if (body1.getShape().getRate() == body2.getShape().getRate()) {
-//            if (to.cross(linearVelocity) > 0) {
-//                Vector2 multiply = to.right().getNormalized().multiply(linearVelocity.getMagnitude());
-//                linearVelocity.x = multiply.x;
-//                linearVelocity.y = multiply.y;
-//            } else {
-//                Vector2 multiply = to.left().getNormalized().multiply(linearVelocity.getMagnitude());
-//                linearVelocity.x = multiply.x;
-//                linearVelocity.y = multiply.y;
-//            }
-//        }
+        if (body1.getShape().getRate() == body2.getShape().getRate()) {
+            if (to.cross(linearVelocity) > 0) {
+                Vector2 multiply = to.right().getNormalized().multiply(linearVelocity.getMagnitude());
+                linearVelocity.x = multiply.x;
+                linearVelocity.y = multiply.y;
+            } else {
+                Vector2 multiply = to.left().getNormalized().multiply(linearVelocity.getMagnitude());
+                linearVelocity.x = multiply.x;
+                linearVelocity.y = multiply.y;
+            }
+        }
         if (linearVelocity.getMagnitude() < 90) {
             linearVelocity.multiply(90 / linearVelocity.getMagnitude());
         }

@@ -278,4 +278,18 @@ public class Vector2 {
         return magnitude;
     }
 
+    /**
+     * 将本{@link Vector2}投影到给定{@link Vector2}上，返回新Vector2
+     *
+     * @param vector 给定{@link Vector2}
+     * @return 新Vector2
+     */
+    public Vector2 project(Vector2 vector) {
+        double dotProd = this.dot(vector);
+        double denominator = vector.dot(vector);
+        if (denominator <= Epsilon.E) return new Vector2();
+        denominator = dotProd / denominator;
+        return new Vector2(denominator * vector.x, denominator * vector.y);
+    }
+
 }

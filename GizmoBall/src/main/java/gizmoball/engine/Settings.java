@@ -4,6 +4,16 @@ package gizmoball.engine;
 public class Settings {
 
     /**
+     * 黑洞缩小系数
+     */
+    public static final int BLACK_HOLE_BIAS = 3;
+
+    /**
+     * 边界四角缓冲
+     */
+    public static final int BOUNDARY_BUFFER = 500;
+
+    /**
      * 挡板在最高点维持的时间
      */
     public static final Integer FLIPPER_TICKS = 5;

@@ -11,6 +11,8 @@ import gizmoball.engine.world.entity.Ball;
 import gizmoball.engine.world.entity.CurvedPipe;
 import lombok.AllArgsConstructor;
 
+import static gizmoball.engine.Settings.PIPE_PIERCE_BIAS;
+
 @AllArgsConstructor
 public class CurvedPipeCollisionFilter implements CollisionFilter {
 
@@ -65,6 +67,12 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             // 在内但并没有发生碰撞
             return false;
         } else if (isInside) {
+            double magnitude1 = v0.to(ce2).getMagnitude();
+            double magnitude2 = v2.to(ce2).getMagnitude();
+            if(magnitude1 + PIPE_PIERCE_BIAS < ball.getRadius() || magnitude2 + PIPE_PIERCE_BIAS < ball.getRadius()){
+                return true;
+            }
+
             // 严格判断是否从管道口进出
             if (penetration.getNormal().dot(r1.getNormalized()) < 1e5 * Epsilon.E ||
                     penetration.getNormal().dot(r2.getNormalized()) < 1e5 * Epsilon.E) {
@@ -76,8 +84,8 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             // 在外和弧线发生碰撞
             double magnitude0 = c2c.project(r1.getNormalized()).getMagnitude();
             double magnitude1 = c2c.project(r2.getNormalized()).getMagnitude();
-            if (magnitude0 - Settings.PIPE_PIERCE_BIAS <= r1.getMagnitude() &&
-                    magnitude1 - Settings.PIPE_PIERCE_BIAS <= r1.getMagnitude()) {
+            if (magnitude0 - PIPE_PIERCE_BIAS <= r1.getMagnitude() &&
+                    magnitude1 - PIPE_PIERCE_BIAS <= r1.getMagnitude()) {
                 return false;
             }
             return true;

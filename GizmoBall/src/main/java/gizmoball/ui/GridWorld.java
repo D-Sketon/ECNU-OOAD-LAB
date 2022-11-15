@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gizmoball.engine.Settings.BOUNDARY_BUFFER;
+
+
 @Getter
 @Slf4j
 public class GridWorld extends World {
@@ -124,7 +127,7 @@ public class GridWorld extends World {
         double worldWidth = boundaryAABB.maxX;
         double worldHeight = boundaryAABB.maxY;
         // init border
-        Rectangle bottomRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
+        Rectangle bottomRectangle = new Rectangle(worldWidth / 2 + BOUNDARY_BUFFER, worldHeight / 2);
         bottomRectangle.getTransform().setX(bottomRectangle.getHalfWidth());
         bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
         PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
@@ -133,7 +136,7 @@ public class GridWorld extends World {
         bottomBorder.setFriction(0.5);
         addBodies(bottomBorder);
 
-        Rectangle topRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
+        Rectangle topRectangle = new Rectangle(worldWidth / 2 + BOUNDARY_BUFFER, worldHeight / 2);
         topRectangle.getTransform().setX(topRectangle.getHalfWidth());
         topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
         PhysicsBody topBorder = new PhysicsBody(topRectangle);

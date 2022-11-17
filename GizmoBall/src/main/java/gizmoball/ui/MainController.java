@@ -158,7 +158,7 @@ public class MainController extends Application implements Initializable {
     private void initGizmoGridPane() {
         for (int i = 0; i < gizmos.length; i++) {
             DraggableGizmoComponent gizmo = gizmos[i];
-            gizmoGridPane.add(gizmo.createVBox(), i % 3, i / 3);
+            gizmoGridPane.add(gizmo.createVBox(), i % 3, i / 3); // 3行3列
             // 添加拖拽事件监听器
             // 拖拽传参为gizmo的类型
             int finalI = i;
@@ -244,6 +244,7 @@ public class MainController extends Application implements Initializable {
                 world.restore();
             } catch (RuntimeException e) {
                 Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
+                log.error("恢复游戏失败: {}", e.getMessage());
             }
             drawGizmo(gizmoCanvas.getGraphicsContext2D());
         });

@@ -33,7 +33,7 @@ public class GizmoWorld extends AbstractWorld<GizmoType> {
         bodies.put(GizmoType.PIPE, pipes);
         bodies.put(GizmoType.BLACK_HOLE, blackHoles);
         bodies.put(GizmoType.LEFT_FLIPPER, leftFlippers);
-        bodies.put(GizmoType.RIGHT_FLIPPER, leftFlippers);
+        bodies.put(GizmoType.RIGHT_FLIPPER, rightFlippers);
 
         tickListeners = new ArrayList<>();
         BallListener ballListener = new BallListener(balls);

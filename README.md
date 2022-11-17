@@ -9,8 +9,8 @@ ECNU OOAD(jnk) Lab
 Java8
 ## Screenshot
 ### Ant Lab
-![AntLab](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/AntLab.png)
+![AntLab](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/CAntLab.png)
 ### BlackJack Lab
-![BlackJack](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/BlackJack.png)
+![BlackJack](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/CBlackJack.png)
 ### GizmoBall
 ![GizmoBall](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/Gizmoball.gif)

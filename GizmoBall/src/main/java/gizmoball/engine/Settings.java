@@ -16,7 +16,7 @@ public class Settings {
     /**
      * 挡板在最高点维持的时间
      */
-    public static final Integer FLIPPER_TICKS = 5;
+    public static final Integer FLIPPER_TICKS = 50;
 
     /**
      * 管道穿模误差
@@ -26,7 +26,7 @@ public class Settings {
     /**
      * 默认挡板角速度
      */
-    public static final double DEFAULT_FLIPPER_ANGULAR = 15;
+    public static final double DEFAULT_FLIPPER_ANGULAR = 7.5;
 
     /**
      * 默认每tick挡板旋转角度
@@ -51,7 +51,7 @@ public class Settings {
     /**
      * 默认每tick最大平移距离
      */
-    public static final double DEFAULT_MAXIMUM_TRANSLATION = 90.0;
+    public static final double DEFAULT_MAXIMUM_TRANSLATION = 30.0;
 
     /**
      * 默认每tick最大旋转角度
@@ -61,7 +61,7 @@ public class Settings {
     /**
      * 默认求解器迭代次数
      */
-    public static final int DEFAULT_SOLVER_ITERATIONS = 20;
+    public static final int DEFAULT_SOLVER_ITERATIONS = 25;
 
     /**
      * 默认线性容差，用于防止过冲

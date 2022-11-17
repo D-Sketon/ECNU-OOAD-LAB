@@ -91,14 +91,8 @@ public class World {
         if (body.getShape() instanceof Flipper) {
             Flipper shape = (Flipper) body.getShape();
             if (shape.getDirection() == Flipper.Direction.LEFT) {
-//                if(leftFlipper != null){
-//                    return;
-//                }
                 leftFlipper = body;
             } else {
-//                if(rightFlipper != null){
-//                    return;
-//                }
                 rightFlipper = body;
             }
             flippers.add(body);

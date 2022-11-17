@@ -127,41 +127,25 @@ public class GridWorld extends World {
         double worldWidth = boundaryAABB.maxX;
         double worldHeight = boundaryAABB.maxY;
         // init border
-        Rectangle bottomRectangle = new Rectangle(worldWidth / 2 + BOUNDARY_BUFFER, worldHeight / 2);
-        bottomRectangle.getTransform().setX(bottomRectangle.getHalfWidth());
-        bottomRectangle.getTransform().setY(-bottomRectangle.getHalfHeight());
-        PhysicsBody bottomBorder = new PhysicsBody(bottomRectangle);
-        bottomBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        bottomBorder.setRestitution(0.95);
-        bottomBorder.setFriction(0.5);
-        addBodies(bottomBorder);
+        // bottom
+        createBoundary(worldWidth / 2 + BOUNDARY_BUFFER, worldHeight / 2, worldWidth / 2, -worldHeight / 2);
+        // top
+        createBoundary(worldWidth / 2 + BOUNDARY_BUFFER, worldHeight / 2, worldWidth / 2 + BOUNDARY_BUFFER, worldHeight + worldHeight / 2);
+        // left
+        createBoundary(worldWidth / 2, worldHeight / 2, -worldWidth / 2, worldHeight / 2);
+        // right
+        createBoundary(worldWidth / 2, worldHeight / 2, worldWidth + worldWidth / 2, worldHeight / 2);
+    }
 
-        Rectangle topRectangle = new Rectangle(worldWidth / 2 + BOUNDARY_BUFFER, worldHeight / 2);
-        topRectangle.getTransform().setX(topRectangle.getHalfWidth());
-        topRectangle.getTransform().setY(worldHeight + topRectangle.getHalfHeight());
-        PhysicsBody topBorder = new PhysicsBody(topRectangle);
-        topBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        topBorder.setRestitution(0.95);
-        topBorder.setFriction(0.5);
-        addBodies(topBorder);
-
-        Rectangle leftRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
-        leftRectangle.getTransform().setX(-leftRectangle.getHalfWidth());
-        leftRectangle.getTransform().setY(leftRectangle.getHalfHeight());
-        PhysicsBody leftBorder = new PhysicsBody(leftRectangle);
-        leftBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        leftBorder.setRestitution(0.95);
-        leftBorder.setFriction(0.5);
-        addBodies(leftBorder);
-
-        Rectangle rightRectangle = new Rectangle(worldWidth / 2, worldHeight / 2);
-        rightRectangle.getTransform().setX(worldWidth + rightRectangle.getHalfWidth());
-        rightRectangle.getTransform().setY(rightRectangle.getHalfHeight());
-        PhysicsBody rightBorder = new PhysicsBody(rightRectangle);
-        rightBorder.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        rightBorder.setRestitution(0.95);
-        rightBorder.setFriction(0.5);
-        addBodies(rightBorder);
+    private void createBoundary(double halfWidth, double halfHeight, double x, double y) {
+        Rectangle rectangle = new Rectangle(halfWidth, halfHeight);
+        rectangle.getTransform().setX(x);
+        rectangle.getTransform().setY(y);
+        PhysicsBody border = new PhysicsBody(rectangle);
+        border.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        border.setRestitution(0.95);
+        border.setFriction(0.5);
+        addBodies(border);
     }
 
     public void addBodyToGrid(PhysicsBody body) throws IllegalArgumentException {

@@ -16,8 +16,6 @@ import lombok.Setter;
 
 import java.util.function.Function;
 
-import static gizmoball.engine.Settings.BLACK_HOLE_BIAS;
-
 @Getter
 @Setter
 public class DraggableGizmoComponent extends ImageLabelComponent {
@@ -44,7 +42,7 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, ImagePhysicsBody> blackHoleBodyCreator = (preferredSize) -> {
-        BlackHole blackhole = new BlackHole(preferredSize.x / 2.0 - BLACK_HOLE_BIAS);
+        BlackHole blackhole = new BlackHole(preferredSize.x / 2.0);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(blackhole);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         return imagePhysicsBody;
@@ -78,12 +76,11 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
         imagePhysicsBody.setFriction(0.0);
         return imagePhysicsBody;
     };
-
     protected static final Function<Vector2, ImagePhysicsBody> triangleBodyCreator = (preferredSize) -> {
         Vector2[] vertices = new Vector2[]{
-                new Vector2(-preferredSize.y / 2.0, -preferredSize.y / 2.0),
+                new Vector2(-preferredSize.x / 2.0, -preferredSize.y / 2.0),
                 new Vector2(preferredSize.x / 2.0, -preferredSize.y / 2.0),
-                new Vector2(-preferredSize.y / 2.0, preferredSize.y / 2.0)
+                new Vector2(-preferredSize.x / 2.0, preferredSize.y / 2.0)
         };
         Triangle triangle = new Triangle(vertices);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(triangle);
@@ -95,7 +92,12 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, ImagePhysicsBody> leftFlipperBodyCreator = (preferredSize) -> {
-        Flipper flipper = new Flipper(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0, Flipper.Direction.LEFT);
+        Vector2[] vertices = new Vector2[]{
+                new Vector2(-preferredSize.x / 2.0, -preferredSize.y / 4.0 / 2.0),
+                new Vector2(preferredSize.x / 2.0, -preferredSize.y / 4.0 / 2.0),
+                new Vector2(-preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0)
+        };
+        Flipper flipper = new Flipper(vertices, Flipper.Direction.LEFT);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(flipper);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         imagePhysicsBody.setRestitution(0.95);
@@ -105,7 +107,12 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, ImagePhysicsBody> rightFlipperBodyCreator = (preferredSize) -> {
-        Flipper flipper = new Flipper(preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0, Flipper.Direction.RIGHT);
+        Vector2[] vertices = new Vector2[]{
+                new Vector2(-preferredSize.y / 2.0, -preferredSize.y / 4.0 / 2.0),
+                new Vector2(preferredSize.x / 2.0, -preferredSize.y / 4.0 / 2.0),
+                new Vector2(preferredSize.y / 2.0, preferredSize.y / 4.0 / 2.0)
+        };
+        Flipper flipper = new Flipper(vertices, Flipper.Direction.RIGHT);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(flipper);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         imagePhysicsBody.setRestitution(0.95);

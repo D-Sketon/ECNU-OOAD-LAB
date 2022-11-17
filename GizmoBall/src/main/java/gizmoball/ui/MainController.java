@@ -23,7 +23,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -120,9 +119,9 @@ public class MainController extends Application implements Initializable {
             new DraggableGizmoComponent("icons/black_hole.png", "black hole", GizmoType.BLACK_HOLE),
             new DraggableGizmoComponent("icons/ball.png", "ball", GizmoType.BALL),
             new DraggableGizmoComponent("icons/pipe.png", "pipe", GizmoType.PIPE),
-            new DraggableGizmoComponent("icons/quarter_circle.png", "curved pipe", GizmoType.CURVED_PIPE),
-            new DraggableGizmoComponent("icons/rail.png", "left flipper", GizmoType.LEFT_FLIPPER),
-            new DraggableGizmoComponent("icons/quarter_circle.png", "right flipper", GizmoType.RIGHT_FLIPPER),
+            new DraggableGizmoComponent("icons/curved_pipe.png", "curved pipe", GizmoType.CURVED_PIPE),
+            new DraggableGizmoComponent("icons/left_flipper.png", "left flipper", GizmoType.LEFT_FLIPPER),
+            new DraggableGizmoComponent("icons/right_flipper.png", "right flipper", GizmoType.RIGHT_FLIPPER),
     };
 
     private static final CommandComponent[] gizmoOps = {
@@ -130,7 +129,7 @@ public class MainController extends Application implements Initializable {
             new CommandComponent("icons/zoom_out.png", "zoom out", GizmoCommand.ZOOM_OUT),
             new CommandComponent("icons/zoom_in.png", "zoom in", GizmoCommand.ZOOM_IN),
             new CommandComponent("icons/rotate_right.png", "rotate right", GizmoCommand.ROTATE_RIGHT),
-            
+
             new CommandComponent("icons/move_up.png", "move up", GizmoCommand.MOVE_UP),
             new CommandComponent("icons/move_right.png", "move right", GizmoCommand.MOVE_RIGHT),
             new CommandComponent("icons/move_down.png", "move down", GizmoCommand.MOVE_DOWN),

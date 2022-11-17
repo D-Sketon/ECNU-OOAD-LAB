@@ -22,16 +22,8 @@ import java.util.List;
 public class World {
 
     public static final Vector2 EARTH_GRAVITY = new Vector2(0, -9.8);
-    public static final Vector2 MOON_GRAVITY = new Vector2(0, -1.6);
-    public static final Vector2 MARS_GRAVITY = new Vector2(0, -3.7);
-    public static final Vector2 VENUS_GRAVITY = new Vector2(0, -8.9);
-    public static final Vector2 JUPITER_GRAVITY = new Vector2(0, -24.8);
-    public static final Vector2 SATURN_GRAVITY = new Vector2(0, -10.4);
-    public static final Vector2 URANUS_GRAVITY = new Vector2(0, -8.7);
-    public static final Vector2 NEPTUNE_GRAVITY = new Vector2(0, -11.0);
-    public static final Vector2 PLUTO_GRAVITY = new Vector2(0, -0.6);
-    public static final Vector2 SUN_GRAVITY = new Vector2(0, -274);
-    public static final Vector2 ZERO_GRAVITY = new Vector2(0, 0);
+
+
 
     protected Vector2 gravity;
 

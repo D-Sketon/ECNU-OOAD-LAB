@@ -2,7 +2,7 @@ package gizmoball.engine.world.entity;
 
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.Rectangle;
+import gizmoball.engine.geometry.shape.Triangle;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +11,7 @@ import static gizmoball.engine.Settings.FLIPPER_TICKS;
 
 @Getter
 @Setter
-public class Flipper extends Rectangle {
+public class Flipper extends Triangle {
     private Direction direction;
 
     private boolean isUp;
@@ -23,14 +23,15 @@ public class Flipper extends Rectangle {
 
     private double angular;
 
-    public Flipper(double halfWidth, double halfHeight, Transform transform, Direction direction) {
-        super(halfWidth, halfHeight, transform);
+
+    public Flipper(Vector2[] vertices, Direction direction) {
+        super(vertices, new Transform());
         this.direction = direction;
         init();
     }
 
-    public Flipper(double halfWidth, double halfHeight, Direction direction) {
-        super(halfWidth, halfHeight);
+    public Flipper(Vector2[] vertices, Transform transform, Direction direction) {
+        super(vertices, transform);
         this.direction = direction;
         init();
     }

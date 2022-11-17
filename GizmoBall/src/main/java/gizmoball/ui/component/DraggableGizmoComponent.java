@@ -6,10 +6,8 @@ import gizmoball.engine.geometry.shape.Circle;
 import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.Mass;
-import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.game.GizmoSettings;
 import gizmoball.game.entity.*;
-import gizmoball.ui.visualize.ImagePhysicsBody;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import javafx.scene.Cursor;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
@@ -24,105 +22,105 @@ import static gizmoball.game.GizmoSettings.BLACK_HOLE_BIAS;
 @Setter
 public class DraggableGizmoComponent extends ImageLabelComponent {
 
-    protected static final Function<Vector2, ImagePhysicsBody> ballBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> ballBodyCreator = (preferredSize) -> {
         Ball ball = new Ball(preferredSize.x / 2.0);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(ball);
-        imagePhysicsBody.setMass(imagePhysicsBody.getShape().createMass(1));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.4);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(ball);
+        gizmoPhysicsBody.setMass(gizmoPhysicsBody.getShape().createMass(1));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.4);
+        gizmoPhysicsBody.setRestitutionVelocity(10);
+        return gizmoPhysicsBody;
     };
 
 
-    protected static final Function<Vector2, ImagePhysicsBody> circleBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> circleBodyCreator = (preferredSize) -> {
         Circle circle = new Circle(preferredSize.x / 2.0);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(circle);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.5);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(circle);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.5);
+        gizmoPhysicsBody.setRestitutionVelocity(10);
+        return gizmoPhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> blackHoleBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> blackHoleBodyCreator = (preferredSize) -> {
         BlackHole blackhole = new BlackHole(preferredSize.x / 2.0 - BLACK_HOLE_BIAS);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(blackhole);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(blackhole);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        return gizmoPhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> rectangleBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> rectangleBodyCreator = (preferredSize) -> {
         Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 2.0);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(rectangle);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.5);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(rectangle);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.5);
+        gizmoPhysicsBody.setRestitutionVelocity(10);
+        return gizmoPhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> pipeBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> pipeBodyCreator = (preferredSize) -> {
         Pipe pipe = new Pipe(preferredSize.x / 2.0, preferredSize.y / 2.0);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(pipe);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.0);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(pipe);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.0);
+        gizmoPhysicsBody.setRestitutionVelocity(10);
+        return gizmoPhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> curvedPipeBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> curvedPipeBodyCreator = (preferredSize) -> {
         CurvedPipe curvedPipe = new CurvedPipe(preferredSize.x);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(curvedPipe);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.0);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(curvedPipe);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.0);
+        return gizmoPhysicsBody;
     };
-    protected static final Function<Vector2, ImagePhysicsBody> triangleBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> triangleBodyCreator = (preferredSize) -> {
         Vector2[] vertices = new Vector2[]{
                 new Vector2(-preferredSize.x / 2.0, -preferredSize.y / 2.0),
                 new Vector2(preferredSize.x / 2.0, -preferredSize.y / 2.0),
                 new Vector2(-preferredSize.x / 2.0, preferredSize.y / 2.0)
         };
         Triangle triangle = new Triangle(vertices);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(triangle);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.5);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(triangle);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.5);
+        gizmoPhysicsBody.setRestitutionVelocity(10);
+        return gizmoPhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> leftFlipperBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> leftFlipperBodyCreator = (preferredSize) -> {
         Vector2[] vertices = new Vector2[]{
                 new Vector2(-preferredSize.x / 2.0, -preferredSize.y / 4.0 / 2.0),
                 new Vector2(preferredSize.x / 2.0, -preferredSize.y / 4.0 / 2.0),
                 new Vector2(-preferredSize.x / 2.0, preferredSize.y / 4.0 / 2.0)
         };
         Flipper flipper = new Flipper(vertices, Flipper.Direction.LEFT);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(flipper);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.5);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(flipper);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.5);
+        gizmoPhysicsBody.setRestitutionVelocity(10);
+        return gizmoPhysicsBody;
     };
 
-    protected static final Function<Vector2, ImagePhysicsBody> rightFlipperBodyCreator = (preferredSize) -> {
+    protected static final Function<Vector2, GizmoPhysicsBody> rightFlipperBodyCreator = (preferredSize) -> {
         Vector2[] vertices = new Vector2[]{
                 new Vector2(-preferredSize.y / 2.0, -preferredSize.y / 4.0 / 2.0),
                 new Vector2(preferredSize.x / 2.0, -preferredSize.y / 4.0 / 2.0),
                 new Vector2(preferredSize.y / 2.0, preferredSize.y / 4.0 / 2.0)
         };
         Flipper flipper = new Flipper(vertices, Flipper.Direction.RIGHT);
-        ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(flipper);
-        imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
-        imagePhysicsBody.setRestitution(0.95);
-        imagePhysicsBody.setFriction(0.5);
-        imagePhysicsBody.setRestitutionVelocity(10);
-        return imagePhysicsBody;
+        GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(flipper);
+        gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
+        gizmoPhysicsBody.setRestitution(0.95);
+        gizmoPhysicsBody.setFriction(0.5);
+        gizmoPhysicsBody.setRestitutionVelocity(10);
+        return gizmoPhysicsBody;
     };
 
 
@@ -148,8 +146,8 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
      * @param center        the center of the gizmo.
      * @return the physics body.
      */
-    public PhysicsBody createPhysicsBody(Vector2 preferredSize, Vector2 center) {
-        ImagePhysicsBody physicsBody = (ImagePhysicsBody) gizmoType.getPhysicsBodySupplier().apply(preferredSize);
+    public GizmoPhysicsBody createPhysicsBody(Vector2 preferredSize, Vector2 center) {
+        GizmoPhysicsBody physicsBody = (GizmoPhysicsBody) gizmoType.getPhysicsBodySupplier().apply(preferredSize);
         physicsBody.getShape().translate(center);
         physicsBody.setGizmoType(gizmoType);
         return physicsBody;

@@ -7,14 +7,12 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 对整个弹球游戏物体所处世界的抽象
  */
-public abstract class AbstractWorld<T> {
+public abstract class AbstractWorld<T extends PhysicsBody> {
 
     /**
      * 地球重力
@@ -23,7 +21,7 @@ public abstract class AbstractWorld<T> {
 
     protected Vector2 gravity;
 
-    protected final Map<T, List<PhysicsBody>> bodies;
+    protected final List<T> bodies;
 
     protected final CollisionDetector collisionDetector;
 
@@ -32,28 +30,26 @@ public abstract class AbstractWorld<T> {
 
     public AbstractWorld(Vector2 gravity) {
         this.gravity = gravity;
-        this.bodies = new HashMap<>();
+        this.bodies = new ArrayList<>();
 
         this.collisionDetector = new BasicCollisionDetector();
         this.solver = new SequentialImpulses();
     }
 
-    public void addBodies(PhysicsBody body, T key) {
-        this.bodies.get(key).add(body);
+    public void addBody(T body) {
+        this.bodies.add(body);
     }
 
-    public void removeBodies(PhysicsBody body, T key) {
-        this.bodies.get(key).remove(body);
+    public void removeBodies(T body) {
+        this.bodies.remove(body);
     }
 
     public void removeAllBodies() {
-        bodies.forEach((k, v) -> v.clear());
+        bodies.clear();
     }
 
-    public List<PhysicsBody> getBodies() {
-        List<PhysicsBody> bodyList = new ArrayList<>();
-        bodies.forEach((k, v) -> bodyList.addAll(v));
-        return bodyList;
+    public List<T> getBodies() {
+        return bodies;
     }
 
     /**

@@ -9,6 +9,7 @@ import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.game.entity.Ball;
 import gizmoball.game.entity.BlackHole;
 import gizmoball.engine.collision.CollisionFilter;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 
@@ -21,6 +22,8 @@ public class BlackHoleListener implements TickListener {
     private final List<PhysicsBody> balls;
 
     private final List<PhysicsBody> blackHoles;
+
+    private final List<GizmoPhysicsBody> allBodies;
 
     /**
      * 重写碰撞检查类
@@ -69,6 +72,7 @@ public class BlackHoleListener implements TickListener {
         for (Pair<Manifold, Pair<PhysicsBody, PhysicsBody>> pair : detect) {
             PhysicsBody ball = pair.getValue().getKey();
             balls.remove(ball);
+            allBodies.remove(ball);
         }
 
         return new ArrayList<>();

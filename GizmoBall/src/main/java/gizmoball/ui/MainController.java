@@ -13,7 +13,7 @@ import gizmoball.game.entity.Ball;
 import gizmoball.game.entity.Flipper;
 import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
-import gizmoball.ui.visualize.ImagePhysicsBody;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -100,7 +100,7 @@ public class MainController extends Application implements Initializable {
     /**
      * 当前选中的组件
      */
-    private PhysicsBody selectedBody;
+    private GizmoPhysicsBody selectedBody;
 
     private GizmoOpHandler gizmoOpHandler;
 
@@ -470,7 +470,7 @@ public class MainController extends Application implements Initializable {
             // 对齐到网格
             Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
             transformedCenter.add(snapped);
-            PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
+            GizmoPhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {
@@ -508,10 +508,10 @@ public class MainController extends Application implements Initializable {
         clearCanvas(gc);
         drawGrid(gc);
 
-        List<PhysicsBody> bodies = world.getBodies();
-        for (PhysicsBody physicsBody : bodies) {
-            if (physicsBody instanceof ImagePhysicsBody) {
-                ((ImagePhysicsBody) physicsBody).drawToCanvas(gc);
+        List<GizmoPhysicsBody> bodies = world.getBodies();
+        for (GizmoPhysicsBody physicsBody : bodies) {
+            if (physicsBody instanceof GizmoPhysicsBody) {
+                physicsBody.drawToCanvas(gc);
                 if (isDebugMode) {
                     if(physicsBody.getShape() instanceof Ball) {
                         Vector2 linearVelocity = physicsBody.getLinearVelocity().copy();

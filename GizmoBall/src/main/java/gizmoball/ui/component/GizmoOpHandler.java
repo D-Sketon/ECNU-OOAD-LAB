@@ -6,6 +6,7 @@ import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.game.entity.Flipper;
 import gizmoball.ui.GeometryUtil;
 import gizmoball.ui.GridWorld;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
@@ -14,9 +15,9 @@ import java.util.function.Function;
 @Slf4j
 public class GizmoOpHandler {
 
-    private GridWorld world;
+    private final GridWorld world;
 
-    private final HashMap<GizmoCommand, Function<PhysicsBody, Boolean>> gizmoOps;
+    private final HashMap<GizmoCommand, Function<GizmoPhysicsBody, Boolean>> gizmoOps;
 
     private boolean hasLeftFlipper;
 
@@ -39,7 +40,7 @@ public class GizmoOpHandler {
         gizmoOps.put(GizmoCommand.ZOOM_OUT, this::zoomOutGizmo);
     }
 
-    public boolean handleCommand(GizmoCommand command, PhysicsBody body) {
+    public boolean handleCommand(GizmoCommand command, GizmoPhysicsBody body) {
         if (command == null) {
             throw new IllegalArgumentException("Command cannot be null");
         }
@@ -60,7 +61,7 @@ public class GizmoOpHandler {
      *
      * @param gizmoBody /
      */
-    public boolean addGizmo(PhysicsBody gizmoBody) {
+    public boolean addGizmo(GizmoPhysicsBody gizmoBody) {
         if(gizmoBody.getShape() instanceof Flipper){
             Flipper flipper = (Flipper) gizmoBody.getShape();
             if(flipper.getDirection() == Flipper.Direction.LEFT){
@@ -79,7 +80,7 @@ public class GizmoOpHandler {
         return true;
     }
 
-    public boolean removeGizmo(PhysicsBody gizmoBody) {
+    public boolean removeGizmo(GizmoPhysicsBody gizmoBody) {
         if (!world.getBodies().contains(gizmoBody)) {
             throw new IllegalArgumentException("物件不存在");
         }
@@ -98,23 +99,23 @@ public class GizmoOpHandler {
         return true;
     }
 
-    public boolean moveUp(PhysicsBody gizmoBody) {
+    public boolean moveUp(GizmoPhysicsBody gizmoBody) {
         return moveGizmo(gizmoBody, new Vector2(0, world.getGridSize()));
     }
 
-    public boolean moveDown(PhysicsBody gizmoBody) {
+    public boolean moveDown(GizmoPhysicsBody gizmoBody) {
         return moveGizmo(gizmoBody, new Vector2(0, -world.getGridSize()));
     }
 
-    public boolean moveLeft(PhysicsBody gizmoBody) {
+    public boolean moveLeft(GizmoPhysicsBody gizmoBody) {
         return moveGizmo(gizmoBody, new Vector2(-world.getGridSize(), 0));
     }
 
-    public boolean moveRight(PhysicsBody gizmoBody) {
+    public boolean moveRight(GizmoPhysicsBody gizmoBody) {
         return moveGizmo(gizmoBody, new Vector2(world.getGridSize(), 0));
     }
 
-    public boolean moveGizmo(PhysicsBody gizmoBody, Vector2 position) {
+    public boolean moveGizmo(GizmoPhysicsBody gizmoBody, Vector2 position) {
         AABB originAABB = gizmoBody.getShape().createAABB();
         GeometryUtil.padToSquare(originAABB);
         AABB translatedAABB = new AABB(originAABB);
@@ -131,22 +132,22 @@ public class GizmoOpHandler {
         return true;
     }
 
-    public boolean rotateRight(PhysicsBody gizmoBody) {
+    public boolean rotateRight(GizmoPhysicsBody gizmoBody) {
         return rotateGizmo(gizmoBody, -Math.PI / 2);
     }
 
-    public boolean rotateLeft(PhysicsBody gizmoBody) {
+    public boolean rotateLeft(GizmoPhysicsBody gizmoBody) {
         return rotateGizmo(gizmoBody, Math.PI / 2);
     }
 
-    public boolean rotateGizmo(PhysicsBody gizmoBody, double theta) {
+    public boolean rotateGizmo(GizmoPhysicsBody gizmoBody, double theta) {
         AABB aabb = gizmoBody.getShape().createAABB();
         Vector2 center = new Vector2((aabb.maxX + aabb.minX) / 2, (aabb.maxY + aabb.minY) / 2);
         gizmoBody.getShape().rotate(theta, center.x, center.y);
         return true;
     }
 
-    public boolean zoomInGizmo(PhysicsBody gizmoBody) {
+    public boolean zoomInGizmo(GizmoPhysicsBody gizmoBody) {
         // 固定左下角点，往左下角缩小
         int rate = gizmoBody.getShape().getRate();
         if (rate == 1) {
@@ -165,7 +166,7 @@ public class GizmoOpHandler {
         return true;
     }
 
-    public boolean zoomOutGizmo(PhysicsBody gizmoBody) {
+    public boolean zoomOutGizmo(GizmoPhysicsBody gizmoBody) {
         // 固定左下角点，往右上角放大，如果越界或者重叠，就不缩放
         AABB originAABB = gizmoBody.getShape().createAABB();
         AABB translatedAABB = new AABB(originAABB);

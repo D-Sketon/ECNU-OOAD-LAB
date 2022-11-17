@@ -4,89 +4,80 @@ import gizmoball.engine.AbstractWorld;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.game.entity.*;
 import gizmoball.game.listener.*;
 import gizmoball.ui.component.GizmoType;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class GizmoWorld extends AbstractWorld<GizmoType> {
+public class GizmoWorld extends AbstractWorld<GizmoPhysicsBody> {
 
     private final List<TickListener> tickListeners;
+
+    protected final Map<GizmoType, List<PhysicsBody>> bodyTypeMap;
 
     public GizmoWorld(Vector2 gravity) {
         super(gravity);
 
+        bodyTypeMap = new HashMap<>();
+
         List<PhysicsBody> balls = new ArrayList<>();
-        List<PhysicsBody> blackHoles = new ArrayList<>();
-        List<PhysicsBody> obstacles = new ArrayList<>();
-        List<PhysicsBody> pipes = new ArrayList<>();
-        List<PhysicsBody> leftFlippers = new ArrayList<>();
-        List<PhysicsBody> rightFlippers = new ArrayList<>();
-
-        bodies.put(GizmoType.BALL, balls);
-        bodies.put(GizmoType.OBSTACLE, obstacles);
-        bodies.put(GizmoType.PIPE, pipes);
-        bodies.put(GizmoType.BLACK_HOLE, blackHoles);
-        bodies.put(GizmoType.LEFT_FLIPPER, leftFlippers);
-        bodies.put(GizmoType.RIGHT_FLIPPER, rightFlippers);
-
+        bodyTypeMap.put(GizmoType.BALL, balls);
         tickListeners = new ArrayList<>();
-        BallListener ballListener = new BallListener(balls);
-        BlackHoleListener blackholeListener = new BlackHoleListener(balls, blackHoles);
-        PipeListener pipeListener = new PipeListener(balls, pipes, gravity);
-        ObstacleListener obstacleListener = new ObstacleListener(balls, obstacles);
-        FlipperListener leftFlipperListener = new FlipperListener(balls, leftFlippers);
-        FlipperListener rightFlipperListener = new FlipperListener(balls, rightFlippers);
-        tickListeners.add(ballListener);
-        tickListeners.add(blackholeListener);
-        tickListeners.add(pipeListener);
-        tickListeners.add(obstacleListener);
-        tickListeners.add(leftFlipperListener);
-        tickListeners.add(rightFlipperListener);
+
+        tickListeners.add(new BallListener(balls));
+        tickListeners.add(new BlackHoleListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.BLACK_HOLE, k -> new ArrayList<>()), bodies));
+        tickListeners.add(new PipeListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.PIPE, k -> new ArrayList<>()), gravity));
+        tickListeners.add(new PipeListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.CURVED_PIPE, k -> new ArrayList<>()), gravity));
+        tickListeners.add(new ObstacleListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.BOUNDARY, k -> new ArrayList<>())));
+        tickListeners.add(new ObstacleListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.CIRCLE, k -> new ArrayList<>())));
+        tickListeners.add(new ObstacleListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.TRIANGLE, k -> new ArrayList<>())));
+        tickListeners.add(new ObstacleListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.RECTANGLE, k -> new ArrayList<>())));
+        tickListeners.add(new FlipperListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.LEFT_FLIPPER, k -> new ArrayList<>())));
+        tickListeners.add(new FlipperListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.RIGHT_FLIPPER, k -> new ArrayList<>())));
     }
 
-    public void addBodies(PhysicsBody body) {
-        GizmoType gizmoType;
-        AbstractShape shape = body.getShape();
-        if (shape instanceof Flipper) {
-            Flipper flipper = (Flipper) shape;
-            if (flipper.getDirection() == Flipper.Direction.LEFT) {
-                gizmoType = GizmoType.LEFT_FLIPPER;
-            } else {
-                gizmoType = GizmoType.RIGHT_FLIPPER;
-            }
-        } else if (body.getShape() instanceof Ball) {
-            gizmoType = GizmoType.BALL;
-        } else if (body.getShape() instanceof BlackHole) {
-            gizmoType = GizmoType.BLACK_HOLE;
-        } else if (body.getShape() instanceof Pipe || body.getShape() instanceof CurvedPipe) {
-            gizmoType = GizmoType.PIPE;
-        } else {
-            gizmoType = GizmoType.OBSTACLE;
+    public void addBody(GizmoPhysicsBody body) {
+        super.addBody(body);
+
+        GizmoType gizmoType = body.getGizmoType();
+        bodyTypeMap.computeIfAbsent(gizmoType, k -> new ArrayList<>()).add(body);
+    }
+
+    public void removeBodies(GizmoPhysicsBody body) {
+        super.removeBodies(body);
+
+        GizmoType type = body.getGizmoType();
+        List<PhysicsBody> list = bodyTypeMap.get(type);
+        if(list != null) {
+            list.remove(body);
         }
-        addBodies(body, gizmoType);
     }
 
-    public void removeBodies(PhysicsBody body) {
-        GizmoType[] values = GizmoType.values();
-        for (GizmoType gizmoType : values) {
-            removeBodies(body, gizmoType);
+    @Override
+    public void removeAllBodies() {
+        super.removeAllBodies();
+
+        // 从类型Map中移除
+        for (Map.Entry<GizmoType, List<PhysicsBody>> entry : bodyTypeMap.entrySet()) {
+            entry.getValue().clear();
         }
     }
 
     public void flipperUp(Flipper.Direction direction) {
         if (direction == Flipper.Direction.LEFT) {
-            for (PhysicsBody physicsBody : bodies.get(GizmoType.LEFT_FLIPPER)) {
+            for (PhysicsBody physicsBody : bodyTypeMap.get(GizmoType.LEFT_FLIPPER)) {
                 Flipper flipper = (Flipper) physicsBody.getShape();
                 flipper.rise();
             }
         } else if (direction == Flipper.Direction.RIGHT) {
-            for (PhysicsBody physicsBody : bodies.get(GizmoType.RIGHT_FLIPPER)) {
+            for (PhysicsBody physicsBody : bodyTypeMap.get(GizmoType.RIGHT_FLIPPER)) {
                 Flipper flipper = (Flipper) physicsBody.getShape();
                 flipper.rise();
             }
@@ -95,12 +86,12 @@ public class GizmoWorld extends AbstractWorld<GizmoType> {
 
     public void flipperDown(Flipper.Direction direction) {
         if (direction == Flipper.Direction.LEFT) {
-            for (PhysicsBody physicsBody : bodies.get(GizmoType.LEFT_FLIPPER)) {
+            for (PhysicsBody physicsBody : bodyTypeMap.get(GizmoType.LEFT_FLIPPER)) {
                 Flipper flipper = (Flipper) physicsBody.getShape();
                 flipper.down();
             }
         } else if (direction == Flipper.Direction.RIGHT) {
-            for (PhysicsBody physicsBody : bodies.get(GizmoType.RIGHT_FLIPPER)) {
+            for (PhysicsBody physicsBody : bodyTypeMap.get(GizmoType.RIGHT_FLIPPER)) {
                 Flipper flipper = (Flipper) physicsBody.getShape();
                 flipper.down();
             }
@@ -117,6 +108,6 @@ public class GizmoWorld extends AbstractWorld<GizmoType> {
             pairs.addAll(pair);
         }
         List<ContactConstraint> contactConstraints = collisionDetector.preLocalSolve(pairs);
-        collisionDetector.LocalSolve(solver, gravity, contactConstraints, bodies.get(GizmoType.BALL));
+        collisionDetector.LocalSolve(solver, gravity, contactConstraints, bodyTypeMap.get(GizmoType.BALL));
     }
 }

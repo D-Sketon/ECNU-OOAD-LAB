@@ -52,15 +52,10 @@ public class FlipperListener implements TickListener {
                     continue;
                 }
                 //转至30度，停止
-                flipper.setUp(false);
                 physicsBody.setAngularVelocity(0);
             } else { //下降状态
                 //还未归位，继续归位
                 if (flipper.getAngular() > 0) {
-                    if (flipper.getTicks() > 0) {
-                        flipper.decreaseTicks();
-                        continue;
-                    }
                     setDownVelocity(physicsBody);
                     flipper.flip(-Settings.DEFAULT_FLIPPER_ROTATION);
                 } else if (flipper.getAngular() == 0) {

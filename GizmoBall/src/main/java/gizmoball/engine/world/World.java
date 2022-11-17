@@ -126,13 +126,23 @@ public class World {
         return bodies;
     }
 
-    public void flipper(Flipper.Direction direction) {
+    public void flipperUp(Flipper.Direction direction) {
         if (direction == Flipper.Direction.LEFT && leftFlipper != null) {
             Flipper flipper = (Flipper) leftFlipper.getShape();
             flipper.rise();
         } else if (direction == Flipper.Direction.RIGHT && rightFlipper != null) {
             Flipper flipper = (Flipper) rightFlipper.getShape();
             flipper.rise();
+        }
+    }
+
+    public void flipperDown(Flipper.Direction direction) {
+        if (direction == Flipper.Direction.LEFT && leftFlipper != null) {
+            Flipper flipper = (Flipper) leftFlipper.getShape();
+            flipper.down();
+        } else if (direction == Flipper.Direction.RIGHT && rightFlipper != null) {
+            Flipper flipper = (Flipper) rightFlipper.getShape();
+            flipper.down();
         }
     }
 

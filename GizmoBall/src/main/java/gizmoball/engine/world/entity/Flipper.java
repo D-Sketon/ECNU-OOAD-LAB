@@ -6,7 +6,6 @@ import gizmoball.engine.geometry.shape.Triangle;
 import lombok.Getter;
 import lombok.Setter;
 
-import static gizmoball.engine.Settings.FLIPPER_TICKS;
 
 
 @Getter
@@ -15,11 +14,6 @@ public class Flipper extends Triangle {
     private Direction direction;
 
     private boolean isUp;
-
-    /**
-     * 挡板在高点维持一段时间
-     */
-    private Integer ticks;
 
     private double angular;
 
@@ -67,9 +61,6 @@ public class Flipper extends Triangle {
         }
     }
 
-    public void decreaseTicks() {
-        this.ticks--;
-    }
 
     public enum Direction {
         LEFT,
@@ -78,7 +69,11 @@ public class Flipper extends Triangle {
 
     public void rise() {
         this.isUp = true;
-        this.ticks = FLIPPER_TICKS;
+    }
+
+
+    public void down() {
+        this.isUp = false;
     }
 
 }

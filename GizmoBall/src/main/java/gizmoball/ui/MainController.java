@@ -351,13 +351,24 @@ public class MainController extends Application implements Initializable {
         anchorPane.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case LEFT:
-                    world.flipper(Flipper.Direction.LEFT);
+                    world.flipperUp(Flipper.Direction.LEFT);
                     break;
                 case RIGHT:
-                    world.flipper(Flipper.Direction.RIGHT);
+                    world.flipperUp(Flipper.Direction.RIGHT);
                     break;
                 case F1:
                     isDebugMode = !isDebugMode;
+                    break;
+            }
+        });
+
+        anchorPane.setOnKeyReleased(event -> {
+            switch (event.getCode()) {
+                case LEFT:
+                    world.flipperDown(Flipper.Direction.LEFT);
+                    break;
+                case RIGHT:
+                    world.flipperDown(Flipper.Direction.RIGHT);
                     break;
             }
         });

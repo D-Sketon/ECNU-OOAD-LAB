@@ -13,4 +13,5 @@ Java8
 ### BlackJack Lab
 ![BlackJack](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/CBlackJack.png)
 ### GizmoBall
-![GizmoBall](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/Gizmoball.gif)
+![GizmoBall1](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/CGizmoball%20.png)
+![GizmoBall2](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/CGizmoball.gif)

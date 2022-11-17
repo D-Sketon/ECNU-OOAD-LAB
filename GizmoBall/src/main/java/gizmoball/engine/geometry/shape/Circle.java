@@ -1,7 +1,6 @@
 package gizmoball.engine.geometry.shape;
 
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
@@ -70,10 +69,8 @@ public class Circle extends AbstractShape {
     }
 
     @Override
-    public PointFeature getFarthestFeature(Vector2 vector) {
-        Vector2 farthest = this.getFarthestPoint(vector);
-        // 圆形没有边，所以返回特征点
-        return new PointFeature(farthest);
+    public Vector2 getFarthestFeature(Vector2 vector) {
+        return this.getFarthestPoint(vector);
     }
 
     @Override

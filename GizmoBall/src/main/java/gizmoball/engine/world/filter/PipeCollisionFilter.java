@@ -125,40 +125,38 @@ public class PipeCollisionFilter implements CollisionFilter {
 
     private boolean isOutPipe() {
         if (pipeDirection == Pipe.PipeDirection.TRANSVERSE) {
-            if(ballY > maxY || ballY < minY){
+            if (ballY > maxY || ballY < minY) {
                 return true;
             }
 
-            if(ballX < minX){
+            if (ballX < minX) {
                 Vector2 v1 = new Vector2(minX - ballX, maxY - ballY);
                 Vector2 v2 = new Vector2(minX - ballX, minY - ballY);
-                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                if (v1.getMagnitude() + PIPE_PIERCE_BIAS < radius || v2.getMagnitude() + PIPE_PIERCE_BIAS < radius) {
                     return true;
                 }
-            }
-            else if(ballX > maxX){
+            } else if (ballX > maxX) {
                 Vector2 v1 = new Vector2(maxX - ballX, maxY - ballY);
                 Vector2 v2 = new Vector2(maxX - ballX, minY - ballY);
-                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                if (v1.getMagnitude() + PIPE_PIERCE_BIAS < radius || v2.getMagnitude() + PIPE_PIERCE_BIAS < radius) {
                     return true;
                 }
             }
         } else {
-            if(ballX > maxX || ballX < minX){
+            if (ballX > maxX || ballX < minX) {
                 return true;
             }
 
-            if(ballY < minY){
+            if (ballY < minY) {
                 Vector2 v1 = new Vector2(minX - ballX, minY - ballY);
                 Vector2 v2 = new Vector2(maxX - ballX, minY - ballY);
-                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                if (v1.getMagnitude() + PIPE_PIERCE_BIAS < radius || v2.getMagnitude() + PIPE_PIERCE_BIAS < radius) {
                     return true;
                 }
-            }
-            else if(ballY > maxY){
+            } else if (ballY > maxY) {
                 Vector2 v1 = new Vector2(minX - ballX, maxY - ballY);
                 Vector2 v2 = new Vector2(maxX - ballX, maxY - ballY);
-                if(v1.getMagnitude() +  PIPE_PIERCE_BIAS < radius || v2.getMagnitude() +  PIPE_PIERCE_BIAS < radius){
+                if (v1.getMagnitude() + PIPE_PIERCE_BIAS < radius || v2.getMagnitude() + PIPE_PIERCE_BIAS < radius) {
                     return true;
                 }
             }

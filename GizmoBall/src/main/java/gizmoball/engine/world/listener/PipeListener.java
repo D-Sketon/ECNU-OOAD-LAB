@@ -1,6 +1,6 @@
 package gizmoball.engine.world.listener;
 
-import gizmoball.engine.collision.BasicCollisionDetector;
+import gizmoball.engine.collision.detector.BasicCollisionDetector;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;

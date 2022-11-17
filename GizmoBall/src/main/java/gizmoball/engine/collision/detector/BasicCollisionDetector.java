@@ -1,10 +1,9 @@
-package gizmoball.engine.collision;
+package gizmoball.engine.collision.detector;
 
 import gizmoball.engine.Settings;
+import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
-import gizmoball.engine.collision.detector.DetectorResult;
-import gizmoball.engine.collision.detector.DetectorUtil;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;

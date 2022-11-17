@@ -1,7 +1,7 @@
 package gizmoball.engine.world.listener;
 
 import gizmoball.engine.Settings;
-import gizmoball.engine.collision.BasicCollisionDetector;
+import gizmoball.engine.collision.detector.BasicCollisionDetector;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.engine.world.entity.Flipper;

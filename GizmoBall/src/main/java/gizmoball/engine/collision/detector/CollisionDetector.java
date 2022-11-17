@@ -1,4 +1,4 @@
-package gizmoball.engine.collision;
+package gizmoball.engine.collision.detector;
 
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;

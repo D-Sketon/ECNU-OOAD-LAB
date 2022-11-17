@@ -1,7 +1,7 @@
 package gizmoball.engine.world.listener;
 
-import gizmoball.engine.collision.BasicCollisionDetector;
 import gizmoball.engine.collision.Penetration;
+import gizmoball.engine.collision.detector.BasicCollisionDetector;
 import gizmoball.engine.collision.detector.DetectorResult;
 import gizmoball.engine.collision.detector.DetectorUtil;
 import gizmoball.engine.collision.manifold.Manifold;

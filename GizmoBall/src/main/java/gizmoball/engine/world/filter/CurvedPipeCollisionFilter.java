@@ -1,6 +1,5 @@
 package gizmoball.engine.world.filter;
 
-import gizmoball.engine.Settings;
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
@@ -69,7 +68,7 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
         } else if (isInside) {
             double magnitude1 = v0.to(ce2).getMagnitude();
             double magnitude2 = v2.to(ce2).getMagnitude();
-            if(magnitude1 + PIPE_PIERCE_BIAS < ball.getRadius() || magnitude2 + PIPE_PIERCE_BIAS < ball.getRadius()){
+            if (magnitude1 + PIPE_PIERCE_BIAS < ball.getRadius() || magnitude2 + PIPE_PIERCE_BIAS < ball.getRadius()) {
                 return true;
             }
 

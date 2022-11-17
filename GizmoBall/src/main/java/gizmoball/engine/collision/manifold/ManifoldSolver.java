@@ -1,7 +1,6 @@
 package gizmoball.engine.collision.manifold;
 
 import gizmoball.engine.collision.Penetration;
-import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.QuarterCircle;
@@ -34,10 +33,10 @@ public class ManifoldSolver {
         }
         // 获得分离法线的单位向量（理论上已被规范化）
         Vector2 n = penetration.getNormal();
-        PointFeature vertex = shape1.getFarthestFeature(n);
+        Vector2 vertex = shape1.getFarthestFeature(n);
 
         if (vertex != null) {
-            ManifoldPoint mp = new ManifoldPoint(vertex.getPoint(), penetration.getDepth());
+            ManifoldPoint mp = new ManifoldPoint(vertex, penetration.getDepth());
             manifold.getPoints().add(mp);
             manifold.getNormal().x = -n.x;
             manifold.getNormal().y = -n.y;
@@ -45,9 +44,9 @@ public class ManifoldSolver {
         }
 
         Vector2 ne = n.getNegative();
-        PointFeature vertex2 = shape2.getFarthestFeature(ne);
+        Vector2 vertex2 = shape2.getFarthestFeature(ne);
         if (vertex2 != null) {
-            ManifoldPoint mp = new ManifoldPoint(vertex2.getPoint(), penetration.getDepth());
+            ManifoldPoint mp = new ManifoldPoint(vertex2, penetration.getDepth());
             manifold.getPoints().add(mp);
             manifold.getNormal().x = ne.x;
             manifold.getNormal().y = ne.y;

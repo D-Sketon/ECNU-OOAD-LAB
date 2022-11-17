@@ -1,10 +1,9 @@
 package gizmoball.engine.world;
 
-import gizmoball.engine.Settings;
-import gizmoball.engine.collision.BasicCollisionDetector;
-import gizmoball.engine.collision.CollisionDetector;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
+import gizmoball.engine.collision.detector.BasicCollisionDetector;
+import gizmoball.engine.collision.detector.CollisionDetector;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
@@ -21,12 +20,12 @@ import java.util.List;
  */
 public class World {
 
+    /**
+     * 地球重力
+     */
     public static final Vector2 EARTH_GRAVITY = new Vector2(0, -9.8);
 
-
-
     protected Vector2 gravity;
-
 
     /**
      * 所有的球
@@ -36,7 +35,7 @@ public class World {
     /**
      * 所有的黑洞
      */
-    protected final List<PhysicsBody> blackholes;
+    protected final List<PhysicsBody> blackHoles;
 
     /**
      * 其他图形，圆，正方形，三角形
@@ -57,11 +56,6 @@ public class World {
 
     protected PhysicsBody rightFlipper;
 
-    /**
-     * 游戏经过ticks数
-     */
-    protected int timeTicks;
-
     protected final List<TickListener> tickListeners;
 
     protected final CollisionDetector collisionDetector;
@@ -72,17 +66,17 @@ public class World {
     public World(Vector2 gravity) {
         this.gravity = gravity;
         this.balls = new ArrayList<>();
-        this.blackholes = new ArrayList<>();
+        this.blackHoles = new ArrayList<>();
         this.obstacles = new ArrayList<>();
         this.pipes = new ArrayList<>();
         this.flippers = new ArrayList<>();
-        this.timeTicks = 0;
+
         this.tickListeners = new ArrayList<>();
         this.collisionDetector = new BasicCollisionDetector();
         this.solver = new SequentialImpulses();
 
         BallListener ballListener = new BallListener(balls);
-        BlackHoleListener blackholeListener = new BlackHoleListener(balls, blackholes);
+        BlackHoleListener blackholeListener = new BlackHoleListener(balls, blackHoles);
         PipeListener pipeListener = new PipeListener(balls, pipes, gravity);
         ObstacleListener obstacleListener = new ObstacleListener(balls, obstacles);
         FlipperListener flipperListener = new FlipperListener(balls, flippers);
@@ -105,7 +99,7 @@ public class World {
         } else if (body.getShape() instanceof Ball) {
             this.balls.add(body);
         } else if (body.getShape() instanceof BlackHole) {
-            this.blackholes.add(body);
+            this.blackHoles.add(body);
         } else if (body.getShape() instanceof Pipe || body.getShape() instanceof CurvedPipe) {
             this.pipes.add(body);
         } else {
@@ -115,7 +109,7 @@ public class World {
     }
 
     public void removeBodies(PhysicsBody... bodies) {
-        this.blackholes.removeAll(Arrays.asList(bodies));
+        this.blackHoles.removeAll(Arrays.asList(bodies));
         this.pipes.removeAll(Arrays.asList(bodies));
         this.balls.removeAll(Arrays.asList(bodies));
         this.obstacles.removeAll(Arrays.asList(bodies));
@@ -126,7 +120,7 @@ public class World {
         List<PhysicsBody> bodies = new ArrayList<>();
         bodies.addAll(obstacles);
         bodies.addAll(balls);
-        bodies.addAll(blackholes);
+        bodies.addAll(blackHoles);
         bodies.addAll(pipes);
         bodies.addAll(flippers);
         return bodies;

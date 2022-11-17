@@ -205,7 +205,7 @@ public class GridWorld extends World {
             bodies.addAll(obstacles.stream().skip(borderCount) // 跳过边界
                     .collect(Collectors.toList()));
             bodies.addAll(balls);
-            bodies.addAll(blackholes);
+            bodies.addAll(blackHoles);
             bodies.addAll(pipes);
             bodies.addAll(flippers);
 
@@ -238,7 +238,7 @@ public class GridWorld extends World {
             List<PhysicsBody> o = PersistentUtil.fromJsonString(snapshot);
             this.obstacles.clear();
             this.balls.clear();
-            this.blackholes.clear();
+            this.blackHoles.clear();
             this.pipes.clear();
             this.flippers.clear();
             //其他四个列表也要清空

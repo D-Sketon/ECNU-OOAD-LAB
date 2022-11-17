@@ -1,7 +1,6 @@
 package gizmoball.engine.geometry.shape;
 
 import gizmoball.engine.collision.Interval;
-import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
@@ -132,7 +131,7 @@ public class Polygon extends AbstractShape {
     }
 
     @Override
-    public PointFeature getFarthestFeature(Vector2 vector) {
+    public Vector2 getFarthestFeature(Vector2 vector) {
         // 多边形没有PointFeature
         return null;
     }

@@ -1,6 +1,5 @@
 package gizmoball.engine.geometry.shape;
 
-import gizmoball.engine.collision.PointFeature;
 import gizmoball.engine.geometry.Vector2;
 
 /**
@@ -29,7 +28,7 @@ public interface Convex {
      * @param vector 方向向量
      * @return Feature
      */
-    PointFeature getFarthestFeature(Vector2 vector);
+    Vector2 getFarthestFeature(Vector2 vector);
 
     /**
      * 获得离给定{@link Vector2}最远的点（顶点）

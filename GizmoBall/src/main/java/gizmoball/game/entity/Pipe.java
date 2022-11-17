@@ -1,4 +1,4 @@
-package gizmoball.engine.world.entity;
+package gizmoball.game.entity;
 
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.shape.Rectangle;

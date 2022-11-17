@@ -7,9 +7,10 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.World;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Flipper;
+import gizmoball.engine.AbstractWorld;
+import gizmoball.ui.component.GizmoType;
+import gizmoball.game.entity.Ball;
+import gizmoball.game.entity.Flipper;
 import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImagePhysicsBody;
@@ -291,7 +292,7 @@ public class MainController extends Application implements Initializable {
     private void initWorld() {
         double worldWidth = gizmoCanvas.getWidth();
         double worldHeight = gizmoCanvas.getHeight();
-        world = new GridWorld(World.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
+        world = new GridWorld(AbstractWorld.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
         preferredSize = new Vector2(world.getGridSize(), world.getGridSize());
         gizmoOpHandler = new GizmoOpHandler(world);
     }

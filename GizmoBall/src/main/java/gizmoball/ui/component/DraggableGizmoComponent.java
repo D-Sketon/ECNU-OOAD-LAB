@@ -7,7 +7,8 @@ import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.*;
+import gizmoball.game.GizmoSettings;
+import gizmoball.game.entity.*;
 import gizmoball.ui.visualize.ImagePhysicsBody;
 import javafx.scene.Cursor;
 import javafx.scene.layout.VBox;
@@ -16,7 +17,8 @@ import lombok.Setter;
 
 import java.util.function.Function;
 
-import static gizmoball.engine.Settings.BLACK_HOLE_BIAS;
+import static gizmoball.game.GizmoSettings.BLACK_HOLE_BIAS;
+
 
 @Getter
 @Setter

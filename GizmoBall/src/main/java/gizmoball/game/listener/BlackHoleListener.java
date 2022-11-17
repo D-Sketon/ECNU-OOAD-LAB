@@ -1,4 +1,4 @@
-package gizmoball.engine.world.listener;
+package gizmoball.game.listener;
 
 import gizmoball.engine.collision.detector.BasicCollisionDetector;
 import gizmoball.engine.collision.detector.DetectorResult;
@@ -6,9 +6,9 @@ import gizmoball.engine.collision.detector.DetectorUtil;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.BlackHole;
-import gizmoball.engine.world.filter.CollisionFilter;
+import gizmoball.game.entity.Ball;
+import gizmoball.game.entity.BlackHole;
+import gizmoball.engine.collision.CollisionFilter;
 import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 

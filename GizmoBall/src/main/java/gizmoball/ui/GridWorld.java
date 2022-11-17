@@ -1,11 +1,12 @@
 package gizmoball.ui;
 
+import gizmoball.game.GizmoWorld;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.World;
+import gizmoball.ui.component.GizmoType;
 import gizmoball.ui.file.PersistentUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +19,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gizmoball.engine.Settings.BOUNDARY_BUFFER;
+import static gizmoball.game.GizmoSettings.BOUNDARY_BUFFER;
 
 
 @Getter
 @Slf4j
-public class GridWorld extends World {
+public class GridWorld extends GizmoWorld {
 
 
     /**
@@ -184,16 +185,18 @@ public class GridWorld extends World {
     public String snapshot(File file) {
         try {
             log.info("保存快照中...");
-            List<PhysicsBody> bodies = new ArrayList<>();
+            List<PhysicsBody> bodiesToJson = new ArrayList<>();
             final int borderCount = 4;
-            bodies.addAll(obstacles.stream().skip(borderCount) // 跳过边界
-                    .collect(Collectors.toList()));
-            bodies.addAll(balls);
-            bodies.addAll(blackHoles);
-            bodies.addAll(pipes);
-            bodies.addAll(flippers);
+            bodies.forEach((k, v) -> {
+                if (k == GizmoType.OBSTACLE) {
+                    bodiesToJson.addAll(v.stream().skip(borderCount) // 跳过边界
+                            .collect(Collectors.toList()));
+                } else {
+                    bodiesToJson.addAll(v);
+                }
+            });
 
-            snapshot = PersistentUtil.toJsonString(bodies);
+            snapshot = PersistentUtil.toJsonString(bodiesToJson);
             log.debug("take snapshot: {}", snapshot);
 
             PersistentUtil.write(snapshot, file);
@@ -220,11 +223,7 @@ public class GridWorld extends World {
         try {
             log.info("恢复快照中...");
             List<PhysicsBody> o = PersistentUtil.fromJsonString(snapshot);
-            this.obstacles.clear();
-            this.balls.clear();
-            this.blackHoles.clear();
-            this.pipes.clear();
-            this.flippers.clear();
+            removeAllBodies();
             //其他四个列表也要清空
             for (PhysicsBody[] gizmoGridBody : this.gizmoGridBodies) {
                 Arrays.fill(gizmoGridBody, null);

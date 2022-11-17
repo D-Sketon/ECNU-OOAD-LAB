@@ -3,7 +3,7 @@ package gizmoball.ui.component;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Flipper;
+import gizmoball.game.entity.Flipper;
 import gizmoball.ui.GeometryUtil;
 import gizmoball.ui.GridWorld;
 import lombok.extern.slf4j.Slf4j;

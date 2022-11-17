@@ -2,6 +2,7 @@ package gizmoball.ui.component;
 
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.ui.component.DraggableGizmoComponent;
 import gizmoball.ui.visualize.CanvasRenderer;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.ImageRenderer;
@@ -33,7 +34,7 @@ public enum GizmoType {
 
     RIGHT_FLIPPER("gizmo/rightFlipper", DraggableGizmoComponent.rightFlipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
-    ;
+    OBSTACLE(null, null, null);
 
     private final String id;
 

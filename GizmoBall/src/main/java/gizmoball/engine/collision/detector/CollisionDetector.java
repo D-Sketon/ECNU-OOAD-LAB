@@ -5,7 +5,7 @@ import gizmoball.engine.collision.contact.SequentialImpulses;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.filter.CollisionFilter;
+import gizmoball.engine.collision.CollisionFilter;
 import javafx.util.Pair;
 
 import java.util.List;

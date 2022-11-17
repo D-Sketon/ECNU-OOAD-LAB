@@ -9,7 +9,7 @@ import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.filter.CollisionFilter;
+import gizmoball.engine.collision.CollisionFilter;
 import javafx.util.Pair;
 
 import java.util.ArrayList;

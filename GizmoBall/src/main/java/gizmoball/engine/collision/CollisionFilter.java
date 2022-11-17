@@ -1,4 +1,4 @@
-package gizmoball.engine.world.filter;
+package gizmoball.engine.collision;
 
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.shape.AbstractShape;

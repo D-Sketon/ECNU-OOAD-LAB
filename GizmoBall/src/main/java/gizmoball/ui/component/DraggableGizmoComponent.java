@@ -16,6 +16,8 @@ import lombok.Setter;
 
 import java.util.function.Function;
 
+import static gizmoball.engine.Settings.BLACK_HOLE_BIAS;
+
 @Getter
 @Setter
 public class DraggableGizmoComponent extends ImageLabelComponent {
@@ -42,7 +44,7 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, ImagePhysicsBody> blackHoleBodyCreator = (preferredSize) -> {
-        BlackHole blackhole = new BlackHole(preferredSize.x / 2.0);
+        BlackHole blackhole = new BlackHole(preferredSize.x / 2.0 - BLACK_HOLE_BIAS);
         ImagePhysicsBody imagePhysicsBody = new ImagePhysicsBody(blackhole);
         imagePhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         return imagePhysicsBody;

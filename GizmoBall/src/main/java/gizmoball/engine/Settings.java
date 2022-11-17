@@ -6,7 +6,7 @@ public class Settings {
     /**
      * 黑洞缩小系数
      */
-    public static final int BLACK_HOLE_BIAS = 3;
+    public static final double BLACK_HOLE_BIAS = 0.5;
 
     /**
      * 边界四角缓冲

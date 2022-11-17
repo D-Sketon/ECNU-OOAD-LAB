@@ -39,7 +39,7 @@ public class SVGRenderer implements CanvasRenderer {
             affine.appendRotation(transform.getAngle(), transform.x, transform.y); // TODO center
             affine.appendTranslation(transform.getX() - shapeWidth / 2,
                     transform.getY() - shapeHeight / 2 + shapeHeight); // +shapeHeight为了处理图片上下翻转
-            affine.appendScale(shape.getRate() * SCALE_RATE, -shape.getRate() * SCALE_RATE);
+            affine.appendScale(shapeHeight / 1024, -shapeWidth / 1024);
             gc.transform(affine);
 
             gc.beginPath();

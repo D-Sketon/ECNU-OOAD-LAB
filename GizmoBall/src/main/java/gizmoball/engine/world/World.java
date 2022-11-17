@@ -89,13 +89,19 @@ public class World {
 
     public void addBodies(PhysicsBody body) {
         if (body.getShape() instanceof Flipper) {
-            flippers.add(body);
             Flipper shape = (Flipper) body.getShape();
             if (shape.getDirection() == Flipper.Direction.LEFT) {
+//                if(leftFlipper != null){
+//                    return;
+//                }
                 leftFlipper = body;
             } else {
+//                if(rightFlipper != null){
+//                    return;
+//                }
                 rightFlipper = body;
             }
+            flippers.add(body);
         } else if (body.getShape() instanceof Ball) {
             this.balls.add(body);
         } else if (body.getShape() instanceof BlackHole) {

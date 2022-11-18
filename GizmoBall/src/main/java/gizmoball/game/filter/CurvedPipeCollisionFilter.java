@@ -1,16 +1,17 @@
-package gizmoball.engine.world.filter;
+package gizmoball.game.filter;
 
+import gizmoball.engine.collision.CollisionFilter;
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.CurvedPipe;
+import gizmoball.game.entity.Ball;
+import gizmoball.game.entity.CurvedPipe;
 import lombok.AllArgsConstructor;
 
-import static gizmoball.engine.Settings.PIPE_PIERCE_BIAS;
+import static gizmoball.game.GizmoSettings.PIPE_PIERCE_BIAS;
 
 @AllArgsConstructor
 public class CurvedPipeCollisionFilter implements CollisionFilter {

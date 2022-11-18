@@ -1,22 +1,22 @@
-package gizmoball.engine.world.entity;
+package gizmoball.game.entity;
 
 import gizmoball.engine.geometry.Transform;
 import gizmoball.engine.geometry.shape.Circle;
 
-public class Ball extends Circle {
+public class BlackHole extends Circle {
 
     /**
      * 反序列化用
      */
     @Deprecated
-    public Ball() {
+    public BlackHole() {
     }
 
-    public Ball(double radius) {
+    public BlackHole(double radius) {
         super(radius);
     }
 
-    public Ball(double radius, Transform transform) {
+    public BlackHole(double radius, Transform transform) {
         super(radius, transform);
     }
 }

@@ -1,14 +1,15 @@
-package gizmoball.engine.world.filter;
+package gizmoball.game.filter;
 
+import gizmoball.engine.collision.CollisionFilter;
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.Epsilon;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Pipe;
+import gizmoball.game.entity.Ball;
+import gizmoball.game.entity.Pipe;
 
-import static gizmoball.engine.Settings.PIPE_PIERCE_BIAS;
+import static gizmoball.game.GizmoSettings.PIPE_PIERCE_BIAS;
 
 public class PipeCollisionFilter implements CollisionFilter {
 

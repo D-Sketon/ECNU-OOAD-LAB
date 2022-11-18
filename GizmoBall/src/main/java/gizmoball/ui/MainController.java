@@ -7,12 +7,13 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.World;
-import gizmoball.engine.world.entity.Ball;
-import gizmoball.engine.world.entity.Flipper;
+import gizmoball.engine.AbstractWorld;
+import gizmoball.ui.component.GizmoType;
+import gizmoball.game.entity.Ball;
+import gizmoball.game.entity.Flipper;
 import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
-import gizmoball.ui.visualize.ImagePhysicsBody;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -99,7 +100,7 @@ public class MainController extends Application implements Initializable {
     /**
      * 当前选中的组件
      */
-    private PhysicsBody selectedBody;
+    private GizmoPhysicsBody selectedBody;
 
     private GizmoOpHandler gizmoOpHandler;
 
@@ -157,7 +158,7 @@ public class MainController extends Application implements Initializable {
     private void initGizmoGridPane() {
         for (int i = 0; i < gizmos.length; i++) {
             DraggableGizmoComponent gizmo = gizmos[i];
-            gizmoGridPane.add(gizmo.createVBox(), i % 3, i / 3);
+            gizmoGridPane.add(gizmo.createVBox(), i % 3, i / 3); // 3行3列
             // 添加拖拽事件监听器
             // 拖拽传参为gizmo的类型
             int finalI = i;
@@ -243,6 +244,7 @@ public class MainController extends Application implements Initializable {
                 world.restore();
             } catch (RuntimeException e) {
                 Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
+                log.error("恢复游戏失败: {}", e.getMessage());
             }
             drawGizmo(gizmoCanvas.getGraphicsContext2D());
         });
@@ -291,7 +293,7 @@ public class MainController extends Application implements Initializable {
     private void initWorld() {
         double worldWidth = gizmoCanvas.getWidth();
         double worldHeight = gizmoCanvas.getHeight();
-        world = new GridWorld(World.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
+        world = new GridWorld(AbstractWorld.EARTH_GRAVITY, (int) worldWidth, (int) worldHeight, 30);
         preferredSize = new Vector2(world.getGridSize(), world.getGridSize());
         gizmoOpHandler = new GizmoOpHandler(world);
     }
@@ -468,7 +470,7 @@ public class MainController extends Application implements Initializable {
             // 对齐到网格
             Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
             transformedCenter.add(snapped);
-            PhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
+            GizmoPhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {
@@ -506,10 +508,10 @@ public class MainController extends Application implements Initializable {
         clearCanvas(gc);
         drawGrid(gc);
 
-        List<PhysicsBody> bodies = world.getBodies();
-        for (PhysicsBody physicsBody : bodies) {
-            if (physicsBody instanceof ImagePhysicsBody) {
-                ((ImagePhysicsBody) physicsBody).drawToCanvas(gc);
+        List<GizmoPhysicsBody> bodies = world.getBodies();
+        for (GizmoPhysicsBody physicsBody : bodies) {
+            if (physicsBody instanceof GizmoPhysicsBody) {
+                physicsBody.drawToCanvas(gc);
                 if (isDebugMode) {
                     if(physicsBody.getShape() instanceof Ball) {
                         Vector2 linearVelocity = physicsBody.getLinearVelocity().copy();

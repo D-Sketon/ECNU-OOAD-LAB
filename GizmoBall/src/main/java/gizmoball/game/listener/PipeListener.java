@@ -1,12 +1,12 @@
-package gizmoball.engine.world.listener;
+package gizmoball.game.listener;
 
 import gizmoball.engine.collision.detector.BasicCollisionDetector;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.filter.CollisionFilter;
-import gizmoball.engine.world.filter.CurvedPipeCollisionFilter;
-import gizmoball.engine.world.filter.PipeCollisionFilter;
+import gizmoball.engine.collision.CollisionFilter;
+import gizmoball.game.filter.CurvedPipeCollisionFilter;
+import gizmoball.game.filter.PipeCollisionFilter;
 import javafx.util.Pair;
 
 import java.util.ArrayList;

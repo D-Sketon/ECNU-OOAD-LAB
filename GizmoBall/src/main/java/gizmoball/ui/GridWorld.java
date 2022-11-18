@@ -1,12 +1,14 @@
 package gizmoball.ui;
 
+import gizmoball.game.GizmoWorld;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.world.World;
+import gizmoball.ui.component.GizmoType;
 import gizmoball.ui.file.PersistentUtil;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.util.Precision;
@@ -16,14 +18,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-import static gizmoball.engine.Settings.BOUNDARY_BUFFER;
+import static gizmoball.game.GizmoSettings.BOUNDARY_BUFFER;
 
 
 @Getter
 @Slf4j
-public class GridWorld extends World {
+public class GridWorld extends GizmoWorld {
 
 
     /**
@@ -34,7 +36,7 @@ public class GridWorld extends World {
     /**
      * 每个网格中对应的PhysicsBody，一个body（包括三角，圆等）视为占满完整的一格
      */
-    protected PhysicsBody[][] gizmoGridBodies;
+    protected GizmoPhysicsBody[][] gizmoGridBodies;
 
     protected int gridSize;
 
@@ -50,7 +52,7 @@ public class GridWorld extends World {
         super(gravity);
         this.gridSize = gridSize;
         boundaryAABB = new AABB(0, 0, width, height);
-        gizmoGridBodies = new PhysicsBody[(int) (width / gridSize)][(int) (height / gridSize)];
+        gizmoGridBodies = new GizmoPhysicsBody[(int) (width / gridSize)][(int) (height / gridSize)];
         initBoundary();
     }
 
@@ -82,7 +84,7 @@ public class GridWorld extends World {
         return getGridIndex(position.x, position.y);
     }
 
-    public void setGrid(AABB aabb, PhysicsBody body) {
+    public void setGrid(AABB aabb, GizmoPhysicsBody body) {
         int[] bottomLeft = getGridIndex(aabb.getMinX(), aabb.getMinY());
         int width = (int) Math.ceil((aabb.getMaxX() - aabb.getMinX()) / gridSize);
         int height = (int) Math.ceil((aabb.getMaxY() - aabb.getMinY()) / gridSize);
@@ -141,26 +143,46 @@ public class GridWorld extends World {
         Rectangle rectangle = new Rectangle(halfWidth, halfHeight);
         rectangle.getTransform().setX(x);
         rectangle.getTransform().setY(y);
-        PhysicsBody border = new PhysicsBody(rectangle);
+        GizmoPhysicsBody border = new GizmoPhysicsBody(rectangle, GizmoType.BOUNDARY);
         border.setMass(new Mass(new Vector2(), 0.0, 0.0));
         border.setRestitution(0.95);
         border.setFriction(0.5);
-        addBodies(border);
+        // 不放入格子
+        super.addBody(border);
     }
 
-    public void addBodyToGrid(PhysicsBody body) throws IllegalArgumentException {
+
+
+    public void addBodyToGrid(PhysicsBody body) {
+        if (body instanceof GizmoPhysicsBody) {
+            this.addBody((GizmoPhysicsBody) body);
+        }
+    }
+
+    @Override
+    public void addBody(GizmoPhysicsBody body) {
         AABB aabb = body.getShape().createAABB();
         GeometryUtil.padToSquare(aabb);
         if (checkOverlay(aabb, body)) {
             throw new IllegalArgumentException("物件重叠");
         }
-        super.addBodies(body);
+
+        super.addBody(body);
         setGrid(aabb, body);
     }
 
-    public void setBodiesToGrid(List<PhysicsBody> bodies) {
-        for (PhysicsBody body : bodies) {
-            addBodyToGrid(body);
+    @Override
+    public void removeBodies(GizmoPhysicsBody body) {
+        super.removeBodies(body);
+    }
+
+    @Override
+    public void removeAllBodies() {
+        super.removeAllBodies();
+
+        // 从格子中移除
+        for (GizmoPhysicsBody[] gizmoGridBody : this.gizmoGridBodies) {
+            Arrays.fill(gizmoGridBody, null);
         }
     }
 
@@ -184,20 +206,18 @@ public class GridWorld extends World {
     public String snapshot(File file) {
         try {
             log.info("保存快照中...");
-            List<PhysicsBody> bodies = new ArrayList<>();
-            final int borderCount = 4;
-            bodies.addAll(obstacles.stream().skip(borderCount) // 跳过边界
-                    .collect(Collectors.toList()));
-            bodies.addAll(balls);
-            bodies.addAll(blackHoles);
-            bodies.addAll(pipes);
-            bodies.addAll(flippers);
+            List<PhysicsBody> bodiesToJson = new ArrayList<>();
+            bodyTypeMap.forEach((k, v) -> {
+                if (k != GizmoType.BOUNDARY) {
+                    bodiesToJson.addAll(v);
+                }
+            });
 
-            snapshot = PersistentUtil.toJsonString(bodies);
+            snapshot = PersistentUtil.toJsonString(bodiesToJson);
             log.debug("take snapshot: {}", snapshot);
 
             PersistentUtil.write(snapshot, file);
-            log.info("已保存{}个物体的快照", bodies.size());
+            log.info("已保存{}个物体的快照", bodiesToJson.size());
         } catch (Exception e) {
             log.error("snapshot error", e);
         }
@@ -219,18 +239,12 @@ public class GridWorld extends World {
     public void restore(String snapshot) throws RuntimeException {
         try {
             log.info("恢复快照中...");
+
             List<PhysicsBody> o = PersistentUtil.fromJsonString(snapshot);
-            this.obstacles.clear();
-            this.balls.clear();
-            this.blackHoles.clear();
-            this.pipes.clear();
-            this.flippers.clear();
-            //其他四个列表也要清空
-            for (PhysicsBody[] gizmoGridBody : this.gizmoGridBodies) {
-                Arrays.fill(gizmoGridBody, null);
-            }
+            removeAllBodies();
             initBoundary();
-            setBodiesToGrid(o);
+            o.forEach(this::addBodyToGrid);
+
             log.info("成功加载{}个物体", o.size());
         } catch (IOException e) {
             log.error("restore error", e);

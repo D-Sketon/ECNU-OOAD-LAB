@@ -1,4 +1,4 @@
-package gizmoball.engine.world.listener;
+package gizmoball.game.listener;
 
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.physics.PhysicsBody;

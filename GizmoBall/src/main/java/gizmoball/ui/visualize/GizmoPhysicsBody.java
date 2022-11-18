@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ImagePhysicsBody extends PhysicsBody implements CanvasRenderer {
+public class GizmoPhysicsBody extends PhysicsBody implements CanvasRenderer {
 
     private GizmoType gizmoType;
 
@@ -17,15 +17,15 @@ public class ImagePhysicsBody extends PhysicsBody implements CanvasRenderer {
      * 反序列化用
      */
     @Deprecated
-    public ImagePhysicsBody() {
+    public GizmoPhysicsBody() {
         super();
     }
 
-    public ImagePhysicsBody(AbstractShape shape) {
+    public GizmoPhysicsBody(AbstractShape shape) {
         super(shape);
     }
 
-    public ImagePhysicsBody(AbstractShape shape, GizmoType gizmoType) {
+    public GizmoPhysicsBody(AbstractShape shape, GizmoType gizmoType) {
         super(shape);
         this.gizmoType = gizmoType;
     }

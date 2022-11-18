@@ -33,7 +33,7 @@ public enum GizmoType {
 
     RIGHT_FLIPPER("gizmo/rightFlipper", DraggableGizmoComponent.rightFlipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
-    ;
+    BOUNDARY("gizmo/boundary", null, CanvasRenderer.DO_NOT_RENDER);
 
     private final String id;
 

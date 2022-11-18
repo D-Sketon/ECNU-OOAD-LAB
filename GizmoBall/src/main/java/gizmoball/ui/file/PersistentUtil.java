@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.ui.visualize.GizmoPhysicsBody;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
@@ -13,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
@@ -26,6 +28,9 @@ public class PersistentUtil {
         mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE);
     }
 
+    /**
+     * 包装List&lt;PhysicsBody&rt;，否则直接反序列化List不会包含PhysicsBody的class信息
+     */
     private static class Wrapper {
         List<PhysicsBody> bodies;
     }
@@ -55,11 +60,11 @@ public class PersistentUtil {
     }
 
     public static String readFromFile(String path) throws IOException {
-        return IOUtils.toString(new FileInputStream(path), "UTF-8");
+        return IOUtils.toString(Files.newInputStream(Paths.get(path)), "UTF-8");
     }
 
     public static String readFromFile(File file) throws IOException {
-        return IOUtils.toString(new FileInputStream(file), "UTF-8");
+        return IOUtils.toString(Files.newInputStream(file.toPath()), "UTF-8");
     }
 
 }

@@ -1,5 +1,6 @@
 package gizmoball.ui;
 
+import gizmoball.engine.AbstractWorld;
 import gizmoball.engine.Settings;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Transform;
@@ -7,8 +8,6 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.geometry.shape.Polygon;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.AbstractWorld;
-import gizmoball.ui.component.GizmoType;
 import gizmoball.game.entity.Ball;
 import gizmoball.game.entity.Flipper;
 import gizmoball.ui.component.*;
@@ -181,23 +180,27 @@ public class MainController extends Application implements Initializable {
         for (CommandComponent gizmoOp : gizmoOps) {
             gizmoOp.createVBox().setMaxWidth(70);
             gizmoOp.getImageWrapper().setOnMouseClicked(event -> {
-                if (selectedBody == null || !inDesign) {
-                    return;
-                }
-                try {
-                    boolean success = gizmoOpHandler.handleCommand(gizmoOp.getGizmoCommand(), selectedBody);
-                    if (success) {
-                        if (gizmoOp.getGizmoCommand() == GizmoCommand.REMOVE) {
-                            selectedBody = null;
-                        }
-                        highlightSelectedBody();
-                        drawGizmo(gizmoCanvas.getGraphicsContext2D());
-                    }
-                } catch (Exception e) {
-                    Toast.makeText(primaryStage, "操作物件失败: " + e.getMessage(), 2000, 500, 500);
-                    log.error("操作物件失败: {}", e.getMessage());
-                }
+                bindGizmoOp(gizmoOp.getGizmoCommand());
             });
+        }
+    }
+
+    private void bindGizmoOp(GizmoCommand command) {
+        if (selectedBody == null || !inDesign) {
+            return;
+        }
+        try {
+            boolean success = gizmoOpHandler.handleCommand(command, selectedBody);
+            if (success) {
+                if (command == GizmoCommand.REMOVE) {
+                    selectedBody = null;
+                }
+                highlightSelectedBody();
+                drawGizmo(gizmoCanvas.getGraphicsContext2D());
+            }
+        } catch (Exception e) {
+            Toast.makeText(primaryStage, "操作物件失败: " + e.getMessage(), 2000, 500, 500);
+            log.error("操作物件失败: {}", e.getMessage());
         }
     }
 
@@ -314,7 +317,7 @@ public class MainController extends Application implements Initializable {
                     world.restore(file);
                     drawGizmo(gizmoCanvas.getGraphicsContext2D());
                 } catch (Exception e) {
-                    Toast.makeText(primaryStage, "加载文件失败: " + e.getMessage(), 2000, 500, 500);
+                    Toast.makeText(primaryStage, "加载文件失败: " + e.getMessage(), 1500, 200, 200);
                     log.error("加载文件失败: {}", e.getMessage());
                 }
             }
@@ -330,7 +333,7 @@ public class MainController extends Application implements Initializable {
                 try {
                     world.snapshot(file);
                 } catch (Exception e) {
-                    Toast.makeText(primaryStage, "保存文件失败: " + e.getMessage(), 2000, 500, 500);
+                    Toast.makeText(primaryStage, "保存文件失败: " + e.getMessage(), 1500, 200, 200);
                     log.error("保存文件失败: {}", e.getMessage());
                 }
             }
@@ -361,6 +364,27 @@ public class MainController extends Application implements Initializable {
                 case F1:
                     isDebugMode = !isDebugMode;
                     break;
+                case DELETE:
+                    bindGizmoOp(GizmoCommand.REMOVE);
+                    break;
+                case W:
+                    bindGizmoOp(GizmoCommand.MOVE_UP);
+                    break;
+                case A:
+                    bindGizmoOp(GizmoCommand.MOVE_LEFT);
+                    break;
+                case S:
+                    bindGizmoOp(GizmoCommand.MOVE_DOWN);
+                    break;
+                case D:
+                    bindGizmoOp(GizmoCommand.MOVE_RIGHT);
+                    break;
+                case SHIFT:
+                    bindGizmoOp(GizmoCommand.ROTATE_LEFT);
+                    break;
+                case CONTROL:
+                    bindGizmoOp(GizmoCommand.ROTATE_RIGHT);
+                    break;
             }
         });
 
@@ -372,6 +396,15 @@ public class MainController extends Application implements Initializable {
                 case RIGHT:
                     world.flipperDown(Flipper.Direction.RIGHT);
                     break;
+            }
+        });
+
+        anchorPane.setOnScroll(event -> {
+            double deltaY = event.getDeltaY();
+            if (deltaY > 0) {
+                bindGizmoOp(GizmoCommand.ZOOM_OUT);
+            } else if (deltaY < 0) {
+                bindGizmoOp(GizmoCommand.ZOOM_IN);
             }
         });
     }
@@ -474,7 +507,7 @@ public class MainController extends Application implements Initializable {
             try {
                 gizmoOpHandler.addGizmo(physicsBody);
             } catch (Exception e) {
-                Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
+                Toast.makeText(primaryStage, e.getMessage(), 1500, 200, 200);
             }
 
             drawGizmo(gc);
@@ -513,18 +546,18 @@ public class MainController extends Application implements Initializable {
             if (physicsBody instanceof GizmoPhysicsBody) {
                 physicsBody.drawToCanvas(gc);
                 if (isDebugMode) {
-                    if(physicsBody.getShape() instanceof Ball) {
+                    if (physicsBody.getShape() instanceof Ball) {
                         Vector2 linearVelocity = physicsBody.getLinearVelocity().copy();
                         Vector2 normalized = linearVelocity.copy().right().getNormalized();
-                        double angularVelocity = physicsBody.getAngularVelocity()*20;
+                        double angularVelocity = physicsBody.getAngularVelocity() * 20;
                         Transform transform = physicsBody.getShape().getTransform();
                         gc.setStroke(Color.GREEN);
                         gc.strokeLine(transform.x, transform.y, transform.x + linearVelocity.x, transform.y + linearVelocity.y);
                         gc.setStroke(Color.RED);
-                        gc.strokeLine(transform.x, transform.y, transform.x + normalized.x * angularVelocity, transform.y +  normalized.y * angularVelocity);
+                        gc.strokeLine(transform.x, transform.y, transform.x + normalized.x * angularVelocity, transform.y + normalized.y * angularVelocity);
                     } else {
                         AbstractShape shape = physicsBody.getShape();
-                        if(shape instanceof Polygon) {
+                        if (shape instanceof Polygon) {
                             Polygon shape1 = (Polygon) shape;
                             Vector2[] normals = shape1.getNormals();
                             Transform transform = physicsBody.getShape().getTransform();
@@ -532,7 +565,7 @@ public class MainController extends Application implements Initializable {
                                 Vector2 multiply = normal.copy().multiply(30);
                                 Vector2 transformed = transform.getTransformed(multiply);
                                 gc.setStroke(Color.YELLOW);
-                                gc.strokeLine(transform.x,transform.y,transformed.x,transformed.y);
+                                gc.strokeLine(transform.x, transform.y, transformed.x, transformed.y);
                             }
                         }
                     }

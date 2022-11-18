@@ -34,7 +34,7 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
 
 
     protected static final Function<Vector2, GizmoPhysicsBody> circleBodyCreator = (preferredSize) -> {
-        Circle circle = new Circle(preferredSize.x / 2.0);
+        ObstacleCircle circle = new ObstacleCircle(preferredSize.x / 2.0);
         GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(circle);
         gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         gizmoPhysicsBody.setRestitution(0.95);
@@ -51,7 +51,7 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
     };
 
     protected static final Function<Vector2, GizmoPhysicsBody> rectangleBodyCreator = (preferredSize) -> {
-        Rectangle rectangle = new Rectangle(preferredSize.x / 2.0, preferredSize.y / 2.0);
+        ObstacleRectangle rectangle = new ObstacleRectangle(preferredSize.x / 2.0, preferredSize.y / 2.0);
         GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(rectangle);
         gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         gizmoPhysicsBody.setRestitution(0.95);
@@ -84,7 +84,7 @@ public class DraggableGizmoComponent extends ImageLabelComponent {
                 new Vector2(preferredSize.x / 2.0, -preferredSize.y / 2.0),
                 new Vector2(-preferredSize.x / 2.0, preferredSize.y / 2.0)
         };
-        Triangle triangle = new Triangle(vertices);
+        ObstacleTriangle triangle = new ObstacleTriangle(vertices);
         GizmoPhysicsBody gizmoPhysicsBody = new GizmoPhysicsBody(triangle);
         gizmoPhysicsBody.setMass(new Mass(new Vector2(), 0.0, 0.0));
         gizmoPhysicsBody.setRestitution(0.95);

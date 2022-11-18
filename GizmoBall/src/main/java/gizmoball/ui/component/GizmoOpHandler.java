@@ -19,14 +19,8 @@ public class GizmoOpHandler {
 
     private final HashMap<GizmoCommand, Function<GizmoPhysicsBody, Boolean>> gizmoOps;
 
-    private boolean hasLeftFlipper;
-
-    private boolean hasRightFlipper;
-
     public GizmoOpHandler(GridWorld world) {
         this.world = world;
-        this.hasLeftFlipper = false;
-        this.hasRightFlipper = false;
         gizmoOps = new HashMap<>();
         gizmoOps.put(GizmoCommand.ADD, this::addGizmo);
         gizmoOps.put(GizmoCommand.REMOVE, this::removeGizmo);
@@ -62,20 +56,6 @@ public class GizmoOpHandler {
      * @param gizmoBody /
      */
     public boolean addGizmo(GizmoPhysicsBody gizmoBody) {
-        if(gizmoBody.getShape() instanceof Flipper){
-            Flipper flipper = (Flipper) gizmoBody.getShape();
-            if(flipper.getDirection() == Flipper.Direction.LEFT){
-                if(hasLeftFlipper){
-                    throw new IllegalArgumentException("左挡板只能为一个");
-                }
-                hasLeftFlipper = true;
-            } else {
-                if(hasRightFlipper){
-                    throw new IllegalArgumentException("右挡板只能为一个");
-                }
-                hasRightFlipper = true;
-            }
-        }
         world.addBodyToGrid(gizmoBody);
         return true;
     }
@@ -83,14 +63,6 @@ public class GizmoOpHandler {
     public boolean removeGizmo(GizmoPhysicsBody gizmoBody) {
         if (!world.getBodies().contains(gizmoBody)) {
             throw new IllegalArgumentException("物件不存在");
-        }
-        if(gizmoBody.getShape() instanceof Flipper){
-            Flipper flipper = (Flipper) gizmoBody.getShape();
-            if(flipper.getDirection() == Flipper.Direction.LEFT){
-                hasLeftFlipper = false;
-            } else {
-                hasRightFlipper = false;
-            }
         }
         world.removeBodies(gizmoBody);
         AABB aabb = gizmoBody.getShape().createAABB();

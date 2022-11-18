@@ -79,6 +79,9 @@ public class MainController extends Application implements Initializable {
     MenuItem menuItemSave;
 
     @FXML
+    MenuItem menuItemClear;
+
+    @FXML
     ImageView previewImageView;
 
     @FXML
@@ -351,6 +354,15 @@ public class MainController extends Application implements Initializable {
                     Toast.makeText(primaryStage, "保存文件失败: " + e.getMessage(), 1500, 200, 200);
                     log.error("保存文件失败: {}", e.getMessage());
                 }
+            }
+        });
+
+        menuItemClear.setOnAction(event -> {
+            //判断处于设计模式
+            if(inDesign){
+                world.removeAllBodies();
+                world.initBoundary();
+                drawGizmo(gizmoCanvas.getGraphicsContext2D());
             }
         });
     }

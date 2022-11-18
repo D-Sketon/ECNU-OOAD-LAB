@@ -14,16 +14,20 @@ import gizmoball.ui.component.*;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
 import gizmoball.ui.visualize.GizmoPhysicsBody;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
@@ -32,6 +36,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -39,6 +44,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -80,6 +86,9 @@ public class MainController extends Application implements Initializable {
 
     @FXML
     MenuItem menuItemClear;
+
+    @FXML
+    MenuItem menuItemAbout;
 
     @FXML
     ImageView previewImageView;
@@ -359,11 +368,68 @@ public class MainController extends Application implements Initializable {
 
         menuItemClear.setOnAction(event -> {
             //判断处于设计模式
-            if(inDesign){
+            if (inDesign) {
                 world.removeAllBodies();
                 world.initBoundary();
                 drawGizmo(gizmoCanvas.getGraphicsContext2D());
             }
+        });
+
+        menuItemAbout.setOnAction(event -> {
+            if (!inDesign) {
+                return;
+            }
+            Dialog<Pair<String, String>> dialog = new Dialog<>();
+            dialog.setTitle("About");
+            Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(new Image("icons/ball.png"));
+
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new Insets(10, 10, 10, 10));
+
+            Label content0 = new Label("ECNU OOAD Lab3 Group 07");
+            Label content1 = new Label("Gizmo Ball powered by Javafx");
+
+            Label githubRepository = new Label("Github repository:");
+            Hyperlink repository = new Hyperlink("https://github.com/D-Sketon/ECNU-OOAD-LAB");
+            repository.setOnAction(e -> {
+                HostServices hostServices =MainController.this.getHostServices();
+                hostServices.showDocument(repository.getText());
+            });
+            Label author = new Label("Author:");
+
+            Hyperlink author0 = new Hyperlink("D-Sketon");
+            author0.setOnAction(e -> {
+                HostServices hostServices =MainController.this.getHostServices();
+                hostServices.showDocument("https://github.com/D-Sketon");
+            });
+
+            Hyperlink author1 = new Hyperlink("Uzemiu");
+            author1.setOnAction(e -> {
+                HostServices hostServices =MainController.this.getHostServices();
+                hostServices.showDocument("https://github.com/Uzemiu");
+            });
+
+            Hyperlink author2 = new Hyperlink("re20051");
+            author2.setOnAction(e -> {
+                HostServices hostServices =MainController.this.getHostServices();
+                hostServices.showDocument("https://github.com/re20051");
+            });
+            grid.add(content0,1,0);
+            grid.add(content1,1,2);
+            grid.add(githubRepository,0,3);
+            grid.add(repository,1,3);
+            grid.add(author,0,4);
+            grid.add(author0,1,4);
+            grid.add(author1,1,5);
+            grid.add(author2,1,6);
+            dialog.getDialogPane().setContent(grid);
+
+            dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);
+            dialog.showAndWait();
+
         });
     }
 

@@ -112,6 +112,15 @@ public class MainController extends Application implements Initializable {
 
     private Stage primaryStage;
 
+    /**
+     * 线程相关
+     */
+    private final ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+
+    private final ScheduledFuture<?>[] scheduledFuture = new ScheduledFuture<?>[1];
+
+    private Runnable r;
+
     private static final DraggableGizmoComponent[] gizmos = {
             new DraggableGizmoComponent("icons/rectangle.png", "rectangle", GizmoType.RECTANGLE),
             new DraggableGizmoComponent("icons/circle.png", "circle", GizmoType.CIRCLE),
@@ -152,6 +161,7 @@ public class MainController extends Application implements Initializable {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         this.primaryStage = primaryStage;
+        root.requestFocus();
     }
 
     private void initGizmoGridPane() {
@@ -205,8 +215,7 @@ public class MainController extends Application implements Initializable {
     }
 
     private void initGameOpHBox() {
-        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        Runnable r = () -> {
+        r = () -> {
             try {
                 world.tick();
                 Platform.runLater(() -> drawGizmo(gizmoCanvas.getGraphicsContext2D()));
@@ -216,41 +225,48 @@ public class MainController extends Application implements Initializable {
         };
 
         // 开始游戏
-        final ScheduledFuture<?>[] scheduledFuture = new ScheduledFuture<?>[1];
         ImageLabelComponent play = gameOps[0];
         play.createVBox();
         play.getImageWrapper().setOnMouseClicked(event -> {
-            if (!inDesign) {
-                return;
-            }
-            selectedBody = null;
-            highlightSelectedBody();
-            inDesign = false;
-            world.snapshot();
-            scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / Settings.TICKS_PER_SECOND),
-                    TimeUnit.MILLISECONDS);
+            startGame();
         });
 
         // 暂停游戏（设计模式）
         ImageLabelComponent design = gameOps[1];
         design.createVBox();
         design.getImageWrapper().setOnMouseClicked(event -> {
-            if (inDesign) {
-                return;
-            }
-            selectedBody = null;
-            highlightSelectedBody();
-            inDesign = true;
-            scheduledFuture[0].cancel(true);
-
-            try {
-                world.restore();
-            } catch (RuntimeException e) {
-                Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
-                log.error("恢复游戏失败: {}", e.getMessage());
-            }
-            drawGizmo(gizmoCanvas.getGraphicsContext2D());
+            designGame();
         });
+    }
+
+    private void startGame() {
+        if (!inDesign) {
+            return;
+        }
+        selectedBody = null;
+        highlightSelectedBody();
+        inDesign = false;
+        world.snapshot();
+        scheduledFuture[0] = scheduledExecutorService.scheduleAtFixedRate(r, 0, (long) (1000.0 / Settings.TICKS_PER_SECOND),
+                TimeUnit.MILLISECONDS);
+    }
+
+    private void designGame() {
+        if (inDesign) {
+            return;
+        }
+        selectedBody = null;
+        highlightSelectedBody();
+        inDesign = true;
+        scheduledFuture[0].cancel(true);
+
+        try {
+            world.restore();
+        } catch (RuntimeException e) {
+            Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
+            log.error("恢复游戏失败: {}", e.getMessage());
+        }
+        drawGizmo(gizmoCanvas.getGraphicsContext2D());
     }
 
     /**
@@ -287,7 +303,6 @@ public class MainController extends Application implements Initializable {
         lowerHBox.getChildren().add(borderPane);
 
         lowerHBox.getChildren().add(gameOps[1].getVBox());
-
     }
 
     /**
@@ -352,7 +367,6 @@ public class MainController extends Application implements Initializable {
         anchorPane.setOnMouseClicked(event -> {
             gizmoCanvas.requestFocus();
         });
-
         anchorPane.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case LEFT:
@@ -384,6 +398,13 @@ public class MainController extends Application implements Initializable {
                     break;
                 case CONTROL:
                     bindGizmoOp(GizmoCommand.ROTATE_RIGHT);
+                    break;
+                case ENTER:
+                    if (inDesign) {
+                        startGame();
+                    } else {
+                        designGame();
+                    }
                     break;
             }
         });

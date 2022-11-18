@@ -4,7 +4,6 @@ import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
 import gizmoball.ui.visualize.CanvasRenderer;
 import gizmoball.ui.visualize.DefaultCanvasRenderer;
-import gizmoball.ui.visualize.ImageRenderer;
 import gizmoball.ui.visualize.SVGRenderer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,9 +24,9 @@ public enum GizmoType {
 
     TRIANGLE("gizmo/triangle", DraggableGizmoComponent.triangleBodyCreator, DefaultCanvasRenderer.INSTANCE),
 
-    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new ImageRenderer("icons/pipe.png")),
+    PIPE("gizmo/pipe", DraggableGizmoComponent.pipeBodyCreator, new SVGRenderer("icons/pipe.svg")),
 
-    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new ImageRenderer("icons/curved_pipe.png")),
+    CURVED_PIPE("gizmo/curvedPipe", DraggableGizmoComponent.curvedPipeBodyCreator, new SVGRenderer("icons/curved_pipe.svg")),
 
     LEFT_FLIPPER("gizmo/leftFlipper", DraggableGizmoComponent.leftFlipperBodyCreator, DefaultCanvasRenderer.INSTANCE),
 

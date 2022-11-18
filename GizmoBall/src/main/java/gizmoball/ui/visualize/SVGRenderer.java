@@ -8,7 +8,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.transform.Affine;
 
 /**
- * <p><b>仅支持iconfont下载下来的svg</b></p>
+ * <p><b>仅支持只包含path节点的svg，svg不能被格式化</b></p>
  * <p>因为{@link javafx.scene.image.Image}不支持SVG，所以没有继承{@link ImageRenderer}</p>
  */
 public class SVGRenderer implements CanvasRenderer {
@@ -18,10 +18,6 @@ public class SVGRenderer implements CanvasRenderer {
     public SVGRenderer(String resource) {
         this.svgNode = SVGNode.fromResource(getClass().getClassLoader().getResourceAsStream(resource));
     }
-
-    // 30 为网格大小，1024为svg大小
-    // TODO how to get gridSize or render without gridSize
-    private final static double SCALE_RATE = 30.0 / 1024;
 
     @Override
     public void drawToCanvas(GraphicsContext gc, PhysicsBody body) {
@@ -42,13 +38,14 @@ public class SVGRenderer implements CanvasRenderer {
             affine.appendScale(shapeHeight / 1024, -shapeWidth / 1024);
             gc.transform(affine);
 
-            gc.beginPath();
             for (SVGPath svgPath : svgNode.getSvgPaths()) {
+                // fill必须放在循环中，不然svg中只能有一种fill
+                gc.beginPath();
                 gc.appendSVGPath(svgPath.getPath());
                 gc.setFill(svgPath.getFill());
+                gc.fill();
+                gc.closePath();
             }
-            gc.fill();
-            gc.closePath();
 
             gc.restore();
         }

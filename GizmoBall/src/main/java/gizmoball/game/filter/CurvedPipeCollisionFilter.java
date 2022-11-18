@@ -80,6 +80,9 @@ public class CurvedPipeCollisionFilter implements CollisionFilter {
             }
             // 否则视为产生碰撞
             return true;
+        } else if (isInSide) {
+            //
+            return true;
         } else {
             // 在外和弧线发生碰撞
             double magnitude0 = c2c.project(r1.getNormalized()).getMagnitude();

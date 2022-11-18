@@ -42,7 +42,7 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem fx:id="menuItemClear" mnemonicParsing="false" text="Clear" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">

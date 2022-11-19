@@ -113,6 +113,8 @@ public class MainController extends Application implements Initializable {
      */
     private GizmoPhysicsBody selectedBody;
 
+    private DraggableGizmoComponent currentSelectComponent;
+
     private GizmoOpHandler gizmoOpHandler;
 
     /**
@@ -145,6 +147,9 @@ public class MainController extends Application implements Initializable {
             new DraggableGizmoComponent("icons/right_flipper.png", "right flipper", GizmoType.RIGHT_FLIPPER),
     };
 
+    private static final VBox rectangle1 =
+            new DraggableGizmoComponent("icons/delete.png", "rectangle", GizmoType.RECTANGLE).createVBox();
+
     private static final CommandComponent[] gizmoOps = {
             new CommandComponent("icons/delete.png", "delete", GizmoCommand.REMOVE),
             new CommandComponent("icons/zoom_out.png", "zoom out", GizmoCommand.ZOOM_OUT),
@@ -172,6 +177,7 @@ public class MainController extends Application implements Initializable {
         primaryStage.setTitle("GizmoBall");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        primaryStage.setResizable(false);
         this.primaryStage = primaryStage;
         root.requestFocus();
     }
@@ -194,7 +200,24 @@ public class MainController extends Application implements Initializable {
                 db.setContent(content);
                 event.consume();
             });
+
+            gizmo.getImageWrapper().setOnMouseClicked(event -> {
+                if(event.getButton() == MouseButton.PRIMARY){
+                    currentSelectComponent = gizmo;
+                    gizmoGridPane.getChildren().remove(rectangle1);
+                    gizmoGridPane.add(rectangle1,finalI % 3, finalI / 3);
+                }
+            });
         }
+    }
+
+    /**
+     * 取消组件选中
+     */
+    protected void cancelSelectedComponent(){
+        currentSelectComponent = null;
+        gizmoGridPane.getChildren().remove(rectangle1);
+        previewImageView.setVisible(false);
     }
 
     private void initGizmoOp() {
@@ -255,6 +278,7 @@ public class MainController extends Application implements Initializable {
         if (!inDesign) {
             return;
         }
+        cancelSelectedComponent();
         selectedBody = null;
         highlightSelectedBody();
         inDesign = false;
@@ -612,6 +636,74 @@ public class MainController extends Application implements Initializable {
             drawGizmo(gc);
             previewImageView.setVisible(false);
             event.setDropCompleted(true);
+            event.consume();
+        });
+
+        // 鼠标移动到画布上时显示选中组件预览/能否放置
+        target.setOnMouseMoved(event -> {
+            if(currentSelectComponent != null){
+                DraggableGizmoComponent gizmo = currentSelectComponent;
+
+                // 显示预览图片
+                double x = event.getX();
+                double y = event.getY();
+                int[] index = world.getGridIndex(x, y);
+                if (index != null) {
+                    PhysicsBody[][] gridBodies = world.gizmoGridBodies;
+                    int i = index[0];
+                    int j = gridBodies[0].length - index[1] - 1;
+                    if (gridBodies[i][j] == null) {
+                        previewImageView.setVisible(true);
+                        previewImageView.setImage(gizmo.getImage());
+                        previewImageView.setLayoutX(index[0] * world.getGridSize());
+                        previewImageView.setLayoutY(index[1] * world.getGridSize());
+                    }
+                }
+            }
+            event.consume();
+        });
+
+        target.setOnMouseExited(event -> {
+            previewImageView.setVisible(false);
+            event.consume();
+        });
+
+        target.setOnMouseClicked(event -> {
+            if (!DEV_MODE && !inDesign) {
+                return;
+            }
+
+            if(event.getButton() == MouseButton.SECONDARY){
+                cancelSelectedComponent();
+                return;
+            }
+            DraggableGizmoComponent gizmo = currentSelectComponent;
+
+            if(gizmo == null){
+                return;
+            }
+
+            int gridSize = world.getGridSize();
+            Vector2 transformedCenter = new Vector2(event.getX(), world.boundaryAABB.maxY - event.getY());
+            // 以鼠标所在的点创建一个格子大小的AABB
+            AABB centerAABB = new AABB(-gridSize / 2.0, -gridSize / 2.0, gridSize / 2.0, gridSize / 2.0);
+            centerAABB.translate(transformedCenter);
+            // 移到边界内
+            Vector2 offsetToBoundary = GeometryUtil.offsetToBoundary(centerAABB, world.boundaryAABB);
+            transformedCenter.add(offsetToBoundary);
+            centerAABB.translate(offsetToBoundary);
+            // 对齐到网格
+            Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
+            transformedCenter.add(snapped);
+            GizmoPhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
+            try {
+                gizmoOpHandler.addGizmo(physicsBody);
+            } catch (Exception e) {
+                Toast.makeText(primaryStage, e.getMessage(), 1500, 200, 200);
+            }
+
+            drawGizmo(gc);
+            previewImageView.setVisible(false);
             event.consume();
         });
 

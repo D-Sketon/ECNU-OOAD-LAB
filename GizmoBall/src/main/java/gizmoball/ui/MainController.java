@@ -147,8 +147,8 @@ public class MainController extends Application implements Initializable {
             new DraggableGizmoComponent("icons/right_flipper.png", "right flipper", GizmoType.RIGHT_FLIPPER),
     };
 
-    private static final VBox rectangle1 =
-            new DraggableGizmoComponent("icons/delete.png", "rectangle", GizmoType.RECTANGLE).createVBox();
+    private static final VBox selectedBox =
+            new DraggableGizmoComponent("icons/selectedBox.png", "", GizmoType.RECTANGLE).createVBox();
 
     private static final CommandComponent[] gizmoOps = {
             new CommandComponent("icons/delete.png", "delete", GizmoCommand.REMOVE),
@@ -178,7 +178,9 @@ public class MainController extends Application implements Initializable {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
         primaryStage.setResizable(false);
+        primaryStage.sizeToScene();
         this.primaryStage = primaryStage;
+        // root就是AnchorPane
         root.requestFocus();
     }
 
@@ -204,8 +206,8 @@ public class MainController extends Application implements Initializable {
             gizmo.getImageWrapper().setOnMouseClicked(event -> {
                 if(event.getButton() == MouseButton.PRIMARY){
                     currentSelectComponent = gizmo;
-                    gizmoGridPane.getChildren().remove(rectangle1);
-                    gizmoGridPane.add(rectangle1,finalI % 3, finalI / 3);
+                    gizmoGridPane.getChildren().remove(selectedBox);
+                    gizmoGridPane.add(selectedBox,finalI % 3, finalI / 3);
                 }
             });
         }
@@ -216,7 +218,7 @@ public class MainController extends Application implements Initializable {
      */
     protected void cancelSelectedComponent(){
         currentSelectComponent = null;
-        gizmoGridPane.getChildren().remove(rectangle1);
+        gizmoGridPane.getChildren().remove(selectedBox);
         previewImageView.setVisible(false);
     }
 

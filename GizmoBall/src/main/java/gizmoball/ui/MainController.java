@@ -189,17 +189,17 @@ public class MainController extends Application implements Initializable {
             // 添加拖拽事件监听器
             // 拖拽传参为gizmo的类型
             int finalI = i;
-            gizmo.getImageWrapper().setOnDragDetected(event -> {
-                if (!DEV_MODE && !inDesign) {
-                    return;
-                }
-                Dragboard db = gizmo.getImageView().startDragAndDrop(TransferMode.ANY);
-                db.setDragView(gizmo.getImageView().getImage());
-                ClipboardContent content = new ClipboardContent();
-                content.put(GIZMO_TYPE_DATA, finalI);
-                db.setContent(content);
-                event.consume();
-            });
+//            gizmo.getImageWrapper().setOnDragDetected(event -> {
+//                if (!DEV_MODE && !inDesign) {
+//                    return;
+//                }
+//                Dragboard db = gizmo.getImageView().startDragAndDrop(TransferMode.ANY);
+//                db.setDragView(gizmo.getImageView().getImage());
+//                ClipboardContent content = new ClipboardContent();
+//                content.put(GIZMO_TYPE_DATA, finalI);
+//                db.setContent(content);
+//                event.consume();
+//            });
 
             gizmo.getImageWrapper().setOnMouseClicked(event -> {
                 if(event.getButton() == MouseButton.PRIMARY){
@@ -575,69 +575,69 @@ public class MainController extends Application implements Initializable {
                 }
             }
         });
-        // 拖到画布上时显示物件预览/能否拖拽
-        target.setOnDragOver(event -> {
-            if (event.getGestureSource() != target) {
-
-                Dragboard db = event.getDragboard();
-                int gizmoIndex = (int) db.getContent(GIZMO_TYPE_DATA);
-                DraggableGizmoComponent gizmo = gizmos[gizmoIndex];
-
-                // 显示预览图片
-                double x = event.getX();
-                double y = event.getY();
-                int[] index = world.getGridIndex(x, y);
-                if (index != null) {
-                    PhysicsBody[][] gridBodies = world.gizmoGridBodies;
-                    int i = index[0];
-                    int j = gridBodies[0].length - index[1] - 1;
-                    if (gridBodies[i][j] == null) {
-                        previewImageView.setVisible(true);
-                        previewImageView.setImage(gizmo.getImage());
-                        previewImageView.setLayoutX(index[0] * world.getGridSize());
-                        previewImageView.setLayoutY(index[1] * world.getGridSize());
-                        event.acceptTransferModes(TransferMode.COPY);
-                    }
-                }
-            }
-            event.consume();
-        });
-        target.setOnDragExited(event -> {
-            previewImageView.setVisible(false);
-            event.consume();
-        });
-        target.setOnDragDropped(event -> {
-            if (!DEV_MODE && !inDesign) {
-                return;
-            }
-            Dragboard db = event.getDragboard();
-            int gizmoIndex = (int) db.getContent(GIZMO_TYPE_DATA);
-            DraggableGizmoComponent gizmo = gizmos[gizmoIndex];
-
-            int gridSize = world.getGridSize();
-            Vector2 transformedCenter = new Vector2(event.getX(), world.boundaryAABB.maxY - event.getY());
-            // 以鼠标所在的点创建一个格子大小的AABB
-            AABB centerAABB = new AABB(-gridSize / 2.0, -gridSize / 2.0, gridSize / 2.0, gridSize / 2.0);
-            centerAABB.translate(transformedCenter);
-            // 移到边界内
-            Vector2 offsetToBoundary = GeometryUtil.offsetToBoundary(centerAABB, world.boundaryAABB);
-            transformedCenter.add(offsetToBoundary);
-            centerAABB.translate(offsetToBoundary);
-            // 对齐到网格
-            Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
-            transformedCenter.add(snapped);
-            GizmoPhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            try {
-                gizmoOpHandler.addGizmo(physicsBody);
-            } catch (Exception e) {
-                Toast.makeText(primaryStage, e.getMessage(), 1500, 200, 200);
-            }
-
-            drawGizmo(gc);
-            previewImageView.setVisible(false);
-            event.setDropCompleted(true);
-            event.consume();
-        });
+//        // 拖到画布上时显示物件预览/能否拖拽
+//        target.setOnDragOver(event -> {
+//            if (event.getGestureSource() != target) {
+//
+//                Dragboard db = event.getDragboard();
+//                int gizmoIndex = (int) db.getContent(GIZMO_TYPE_DATA);
+//                DraggableGizmoComponent gizmo = gizmos[gizmoIndex];
+//
+//                // 显示预览图片
+//                double x = event.getX();
+//                double y = event.getY();
+//                int[] index = world.getGridIndex(x, y);
+//                if (index != null) {
+//                    PhysicsBody[][] gridBodies = world.gizmoGridBodies;
+//                    int i = index[0];
+//                    int j = gridBodies[0].length - index[1] - 1;
+//                    if (gridBodies[i][j] == null) {
+//                        previewImageView.setVisible(true);
+//                        previewImageView.setImage(gizmo.getImage());
+//                        previewImageView.setLayoutX(index[0] * world.getGridSize());
+//                        previewImageView.setLayoutY(index[1] * world.getGridSize());
+//                        event.acceptTransferModes(TransferMode.COPY);
+//                    }
+//                }
+//            }
+//            event.consume();
+//        });
+//        target.setOnDragExited(event -> {
+//            previewImageView.setVisible(false);
+//            event.consume();
+//        });
+//        target.setOnDragDropped(event -> {
+//            if (!DEV_MODE && !inDesign) {
+//                return;
+//            }
+//            Dragboard db = event.getDragboard();
+//            int gizmoIndex = (int) db.getContent(GIZMO_TYPE_DATA);
+//            DraggableGizmoComponent gizmo = gizmos[gizmoIndex];
+//
+//            int gridSize = world.getGridSize();
+//            Vector2 transformedCenter = new Vector2(event.getX(), world.boundaryAABB.maxY - event.getY());
+//            // 以鼠标所在的点创建一个格子大小的AABB
+//            AABB centerAABB = new AABB(-gridSize / 2.0, -gridSize / 2.0, gridSize / 2.0, gridSize / 2.0);
+//            centerAABB.translate(transformedCenter);
+//            // 移到边界内
+//            Vector2 offsetToBoundary = GeometryUtil.offsetToBoundary(centerAABB, world.boundaryAABB);
+//            transformedCenter.add(offsetToBoundary);
+//            centerAABB.translate(offsetToBoundary);
+//            // 对齐到网格
+//            Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
+//            transformedCenter.add(snapped);
+//            GizmoPhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
+//            try {
+//                gizmoOpHandler.addGizmo(physicsBody);
+//            } catch (Exception e) {
+//                Toast.makeText(primaryStage, e.getMessage(), 1500, 200, 200);
+//            }
+//
+//            drawGizmo(gc);
+//            previewImageView.setVisible(false);
+//            event.setDropCompleted(true);
+//            event.consume();
+//        });
 
         // 鼠标移动到画布上时显示选中组件预览/能否放置
         target.setOnMouseMoved(event -> {
@@ -677,33 +677,43 @@ public class MainController extends Application implements Initializable {
                 cancelSelectedComponent();
                 return;
             }
-            DraggableGizmoComponent gizmo = currentSelectComponent;
 
-            if(gizmo == null){
-                return;
+            if(currentSelectComponent == null){
+                double x = event.getX();
+                double y = world.boundaryAABB.maxY - event.getY();
+                // 获取当前index
+                int[] index = world.getGridIndex(x, y);
+                if (index != null) {
+                    selectedBody = world.gizmoGridBodies[index[0]][index[1]];
+                    highlightSelectedBody();
+                }
+            } else {
+                DraggableGizmoComponent gizmo = currentSelectComponent;
+
+                int gridSize = world.getGridSize();
+                Vector2 transformedCenter = new Vector2(event.getX(), world.boundaryAABB.maxY - event.getY());
+                // 以鼠标所在的点创建一个格子大小的AABB
+                AABB centerAABB = new AABB(-gridSize / 2.0, -gridSize / 2.0, gridSize / 2.0, gridSize / 2.0);
+                centerAABB.translate(transformedCenter);
+                // 移到边界内
+                Vector2 offsetToBoundary = GeometryUtil.offsetToBoundary(centerAABB, world.boundaryAABB);
+                transformedCenter.add(offsetToBoundary);
+                centerAABB.translate(offsetToBoundary);
+                // 对齐到网格
+                Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
+                transformedCenter.add(snapped);
+                GizmoPhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
+                try {
+                    gizmoOpHandler.addGizmo(physicsBody);
+                } catch (Exception e) {
+                    Toast.makeText(primaryStage, e.getMessage(), 1500, 200, 200);
+                }
+
+                drawGizmo(gc);
+                previewImageView.setVisible(false);
             }
 
-            int gridSize = world.getGridSize();
-            Vector2 transformedCenter = new Vector2(event.getX(), world.boundaryAABB.maxY - event.getY());
-            // 以鼠标所在的点创建一个格子大小的AABB
-            AABB centerAABB = new AABB(-gridSize / 2.0, -gridSize / 2.0, gridSize / 2.0, gridSize / 2.0);
-            centerAABB.translate(transformedCenter);
-            // 移到边界内
-            Vector2 offsetToBoundary = GeometryUtil.offsetToBoundary(centerAABB, world.boundaryAABB);
-            transformedCenter.add(offsetToBoundary);
-            centerAABB.translate(offsetToBoundary);
-            // 对齐到网格
-            Vector2 snapped = GeometryUtil.snapToGrid(centerAABB, gridSize, gridSize);
-            transformedCenter.add(snapped);
-            GizmoPhysicsBody physicsBody = gizmo.createPhysicsBody(preferredSize, transformedCenter);
-            try {
-                gizmoOpHandler.addGizmo(physicsBody);
-            } catch (Exception e) {
-                Toast.makeText(primaryStage, e.getMessage(), 1500, 200, 200);
-            }
 
-            drawGizmo(gc);
-            previewImageView.setVisible(false);
             event.consume();
         });
 

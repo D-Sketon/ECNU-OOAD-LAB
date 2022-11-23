@@ -172,7 +172,10 @@ public class PlayerPanel extends Application implements Initializable {
         primaryStage.setTitle("GizmoBall");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+        primaryStage.setResizable(false);
+        primaryStage.sizeToScene();
         this.primaryStage = primaryStage;
+
         root.requestFocus();
     }
 
@@ -232,7 +235,11 @@ public class PlayerPanel extends Application implements Initializable {
                 world.tick();
                 Platform.runLater(() -> drawGizmo(gizmoCanvas.getGraphicsContext2D()));
             } catch (Exception e) {
-                e.printStackTrace();
+                Platform.runLater(() -> {
+                    designGame();
+                    Toast.makeText(primaryStage, e.getMessage(), 2000, 500, 500);
+                    log.error("游戏发生异常: {}", e.getMessage());
+                });
             }
         };
 

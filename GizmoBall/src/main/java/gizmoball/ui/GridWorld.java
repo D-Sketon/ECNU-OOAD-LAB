@@ -259,4 +259,13 @@ public class GridWorld extends GizmoWorld {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void tick() throws RuntimeException{
+        super.tick();
+        int ballSize = bodyTypeMap.get(GizmoType.BALL).size();
+        if (ballSize == 0) {
+            throw new RuntimeException("游戏结束");
+        }
+    }
 }

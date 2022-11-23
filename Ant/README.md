@@ -27,3 +27,5 @@
 处理蚂蚁爬行(**CreepGameLifecycle**)，碰撞检测(**CreepGameLifecycle**)，记录离开木杆最大最小时间，控制台信息打印(**PrintGameLifecycle**)，更新界面(RenderGameLifecycle)等功能都通过实例化**GameLifecycle**接口实现。实际注册回调函数的时候需要注意先后顺序，先是蚂蚁的爬行，然后进行碰撞检测，然后再更新界面。  
 ## 设计思想
 CreepingGame采用注册，调用回调函数的形式可以减少代码的耦合度，使得蚂蚁爬行,检测碰撞的代码，记录最大最小时间的代码以及更新UI类的代码可以分开。同时更新UI和实际游戏逻辑也是分开的，更新UI逻辑只通过GameContext的信息以及回调函数来更新，对其他其他游戏逻辑没有侵入性。  
+## 类图
+![Ant](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/Ant_ClassModel.png)

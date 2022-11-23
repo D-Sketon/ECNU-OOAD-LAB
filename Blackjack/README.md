@@ -93,3 +93,5 @@
 通信方面，在单人游戏时会同时启动**GameClient**和**GameServer**的实例，**GameClient**可以直接调用**GameServer**方法进行交互，联机时则会启动**GameClient**实例与**GameServer**通信，为解决通信适配的问题，引入了**CommunicationAdapter**接口。对于**GameClient**和**GameServer**处于一台主机时通过**LocalGameAdapter**进行适配，如果**GameClient**连接远程服务器，则通过**RemoteGameAdapter**适配。  
 实际的游戏有很多操作，比如摸牌、加倍、分牌等，所以通信的消息采用**GameEvent**的事件形式，通过定义不同的事件类型实现服务端对客户端不同操作的识别以及客户端对服务端返回消息的识别。考虑到多人联机时的网络通信，事件的处理可能需要是异步的，需要通过实现**GameEventAware**接口中的回调函数来处理事件。  
 UI标题和联机界面参考了著名游戏Minecraft。
+## 类图
+![Blackjack](https://fastly.jsdelivr.net/gh/D-Sketon/blog-img/Blackjack_ClassModel.png)

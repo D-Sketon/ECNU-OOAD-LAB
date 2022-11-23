@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<AnchorPane fx:id="anchorPane" prefHeight="625.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gizmoball.ui.MainController">
+<AnchorPane fx:id="anchorPane" prefHeight="625.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gizmoball.ui.PlayerPanel">
    <children>
       <Pane layoutY="25.0" prefHeight="600.0" prefWidth="600.0">
          <children>

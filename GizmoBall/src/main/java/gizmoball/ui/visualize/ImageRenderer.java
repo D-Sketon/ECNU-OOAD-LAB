@@ -10,7 +10,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.transform.Affine;
 
-@Deprecated
 public class ImageRenderer implements CanvasRenderer {
 
     private final Image image;

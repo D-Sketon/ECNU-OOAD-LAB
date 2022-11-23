@@ -62,7 +62,7 @@ public class GizmoOpHandler {
         if (!world.getBodies().contains(gizmoBody)) {
             throw new IllegalArgumentException("物件不存在");
         }
-        world.removeBodies(gizmoBody);
+        world.removeBody(gizmoBody);
         AABB aabb = gizmoBody.getShape().createAABB();
         GeometryUtil.padToSquare(aabb);
         world.setGrid(aabb, null);

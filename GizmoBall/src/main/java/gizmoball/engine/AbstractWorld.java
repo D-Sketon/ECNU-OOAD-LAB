@@ -40,7 +40,7 @@ public abstract class AbstractWorld<T extends PhysicsBody> {
         this.bodies.add(body);
     }
 
-    public void removeBodies(T body) {
+    public void removeBody(T body) {
         this.bodies.remove(body);
     }
 

@@ -44,6 +44,5 @@ public class DefaultCanvasRenderer implements CanvasRenderer {
                     circle.getTransform().getY() - circle.getRadius(),
                     circle.getRadius() * 2, circle.getRadius() * 2);
         }
-        // TODO draw slice
     }
 }

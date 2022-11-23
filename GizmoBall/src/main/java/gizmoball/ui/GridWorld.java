@@ -124,7 +124,7 @@ public class GridWorld extends GizmoWorld {
         return false;
     }
 
-    protected void initBoundary() {
+    public void initBoundary() {
         double worldWidth = boundaryAABB.maxX;
         double worldHeight = boundaryAABB.maxY;
         // init border
@@ -170,8 +170,8 @@ public class GridWorld extends GizmoWorld {
     }
 
     @Override
-    public void removeBodies(GizmoPhysicsBody body) {
-        super.removeBodies(body);
+    public void removeBody(GizmoPhysicsBody body) {
+        super.removeBody(body);
     }
 
     @Override

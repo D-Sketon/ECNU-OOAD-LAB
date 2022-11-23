@@ -43,6 +43,7 @@ public class GizmoWorld extends AbstractWorld<GizmoPhysicsBody> {
         tickListeners.add(new FlipperListener(balls, bodyTypeMap.computeIfAbsent(GizmoType.RIGHT_FLIPPER, k -> new ArrayList<>())));
     }
 
+    @Override
     public void addBody(GizmoPhysicsBody body) {
         super.addBody(body);
 
@@ -50,8 +51,9 @@ public class GizmoWorld extends AbstractWorld<GizmoPhysicsBody> {
         bodyTypeMap.computeIfAbsent(gizmoType, k -> new ArrayList<>()).add(body);
     }
 
-    public void removeBodies(GizmoPhysicsBody body) {
-        super.removeBodies(body);
+    @Override
+    public void removeBody(GizmoPhysicsBody body) {
+        super.removeBody(body);
 
         GizmoType type = body.getGizmoType();
         List<PhysicsBody> list = bodyTypeMap.get(type);

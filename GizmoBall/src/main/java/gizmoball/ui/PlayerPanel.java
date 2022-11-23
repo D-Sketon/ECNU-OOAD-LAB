@@ -49,7 +49,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class MainController extends Application implements Initializable {
+public class PlayerPanel extends Application implements Initializable {
 
     /**
      * 渲染弹球游戏界面的canvas
@@ -397,26 +397,26 @@ public class MainController extends Application implements Initializable {
             Label githubRepository = new Label("Github repository:");
             Hyperlink repository = new Hyperlink("https://github.com/D-Sketon/ECNU-OOAD-LAB");
             repository.setOnAction(e -> {
-                HostServices hostServices = MainController.this.getHostServices();
+                HostServices hostServices = PlayerPanel.this.getHostServices();
                 hostServices.showDocument(repository.getText());
             });
             Label author = new Label("Author:");
 
             Hyperlink author0 = new Hyperlink("D-Sketon");
             author0.setOnAction(e -> {
-                HostServices hostServices = MainController.this.getHostServices();
+                HostServices hostServices = PlayerPanel.this.getHostServices();
                 hostServices.showDocument("https://github.com/D-Sketon");
             });
 
             Hyperlink author1 = new Hyperlink("Uzemiu");
             author1.setOnAction(e -> {
-                HostServices hostServices = MainController.this.getHostServices();
+                HostServices hostServices = PlayerPanel.this.getHostServices();
                 hostServices.showDocument("https://github.com/Uzemiu");
             });
 
             Hyperlink author2 = new Hyperlink("re20051");
             author2.setOnAction(e -> {
-                HostServices hostServices = MainController.this.getHostServices();
+                HostServices hostServices = PlayerPanel.this.getHostServices();
                 hostServices.showDocument("https://github.com/re20051");
             });
             grid.add(content0, 1, 0);

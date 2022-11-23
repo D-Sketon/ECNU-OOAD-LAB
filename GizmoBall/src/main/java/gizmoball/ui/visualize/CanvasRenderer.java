@@ -5,11 +5,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public interface CanvasRenderer {
 
-    CanvasRenderer DO_NOT_RENDER = new CanvasRenderer() {
-        @Override
-        public void drawToCanvas(GraphicsContext graphicsContext, PhysicsBody physicsBody) {
-            // do nothing
-        }
+    CanvasRenderer DO_NOT_RENDER = (graphicsContext, physicsBody) -> {
+        // do nothing
     };
 
     void drawToCanvas(GraphicsContext graphicsContext, PhysicsBody physicsBody);

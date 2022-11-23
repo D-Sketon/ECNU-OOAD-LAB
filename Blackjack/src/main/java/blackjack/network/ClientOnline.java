@@ -84,7 +84,7 @@ public class ClientOnline {
 
         @Override
         public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-            log.info("client idleTimes = " + readIdleTimes );
+            log.info("client idleTimes = " + readIdleTimes);
             IdleStateEvent event;
             if (evt instanceof IdleStateEvent)
                 event = (IdleStateEvent) evt;

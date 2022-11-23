@@ -9,7 +9,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ipfilter.AbstractRemoteAddressFilter;
@@ -134,7 +133,7 @@ public class ServerOnline {
 
         @Override
         public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-            log.info("server idleTimes = " + readIdleTimes );
+            log.info("server idleTimes = " + readIdleTimes);
             IdleStateEvent event;
             if (evt instanceof IdleStateEvent)
                 event = (IdleStateEvent) evt;

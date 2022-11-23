@@ -5,7 +5,7 @@ import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.manifold.Manifold;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.game.entity.*;
+import gizmoball.game.entity.Flipper;
 import gizmoball.game.listener.*;
 import gizmoball.ui.component.GizmoType;
 import gizmoball.ui.visualize.GizmoPhysicsBody;
@@ -55,7 +55,7 @@ public class GizmoWorld extends AbstractWorld<GizmoPhysicsBody> {
 
         GizmoType type = body.getGizmoType();
         List<PhysicsBody> list = bodyTypeMap.get(type);
-        if(list != null) {
+        if (list != null) {
             list.remove(body);
         }
     }

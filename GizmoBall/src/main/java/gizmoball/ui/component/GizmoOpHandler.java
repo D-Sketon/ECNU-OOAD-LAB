@@ -2,8 +2,6 @@ package gizmoball.ui.component;
 
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.game.entity.Flipper;
 import gizmoball.ui.GeometryUtil;
 import gizmoball.ui.GridWorld;
 import gizmoball.ui.visualize.GizmoPhysicsBody;

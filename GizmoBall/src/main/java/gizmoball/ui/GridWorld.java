@@ -1,11 +1,11 @@
 package gizmoball.ui;
 
-import gizmoball.game.GizmoWorld;
 import gizmoball.engine.geometry.AABB;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.Rectangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.engine.physics.PhysicsBody;
+import gizmoball.game.GizmoWorld;
 import gizmoball.ui.component.GizmoType;
 import gizmoball.ui.file.PersistentUtil;
 import gizmoball.ui.visualize.GizmoPhysicsBody;
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static gizmoball.game.GizmoSettings.BOUNDARY_BUFFER;
 
@@ -150,7 +149,6 @@ public class GridWorld extends GizmoWorld {
         // 不放入格子
         super.addBody(border);
     }
-
 
 
     public void addBodyToGrid(PhysicsBody body) {

@@ -2,11 +2,11 @@ package ant.game.lifecycle;
 
 import ant.game.core.CreepingGame;
 import ant.game.core.GameContext;
-import ant.game.physics.Vector2D;
-import ant.game.physics.Collider;
 import ant.game.entity.Ant;
 import ant.game.entity.GameObject;
 import ant.game.entity.Rod;
+import ant.game.physics.Collider;
+import ant.game.physics.Vector2D;
 
 import java.util.ArrayList;
 import java.util.Comparator;

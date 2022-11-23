@@ -38,7 +38,7 @@ public class GameContext {
 
     /**
      * 创建牌堆
-     * 
+     *
      * @param deckNum 牌堆数
      */
     public void createDeck(int deckNum) {

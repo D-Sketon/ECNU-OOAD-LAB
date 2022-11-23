@@ -13,12 +13,12 @@ public class Vector2D {
 
     private double y;
 
-    public void add(Vector2D v){
+    public void add(Vector2D v) {
         x += v.x;
         y += v.y;
     }
 
-    public void subtract(Vector2D v){
+    public void subtract(Vector2D v) {
         x -= v.x;
         y -= v.y;
     }
@@ -32,7 +32,7 @@ public class Vector2D {
     }
 
     public static Vector2D zero() {
-        return new Vector2D(0f,0f);
+        return new Vector2D(0f, 0f);
     }
 
 }

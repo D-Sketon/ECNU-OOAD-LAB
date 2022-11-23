@@ -16,8 +16,6 @@ import gizmoball.ui.visualize.GizmoPhysicsBody;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -44,7 +42,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -96,7 +93,10 @@ public class MainController extends Application implements Initializable {
     @FXML
     AnchorPane anchorPane;
 
-    private static final boolean DEV_MODE = true;
+    /**
+     * 区别于生产模式
+     */
+    private static final boolean DEV_MODE = false;
 
     /**
      * 游戏世界
@@ -337,6 +337,7 @@ public class MainController extends Application implements Initializable {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss");
 
         menuItemLoad.setOnAction(event -> {
+            if (!inDesign) return;
             fileChooser.setInitialDirectory(new File("."));
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
@@ -351,6 +352,7 @@ public class MainController extends Application implements Initializable {
         });
 
         menuItemSave.setOnAction(event -> {
+            if (!inDesign) return;
             // set current time as filename
             String time = LocalDateTime.now().format(formatter);
 
@@ -395,36 +397,36 @@ public class MainController extends Application implements Initializable {
             Label githubRepository = new Label("Github repository:");
             Hyperlink repository = new Hyperlink("https://github.com/D-Sketon/ECNU-OOAD-LAB");
             repository.setOnAction(e -> {
-                HostServices hostServices =MainController.this.getHostServices();
+                HostServices hostServices = MainController.this.getHostServices();
                 hostServices.showDocument(repository.getText());
             });
             Label author = new Label("Author:");
 
             Hyperlink author0 = new Hyperlink("D-Sketon");
             author0.setOnAction(e -> {
-                HostServices hostServices =MainController.this.getHostServices();
+                HostServices hostServices = MainController.this.getHostServices();
                 hostServices.showDocument("https://github.com/D-Sketon");
             });
 
             Hyperlink author1 = new Hyperlink("Uzemiu");
             author1.setOnAction(e -> {
-                HostServices hostServices =MainController.this.getHostServices();
+                HostServices hostServices = MainController.this.getHostServices();
                 hostServices.showDocument("https://github.com/Uzemiu");
             });
 
             Hyperlink author2 = new Hyperlink("re20051");
             author2.setOnAction(e -> {
-                HostServices hostServices =MainController.this.getHostServices();
+                HostServices hostServices = MainController.this.getHostServices();
                 hostServices.showDocument("https://github.com/re20051");
             });
-            grid.add(content0,1,0);
-            grid.add(content1,1,2);
-            grid.add(githubRepository,0,3);
-            grid.add(repository,1,3);
-            grid.add(author,0,4);
-            grid.add(author0,1,4);
-            grid.add(author1,1,5);
-            grid.add(author2,1,6);
+            grid.add(content0, 1, 0);
+            grid.add(content1, 1, 2);
+            grid.add(githubRepository, 0, 3);
+            grid.add(repository, 1, 3);
+            grid.add(author, 0, 4);
+            grid.add(author0, 1, 4);
+            grid.add(author1, 1, 5);
+            grid.add(author2, 1, 6);
             dialog.getDialogPane().setContent(grid);
 
             dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK);

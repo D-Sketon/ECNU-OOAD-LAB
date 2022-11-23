@@ -2,9 +2,6 @@ package gizmoball.ui.component;
 
 
 import gizmoball.engine.geometry.Vector2;
-import gizmoball.engine.geometry.shape.Circle;
-import gizmoball.engine.geometry.shape.Rectangle;
-import gizmoball.engine.geometry.shape.Triangle;
 import gizmoball.engine.physics.Mass;
 import gizmoball.game.entity.*;
 import gizmoball.ui.visualize.GizmoPhysicsBody;

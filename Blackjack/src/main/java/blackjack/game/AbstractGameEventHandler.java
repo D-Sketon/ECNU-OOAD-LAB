@@ -8,9 +8,9 @@ import blackjack.player.Player;
 import java.util.Map;
 
 public abstract class AbstractGameEventHandler implements GameEventAware {
-    
+
     protected GameContext gameContext;
-    
+
     @Override
     public void onPlayerJoin(Player player) {
 
@@ -102,7 +102,7 @@ public abstract class AbstractGameEventHandler implements GameEventAware {
 
     @Override
     public void onPlayerReset(Player player) {
-        
+
     }
 
     @Override

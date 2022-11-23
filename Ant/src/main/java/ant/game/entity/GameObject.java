@@ -1,7 +1,7 @@
 package ant.game.entity;
 
-import ant.game.physics.Vector2D;
 import ant.game.physics.Collider;
+import ant.game.physics.Vector2D;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

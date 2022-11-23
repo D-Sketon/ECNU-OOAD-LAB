@@ -1,6 +1,7 @@
 package gizmoball.engine.collision.detector;
 
 import gizmoball.engine.Settings;
+import gizmoball.engine.collision.CollisionFilter;
 import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.collision.contact.ContactConstraint;
 import gizmoball.engine.collision.contact.SequentialImpulses;
@@ -9,7 +10,6 @@ import gizmoball.engine.collision.manifold.ManifoldSolver;
 import gizmoball.engine.geometry.Vector2;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
-import gizmoball.engine.collision.CollisionFilter;
 import javafx.util.Pair;
 
 import java.util.ArrayList;

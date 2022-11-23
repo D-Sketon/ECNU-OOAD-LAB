@@ -98,7 +98,7 @@ public class CreepingGame implements Runnable {
 
     @Override
     public void run() {
-        if(!suspend) {
+        if (!suspend) {
             gameContext.timeTicks++;
             lifecycles.forEach(GameLifecycle::onUpdate);
             if (terminationRequested) {

@@ -1,6 +1,5 @@
 package gizmoball.engine.collision;
 
-import gizmoball.engine.collision.Penetration;
 import gizmoball.engine.geometry.shape.AbstractShape;
 import gizmoball.engine.physics.PhysicsBody;
 

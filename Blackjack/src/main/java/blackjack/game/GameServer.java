@@ -11,7 +11,6 @@ import blackjack.player.Dealer;
 import blackjack.player.Player;
 import com.google.gson.Gson;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -499,8 +498,6 @@ public class GameServer extends AbstractGameEventHandler {
             sendToPlayer(playerId, GameEvent.ERROR_REQUEST, new ActionParam(playerId, null, null, null));
             return;
         }
-
-
 
 
         log.info("PlayerId = " + playerId + " HandIndex = " + handIndex + " onPlayerDouble");

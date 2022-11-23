@@ -18,14 +18,14 @@ public class PrintGameLifecycle extends AbstractGameLifecycle {
     private static final int COLOR_GREY = 37;
 
     public PrintGameLifecycle(GameContext gameContext, CreepingGame creepingGame) {
-            super(gameContext, creepingGame);
-        }
+        super(gameContext, creepingGame);
+    }
 
     private static final Integer[] COLORS = {COLOR_WHITE, COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_GREY};
 
     private final HashMap<Ant, Integer> ANT_COLOR = new HashMap<>();
 
-    private void printInfo(){
+    private void printInfo() {
 
         System.out.println("=====Game id: " + gameContext.getGameId() + "=====");
         System.out.println("Game ticks: " + gameContext.getTimeTicks());
@@ -48,18 +48,18 @@ public class PrintGameLifecycle extends AbstractGameLifecycle {
 
             directionChars[posi] = '-';
             if (velX > 0) {
-                if(directionChars[posi - 1] == ' '){
+                if (directionChars[posi - 1] == ' ') {
                     directionChars[posi - 1] = '-';
                 }
                 directionChars[posi + 1] = '>';
             } else {
                 directionChars[posi - 1] = '<';
-                if(directionChars[posi + 1] == ' '){
+                if (directionChars[posi + 1] == ' ') {
                     directionChars[posi + 1] = '-';
                 }
             }
 
-            if(posi - lastPosi - 1 > 0 || lastPosi == 0){
+            if (posi - lastPosi - 1 > 0 || lastPosi == 0) {
                 char[] emptyRod = new char[posi - lastPosi - 1];
                 Arrays.fill(emptyRod, ' ');
                 formattedAntString.append("\33[34;4m").append(emptyRod).append("\33[0m")
@@ -68,7 +68,7 @@ public class PrintGameLifecycle extends AbstractGameLifecycle {
             }
             lastPosi = posi;
 
-            int posx = ((int)ant.getPosition().getX());
+            int posx = ((int) ant.getPosition().getX());
             String posStr = (posx < 100
                     ? (posx < 10 ? " " : "0")
                     : "") + posx;
@@ -87,7 +87,7 @@ public class PrintGameLifecycle extends AbstractGameLifecycle {
         System.out.println("=========================");
     }
 
-    private void buildAntColor(){
+    private void buildAntColor() {
         List<Integer> colors = new ArrayList<>(Arrays.asList(COLORS));
         Collections.shuffle(colors);
         List<Ant> ants = gameContext.getAnts();

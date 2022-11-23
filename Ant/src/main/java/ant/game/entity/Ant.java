@@ -1,8 +1,9 @@
 package ant.game.entity;
 
-import ant.game.physics.Vector2D;
-import lombok.*;
 import ant.game.physics.Collider;
+import ant.game.physics.Vector2D;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
 @Data
@@ -25,10 +26,10 @@ public class Ant extends GameObject {
     }
 
     public Ant(String id, Vector2D position) {
-        this(id, position, new Collider(Vector2D.zero(), new Vector2D(20,20)));
+        this(id, position, new Collider(Vector2D.zero(), new Vector2D(20, 20)));
     }
 
-    public Ant(String id, Vector2D position, Collider collider){
+    public Ant(String id, Vector2D position, Collider collider) {
         super(position, collider);
         this.id = id;
     }
